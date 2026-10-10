@@ -27,33 +27,31 @@ export type AggregateBankEarnings = {
 }
 
 export type BankEarningsAvgAggregateOutputType = {
-  id: number | null
   total: number | null
   totalUsdt: number | null
 }
 
 export type BankEarningsSumAggregateOutputType = {
-  id: number | null
   total: number | null
   totalUsdt: number | null
 }
 
 export type BankEarningsMinAggregateOutputType = {
-  id: number | null
+  userId: string | null
   total: number | null
   totalUsdt: number | null
   updatedAt: Date | null
 }
 
 export type BankEarningsMaxAggregateOutputType = {
-  id: number | null
+  userId: string | null
   total: number | null
   totalUsdt: number | null
   updatedAt: Date | null
 }
 
 export type BankEarningsCountAggregateOutputType = {
-  id: number
+  userId: number
   total: number
   totalUsdt: number
   updatedAt: number
@@ -62,33 +60,31 @@ export type BankEarningsCountAggregateOutputType = {
 
 
 export type BankEarningsAvgAggregateInputType = {
-  id?: true
   total?: true
   totalUsdt?: true
 }
 
 export type BankEarningsSumAggregateInputType = {
-  id?: true
   total?: true
   totalUsdt?: true
 }
 
 export type BankEarningsMinAggregateInputType = {
-  id?: true
+  userId?: true
   total?: true
   totalUsdt?: true
   updatedAt?: true
 }
 
 export type BankEarningsMaxAggregateInputType = {
-  id?: true
+  userId?: true
   total?: true
   totalUsdt?: true
   updatedAt?: true
 }
 
 export type BankEarningsCountAggregateInputType = {
-  id?: true
+  userId?: true
   total?: true
   totalUsdt?: true
   updatedAt?: true
@@ -182,7 +178,7 @@ export type BankEarningsGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 export type BankEarningsGroupByOutputType = {
-  id: number
+  userId: string
   total: number
   totalUsdt: number
   updatedAt: Date
@@ -212,31 +208,34 @@ export type BankEarningsWhereInput = {
   AND?: Prisma.BankEarningsWhereInput | Prisma.BankEarningsWhereInput[]
   OR?: Prisma.BankEarningsWhereInput[]
   NOT?: Prisma.BankEarningsWhereInput | Prisma.BankEarningsWhereInput[]
-  id?: Prisma.IntFilter<"BankEarnings"> | number
+  userId?: Prisma.StringFilter<"BankEarnings"> | string
   total?: Prisma.IntFilter<"BankEarnings"> | number
   totalUsdt?: Prisma.IntFilter<"BankEarnings"> | number
   updatedAt?: Prisma.DateTimeFilter<"BankEarnings"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type BankEarningsOrderByWithRelationInput = {
-  id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   total?: Prisma.SortOrder
   totalUsdt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type BankEarningsWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  userId?: string
   AND?: Prisma.BankEarningsWhereInput | Prisma.BankEarningsWhereInput[]
   OR?: Prisma.BankEarningsWhereInput[]
   NOT?: Prisma.BankEarningsWhereInput | Prisma.BankEarningsWhereInput[]
   total?: Prisma.IntFilter<"BankEarnings"> | number
   totalUsdt?: Prisma.IntFilter<"BankEarnings"> | number
   updatedAt?: Prisma.DateTimeFilter<"BankEarnings"> | Date | string
-}, "id">
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+}, "userId">
 
 export type BankEarningsOrderByWithAggregationInput = {
-  id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   total?: Prisma.SortOrder
   totalUsdt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -251,131 +250,219 @@ export type BankEarningsScalarWhereWithAggregatesInput = {
   AND?: Prisma.BankEarningsScalarWhereWithAggregatesInput | Prisma.BankEarningsScalarWhereWithAggregatesInput[]
   OR?: Prisma.BankEarningsScalarWhereWithAggregatesInput[]
   NOT?: Prisma.BankEarningsScalarWhereWithAggregatesInput | Prisma.BankEarningsScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"BankEarnings"> | number
+  userId?: Prisma.StringWithAggregatesFilter<"BankEarnings"> | string
   total?: Prisma.IntWithAggregatesFilter<"BankEarnings"> | number
   totalUsdt?: Prisma.IntWithAggregatesFilter<"BankEarnings"> | number
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BankEarnings"> | Date | string
 }
 
 export type BankEarningsCreateInput = {
-  id?: number
   total?: number
   totalUsdt?: number
   updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutBankEarningsInput
 }
 
 export type BankEarningsUncheckedCreateInput = {
-  id?: number
+  userId: string
   total?: number
   totalUsdt?: number
   updatedAt?: Date | string
 }
 
 export type BankEarningsUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   totalUsdt?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutBankEarningsNestedInput
 }
 
 export type BankEarningsUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   total?: Prisma.IntFieldUpdateOperationsInput | number
   totalUsdt?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BankEarningsCreateManyInput = {
-  id?: number
+  userId: string
   total?: number
   totalUsdt?: number
   updatedAt?: Date | string
 }
 
 export type BankEarningsUpdateManyMutationInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   totalUsdt?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BankEarningsUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   total?: Prisma.IntFieldUpdateOperationsInput | number
   totalUsdt?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type BankEarningsNullableScalarRelationFilter = {
+  is?: Prisma.BankEarningsWhereInput | null
+  isNot?: Prisma.BankEarningsWhereInput | null
+}
+
 export type BankEarningsCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   total?: Prisma.SortOrder
   totalUsdt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type BankEarningsAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   total?: Prisma.SortOrder
   totalUsdt?: Prisma.SortOrder
 }
 
 export type BankEarningsMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   total?: Prisma.SortOrder
   totalUsdt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type BankEarningsMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   total?: Prisma.SortOrder
   totalUsdt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type BankEarningsSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   total?: Prisma.SortOrder
   totalUsdt?: Prisma.SortOrder
+}
+
+export type BankEarningsCreateNestedOneWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.BankEarningsCreateWithoutUserInput, Prisma.BankEarningsUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.BankEarningsCreateOrConnectWithoutUserInput
+  connect?: Prisma.BankEarningsWhereUniqueInput
+}
+
+export type BankEarningsUncheckedCreateNestedOneWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.BankEarningsCreateWithoutUserInput, Prisma.BankEarningsUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.BankEarningsCreateOrConnectWithoutUserInput
+  connect?: Prisma.BankEarningsWhereUniqueInput
+}
+
+export type BankEarningsUpdateOneWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.BankEarningsCreateWithoutUserInput, Prisma.BankEarningsUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.BankEarningsCreateOrConnectWithoutUserInput
+  upsert?: Prisma.BankEarningsUpsertWithoutUserInput
+  disconnect?: Prisma.BankEarningsWhereInput | boolean
+  delete?: Prisma.BankEarningsWhereInput | boolean
+  connect?: Prisma.BankEarningsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BankEarningsUpdateToOneWithWhereWithoutUserInput, Prisma.BankEarningsUpdateWithoutUserInput>, Prisma.BankEarningsUncheckedUpdateWithoutUserInput>
+}
+
+export type BankEarningsUncheckedUpdateOneWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.BankEarningsCreateWithoutUserInput, Prisma.BankEarningsUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.BankEarningsCreateOrConnectWithoutUserInput
+  upsert?: Prisma.BankEarningsUpsertWithoutUserInput
+  disconnect?: Prisma.BankEarningsWhereInput | boolean
+  delete?: Prisma.BankEarningsWhereInput | boolean
+  connect?: Prisma.BankEarningsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BankEarningsUpdateToOneWithWhereWithoutUserInput, Prisma.BankEarningsUpdateWithoutUserInput>, Prisma.BankEarningsUncheckedUpdateWithoutUserInput>
+}
+
+export type BankEarningsCreateWithoutUserInput = {
+  total?: number
+  totalUsdt?: number
+  updatedAt?: Date | string
+}
+
+export type BankEarningsUncheckedCreateWithoutUserInput = {
+  total?: number
+  totalUsdt?: number
+  updatedAt?: Date | string
+}
+
+export type BankEarningsCreateOrConnectWithoutUserInput = {
+  where: Prisma.BankEarningsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BankEarningsCreateWithoutUserInput, Prisma.BankEarningsUncheckedCreateWithoutUserInput>
+}
+
+export type BankEarningsUpsertWithoutUserInput = {
+  update: Prisma.XOR<Prisma.BankEarningsUpdateWithoutUserInput, Prisma.BankEarningsUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.BankEarningsCreateWithoutUserInput, Prisma.BankEarningsUncheckedCreateWithoutUserInput>
+  where?: Prisma.BankEarningsWhereInput
+}
+
+export type BankEarningsUpdateToOneWithWhereWithoutUserInput = {
+  where?: Prisma.BankEarningsWhereInput
+  data: Prisma.XOR<Prisma.BankEarningsUpdateWithoutUserInput, Prisma.BankEarningsUncheckedUpdateWithoutUserInput>
+}
+
+export type BankEarningsUpdateWithoutUserInput = {
+  total?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUsdt?: Prisma.IntFieldUpdateOperationsInput | number
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BankEarningsUncheckedUpdateWithoutUserInput = {
+  total?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUsdt?: Prisma.IntFieldUpdateOperationsInput | number
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type BankEarningsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
+  userId?: boolean
   total?: boolean
   totalUsdt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bankEarnings"]>
 
 export type BankEarningsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
+  userId?: boolean
   total?: boolean
   totalUsdt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bankEarnings"]>
 
 export type BankEarningsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
+  userId?: boolean
   total?: boolean
   totalUsdt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bankEarnings"]>
 
 export type BankEarningsSelectScalar = {
-  id?: boolean
+  userId?: boolean
   total?: boolean
   totalUsdt?: boolean
   updatedAt?: boolean
 }
 
-export type BankEarningsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "total" | "totalUsdt" | "updatedAt", ExtArgs["result"]["bankEarnings"]>
+export type BankEarningsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "total" | "totalUsdt" | "updatedAt", ExtArgs["result"]["bankEarnings"]>
+export type BankEarningsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type BankEarningsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type BankEarningsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $BankEarningsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BankEarnings"
-  objects: {}
+  objects: {
+    user: Prisma.$UserPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
+    userId: string
     total: number
     totalUsdt: number
     updatedAt: Date
@@ -462,8 +549,8 @@ export interface BankEarningsDelegate<ExtArgs extends runtime.Types.Extensions.I
    * // Get first 10 BankEarnings
    * const bankEarnings = await prisma.bankEarnings.findMany({ take: 10 })
    * 
-   * // Only select the `id`
-   * const bankEarningsWithIdOnly = await prisma.bankEarnings.findMany({ select: { id: true } })
+   * // Only select the `userId`
+   * const bankEarningsWithUserIdOnly = await prisma.bankEarnings.findMany({ select: { userId: true } })
    * 
    */
   findMany<T extends BankEarningsFindManyArgs>(args?: Prisma.SelectSubset<T, BankEarningsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BankEarningsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -507,9 +594,9 @@ export interface BankEarningsDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Create many BankEarnings and only return the `id`
-   * const bankEarningsWithIdOnly = await prisma.bankEarnings.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many BankEarnings and only return the `userId`
+   * const bankEarningsWithUserIdOnly = await prisma.bankEarnings.createManyAndReturn({
+   *   select: { userId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -598,9 +685,9 @@ export interface BankEarningsDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Update zero or more BankEarnings and only return the `id`
-   * const bankEarningsWithIdOnly = await prisma.bankEarnings.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more BankEarnings and only return the `userId`
+   * const bankEarningsWithUserIdOnly = await prisma.bankEarnings.updateManyAndReturn({
+   *   select: { userId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -773,6 +860,7 @@ readonly fields: BankEarningsFieldRefs;
  */
 export interface Prisma__BankEarningsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -802,7 +890,7 @@ export interface Prisma__BankEarningsClient<T, Null = never, ExtArgs extends run
  * Fields of the BankEarnings model
  */
 export interface BankEarningsFieldRefs {
-  readonly id: Prisma.FieldRef<"BankEarnings", 'Int'>
+  readonly userId: Prisma.FieldRef<"BankEarnings", 'String'>
   readonly total: Prisma.FieldRef<"BankEarnings", 'Int'>
   readonly totalUsdt: Prisma.FieldRef<"BankEarnings", 'Int'>
   readonly updatedAt: Prisma.FieldRef<"BankEarnings", 'DateTime'>
@@ -823,6 +911,10 @@ export type BankEarningsFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
+  /**
    * Filter, which BankEarnings to fetch.
    */
   where: Prisma.BankEarningsWhereUniqueInput
@@ -841,6 +933,10 @@ export type BankEarningsFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
+  /**
    * Filter, which BankEarnings to fetch.
    */
   where: Prisma.BankEarningsWhereUniqueInput
@@ -858,6 +954,10 @@ export type BankEarningsFindFirstArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the BankEarnings
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
   /**
    * Filter, which BankEarnings to fetch.
    */
@@ -907,6 +1007,10 @@ export type BankEarningsFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
+  /**
    * Filter, which BankEarnings to fetch.
    */
   where?: Prisma.BankEarningsWhereInput
@@ -955,6 +1059,10 @@ export type BankEarningsFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
+  /**
    * Filter, which BankEarnings to fetch.
    */
   where?: Prisma.BankEarningsWhereInput
@@ -998,6 +1106,10 @@ export type BankEarningsCreateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
+  /**
    * The data needed to create a BankEarnings.
    */
   data: Prisma.XOR<Prisma.BankEarningsCreateInput, Prisma.BankEarningsUncheckedCreateInput>
@@ -1031,6 +1143,10 @@ export type BankEarningsCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.BankEarningsCreateManyInput | Prisma.BankEarningsCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1045,6 +1161,10 @@ export type BankEarningsUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the BankEarnings
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
   /**
    * The data needed to update a BankEarnings.
    */
@@ -1097,6 +1217,10 @@ export type BankEarningsUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many BankEarnings to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1111,6 +1235,10 @@ export type BankEarningsUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the BankEarnings
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
   /**
    * The filter to search for the BankEarnings to update in case it exists.
    */
@@ -1137,6 +1265,10 @@ export type BankEarningsDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the BankEarnings
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
   /**
    * Filter which BankEarnings to delete.
    */
@@ -1169,4 +1301,8 @@ export type BankEarningsDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the BankEarnings
    */
   omit?: Prisma.BankEarningsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankEarningsInclude<ExtArgs> | null
 }

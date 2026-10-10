@@ -1,5 +1,6 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
+import { requireUser } from "@/shared/lib/session";
 import { updateClientStatusSchema } from "@/features/subscriptions/schemas";
 
 function normalizePhoneNumber(phone: string) {
@@ -12,6 +13,9 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const body = await req.json();
 
     const parsed = updateClientStatusSchema.partial().safeParse(body);
@@ -56,8 +60,12 @@ export async function PATCH(
       typeof subscriptionData.amount === "number" ? subscriptionData.amount : 0;
     const isRenewal = subscriptionData.status === "ACTIVE" && amount > 0;
 
-    const currentSubscription = await prisma.subscription.findUnique({
-      where: { id },
+    if (isRenewal) {
+      subscriptionData.purchaseDate = new Date();
+    }
+
+    const currentSubscription = await prisma.subscription.findFirst({
+      where: { id, userId },
       select: {
         id: true,
         clientId: true,
@@ -95,12 +103,12 @@ export async function PATCH(
         : currentSubscription.screenId;
 
     const [nextActiveAccount, nextService, nextScreen] = await Promise.all([
-      prisma.activeAccount.findUnique({
-        where: { id: nextActiveAccountId },
+      prisma.activeAccount.findFirst({
+        where: { id: nextActiveAccountId, userId },
         select: { id: true, serviceId: true },
       }),
-      prisma.service.findUnique({
-        where: { id: nextServiceId },
+      prisma.service.findFirst({
+        where: { id: nextServiceId, createdById: userId },
         select: { id: true },
       }),
       prisma.screen.findUnique({
@@ -151,10 +159,24 @@ export async function PATCH(
     const targetClientName = clientDataToUpdate.clientName;
 
     if (typeof parsed.data.clientId === "string") {
+      const clientExists = await prisma.client.findFirst({
+        where: { id: parsed.data.clientId, userId },
+        select: { id: true },
+      });
+
+      if (!clientExists) {
+        return NextResponse.json(
+          { message: "Client not found" },
+          { status: 404 },
+        );
+      }
+
       subscriptionData.clientId = parsed.data.clientId;
     } else if (normalizedPhone) {
       const existingClient = await prisma.client.findUnique({
-        where: { phoneNumber: normalizedPhone },
+        where: {
+          userId_phoneNumber: { userId, phoneNumber: normalizedPhone },
+        },
         select: { id: true },
       });
 
@@ -205,14 +227,14 @@ export async function PATCH(
         },
       }),
       prisma.bankEarnings.upsert({
-        where: { id: 1 },
+        where: { userId },
         update: {
           total: {
             increment: isRenewal ? amount : 0,
           },
         },
         create: {
-          id: 1,
+          userId,
           total: isRenewal ? amount : 0,
         },
       }),
@@ -245,10 +267,19 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
 
-    await prisma.subscription.delete({
-      where: { id },
+    const { count } = await prisma.subscription.deleteMany({
+      where: { id, userId },
     });
+
+    if (count === 0) {
+      return NextResponse.json(
+        { message: "Subscription not found" },
+        { status: 404 },
+      );
+    }
 
     return NextResponse.json({ message: "Client status deleted" });
   } catch (error) {

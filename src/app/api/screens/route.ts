@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/shared/lib/db";
+import { requireUser } from "@/shared/lib/session";
 import { createScreenSchema } from "@/features/streaming-services/schemas";
 
 export async function POST(req: NextRequest) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const body = await req.json();
     const data = createScreenSchema.parse(body);
 
-    const activeAccount = await prisma.activeAccount.findUnique({
-      where: { id: data.activeAccountId },
+    const activeAccount = await prisma.activeAccount.findFirst({
+      where: { id: data.activeAccountId, userId },
       include: { screens: true },
     });
 
@@ -48,10 +52,16 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const { searchParams } = new URL(req.url);
     const activeAccountId = searchParams.get("activeAccountId");
 
-    const where = activeAccountId ? { activeAccountId } : {};
+    const where = {
+      activeAccount: { userId },
+      ...(activeAccountId ? { activeAccountId } : {}),
+    };
 
     const screens = await prisma.screen.findMany({
       where,

@@ -30,6 +30,7 @@ export type ActiveAccountMinAggregateOutputType = {
   password: string | null
   serviceId: string | null
   expirationDate: Date | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,6 +41,7 @@ export type ActiveAccountMaxAggregateOutputType = {
   password: string | null
   serviceId: string | null
   expirationDate: Date | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +52,7 @@ export type ActiveAccountCountAggregateOutputType = {
   password: number
   serviceId: number
   expirationDate: number
+  userId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -62,6 +65,7 @@ export type ActiveAccountMinAggregateInputType = {
   password?: true
   serviceId?: true
   expirationDate?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -72,6 +76,7 @@ export type ActiveAccountMaxAggregateInputType = {
   password?: true
   serviceId?: true
   expirationDate?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +87,7 @@ export type ActiveAccountCountAggregateInputType = {
   password?: true
   serviceId?: true
   expirationDate?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -165,6 +171,7 @@ export type ActiveAccountGroupByOutputType = {
   password: string
   serviceId: string | null
   expirationDate: Date
+  userId: string
   createdAt: Date
   updatedAt: Date
   _count: ActiveAccountCountAggregateOutputType | null
@@ -196,9 +203,11 @@ export type ActiveAccountWhereInput = {
   password?: Prisma.StringFilter<"ActiveAccount"> | string
   serviceId?: Prisma.StringNullableFilter<"ActiveAccount"> | string | null
   expirationDate?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
+  userId?: Prisma.StringFilter<"ActiveAccount"> | string
   createdAt?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
   service?: Prisma.XOR<Prisma.ServiceNullableScalarRelationFilter, Prisma.ServiceWhereInput> | null
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   subscriptions?: Prisma.SubscriptionListRelationFilter
   screens?: Prisma.ScreenListRelationFilter
 }
@@ -209,28 +218,33 @@ export type ActiveAccountOrderByWithRelationInput = {
   password?: Prisma.SortOrder
   serviceId?: Prisma.SortOrderInput | Prisma.SortOrder
   expirationDate?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   service?: Prisma.ServiceOrderByWithRelationInput
+  user?: Prisma.UserOrderByWithRelationInput
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
   screens?: Prisma.ScreenOrderByRelationAggregateInput
 }
 
 export type ActiveAccountWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  email?: string
+  userId_email?: Prisma.ActiveAccountUserIdEmailCompoundUniqueInput
   AND?: Prisma.ActiveAccountWhereInput | Prisma.ActiveAccountWhereInput[]
   OR?: Prisma.ActiveAccountWhereInput[]
   NOT?: Prisma.ActiveAccountWhereInput | Prisma.ActiveAccountWhereInput[]
+  email?: Prisma.StringFilter<"ActiveAccount"> | string
   password?: Prisma.StringFilter<"ActiveAccount"> | string
   serviceId?: Prisma.StringNullableFilter<"ActiveAccount"> | string | null
   expirationDate?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
+  userId?: Prisma.StringFilter<"ActiveAccount"> | string
   createdAt?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
   service?: Prisma.XOR<Prisma.ServiceNullableScalarRelationFilter, Prisma.ServiceWhereInput> | null
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   subscriptions?: Prisma.SubscriptionListRelationFilter
   screens?: Prisma.ScreenListRelationFilter
-}, "id" | "email">
+}, "id" | "userId_email">
 
 export type ActiveAccountOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -238,6 +252,7 @@ export type ActiveAccountOrderByWithAggregationInput = {
   password?: Prisma.SortOrder
   serviceId?: Prisma.SortOrderInput | Prisma.SortOrder
   expirationDate?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ActiveAccountCountOrderByAggregateInput
@@ -254,6 +269,7 @@ export type ActiveAccountScalarWhereWithAggregatesInput = {
   password?: Prisma.StringWithAggregatesFilter<"ActiveAccount"> | string
   serviceId?: Prisma.StringNullableWithAggregatesFilter<"ActiveAccount"> | string | null
   expirationDate?: Prisma.DateTimeWithAggregatesFilter<"ActiveAccount"> | Date | string
+  userId?: Prisma.StringWithAggregatesFilter<"ActiveAccount"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ActiveAccount"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ActiveAccount"> | Date | string
 }
@@ -266,6 +282,7 @@ export type ActiveAccountCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   service?: Prisma.ServiceCreateNestedOneWithoutActiveAccountsInput
+  user: Prisma.UserCreateNestedOneWithoutActiveAccountsInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutActiveAccountInput
   screens?: Prisma.ScreenCreateNestedManyWithoutActiveAccountInput
 }
@@ -276,6 +293,7 @@ export type ActiveAccountUncheckedCreateInput = {
   password: string
   serviceId?: string | null
   expirationDate: Date | string
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutActiveAccountInput
@@ -290,6 +308,7 @@ export type ActiveAccountUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   service?: Prisma.ServiceUpdateOneWithoutActiveAccountsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutActiveAccountsNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutActiveAccountNestedInput
   screens?: Prisma.ScreenUpdateManyWithoutActiveAccountNestedInput
 }
@@ -300,6 +319,7 @@ export type ActiveAccountUncheckedUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutActiveAccountNestedInput
@@ -312,6 +332,7 @@ export type ActiveAccountCreateManyInput = {
   password: string
   serviceId?: string | null
   expirationDate: Date | string
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -331,6 +352,7 @@ export type ActiveAccountUncheckedUpdateManyInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -345,12 +367,18 @@ export type ActiveAccountOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type ActiveAccountUserIdEmailCompoundUniqueInput = {
+  userId: string
+  email: string
+}
+
 export type ActiveAccountCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
   expirationDate?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -361,6 +389,7 @@ export type ActiveAccountMaxOrderByAggregateInput = {
   password?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
   expirationDate?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -371,6 +400,7 @@ export type ActiveAccountMinOrderByAggregateInput = {
   password?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
   expirationDate?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -378,6 +408,48 @@ export type ActiveAccountMinOrderByAggregateInput = {
 export type ActiveAccountScalarRelationFilter = {
   is?: Prisma.ActiveAccountWhereInput
   isNot?: Prisma.ActiveAccountWhereInput
+}
+
+export type ActiveAccountCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.ActiveAccountCreateWithoutUserInput, Prisma.ActiveAccountUncheckedCreateWithoutUserInput> | Prisma.ActiveAccountCreateWithoutUserInput[] | Prisma.ActiveAccountUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ActiveAccountCreateOrConnectWithoutUserInput | Prisma.ActiveAccountCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.ActiveAccountCreateManyUserInputEnvelope
+  connect?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+}
+
+export type ActiveAccountUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.ActiveAccountCreateWithoutUserInput, Prisma.ActiveAccountUncheckedCreateWithoutUserInput> | Prisma.ActiveAccountCreateWithoutUserInput[] | Prisma.ActiveAccountUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ActiveAccountCreateOrConnectWithoutUserInput | Prisma.ActiveAccountCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.ActiveAccountCreateManyUserInputEnvelope
+  connect?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+}
+
+export type ActiveAccountUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.ActiveAccountCreateWithoutUserInput, Prisma.ActiveAccountUncheckedCreateWithoutUserInput> | Prisma.ActiveAccountCreateWithoutUserInput[] | Prisma.ActiveAccountUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ActiveAccountCreateOrConnectWithoutUserInput | Prisma.ActiveAccountCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.ActiveAccountUpsertWithWhereUniqueWithoutUserInput | Prisma.ActiveAccountUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.ActiveAccountCreateManyUserInputEnvelope
+  set?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+  disconnect?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+  delete?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+  connect?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+  update?: Prisma.ActiveAccountUpdateWithWhereUniqueWithoutUserInput | Prisma.ActiveAccountUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.ActiveAccountUpdateManyWithWhereWithoutUserInput | Prisma.ActiveAccountUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.ActiveAccountScalarWhereInput | Prisma.ActiveAccountScalarWhereInput[]
+}
+
+export type ActiveAccountUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.ActiveAccountCreateWithoutUserInput, Prisma.ActiveAccountUncheckedCreateWithoutUserInput> | Prisma.ActiveAccountCreateWithoutUserInput[] | Prisma.ActiveAccountUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ActiveAccountCreateOrConnectWithoutUserInput | Prisma.ActiveAccountCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.ActiveAccountUpsertWithWhereUniqueWithoutUserInput | Prisma.ActiveAccountUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.ActiveAccountCreateManyUserInputEnvelope
+  set?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+  disconnect?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+  delete?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+  connect?: Prisma.ActiveAccountWhereUniqueInput | Prisma.ActiveAccountWhereUniqueInput[]
+  update?: Prisma.ActiveAccountUpdateWithWhereUniqueWithoutUserInput | Prisma.ActiveAccountUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.ActiveAccountUpdateManyWithWhereWithoutUserInput | Prisma.ActiveAccountUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.ActiveAccountScalarWhereInput | Prisma.ActiveAccountScalarWhereInput[]
 }
 
 export type ActiveAccountCreateNestedManyWithoutServiceInput = {
@@ -450,6 +522,70 @@ export type ActiveAccountUpdateOneRequiredWithoutSubscriptionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ActiveAccountUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.ActiveAccountUpdateWithoutSubscriptionsInput>, Prisma.ActiveAccountUncheckedUpdateWithoutSubscriptionsInput>
 }
 
+export type ActiveAccountCreateWithoutUserInput = {
+  id?: string
+  email: string
+  password: string
+  expirationDate: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  service?: Prisma.ServiceCreateNestedOneWithoutActiveAccountsInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutActiveAccountInput
+  screens?: Prisma.ScreenCreateNestedManyWithoutActiveAccountInput
+}
+
+export type ActiveAccountUncheckedCreateWithoutUserInput = {
+  id?: string
+  email: string
+  password: string
+  serviceId?: string | null
+  expirationDate: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutActiveAccountInput
+  screens?: Prisma.ScreenUncheckedCreateNestedManyWithoutActiveAccountInput
+}
+
+export type ActiveAccountCreateOrConnectWithoutUserInput = {
+  where: Prisma.ActiveAccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.ActiveAccountCreateWithoutUserInput, Prisma.ActiveAccountUncheckedCreateWithoutUserInput>
+}
+
+export type ActiveAccountCreateManyUserInputEnvelope = {
+  data: Prisma.ActiveAccountCreateManyUserInput | Prisma.ActiveAccountCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type ActiveAccountUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.ActiveAccountWhereUniqueInput
+  update: Prisma.XOR<Prisma.ActiveAccountUpdateWithoutUserInput, Prisma.ActiveAccountUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.ActiveAccountCreateWithoutUserInput, Prisma.ActiveAccountUncheckedCreateWithoutUserInput>
+}
+
+export type ActiveAccountUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.ActiveAccountWhereUniqueInput
+  data: Prisma.XOR<Prisma.ActiveAccountUpdateWithoutUserInput, Prisma.ActiveAccountUncheckedUpdateWithoutUserInput>
+}
+
+export type ActiveAccountUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.ActiveAccountScalarWhereInput
+  data: Prisma.XOR<Prisma.ActiveAccountUpdateManyMutationInput, Prisma.ActiveAccountUncheckedUpdateManyWithoutUserInput>
+}
+
+export type ActiveAccountScalarWhereInput = {
+  AND?: Prisma.ActiveAccountScalarWhereInput | Prisma.ActiveAccountScalarWhereInput[]
+  OR?: Prisma.ActiveAccountScalarWhereInput[]
+  NOT?: Prisma.ActiveAccountScalarWhereInput | Prisma.ActiveAccountScalarWhereInput[]
+  id?: Prisma.StringFilter<"ActiveAccount"> | string
+  email?: Prisma.StringFilter<"ActiveAccount"> | string
+  password?: Prisma.StringFilter<"ActiveAccount"> | string
+  serviceId?: Prisma.StringNullableFilter<"ActiveAccount"> | string | null
+  expirationDate?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
+  userId?: Prisma.StringFilter<"ActiveAccount"> | string
+  createdAt?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
+}
+
 export type ActiveAccountCreateWithoutServiceInput = {
   id?: string
   email: string
@@ -457,6 +593,7 @@ export type ActiveAccountCreateWithoutServiceInput = {
   expirationDate: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutActiveAccountsInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutActiveAccountInput
   screens?: Prisma.ScreenCreateNestedManyWithoutActiveAccountInput
 }
@@ -466,6 +603,7 @@ export type ActiveAccountUncheckedCreateWithoutServiceInput = {
   email: string
   password: string
   expirationDate: Date | string
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutActiveAccountInput
@@ -498,19 +636,6 @@ export type ActiveAccountUpdateManyWithWhereWithoutServiceInput = {
   data: Prisma.XOR<Prisma.ActiveAccountUpdateManyMutationInput, Prisma.ActiveAccountUncheckedUpdateManyWithoutServiceInput>
 }
 
-export type ActiveAccountScalarWhereInput = {
-  AND?: Prisma.ActiveAccountScalarWhereInput | Prisma.ActiveAccountScalarWhereInput[]
-  OR?: Prisma.ActiveAccountScalarWhereInput[]
-  NOT?: Prisma.ActiveAccountScalarWhereInput | Prisma.ActiveAccountScalarWhereInput[]
-  id?: Prisma.StringFilter<"ActiveAccount"> | string
-  email?: Prisma.StringFilter<"ActiveAccount"> | string
-  password?: Prisma.StringFilter<"ActiveAccount"> | string
-  serviceId?: Prisma.StringNullableFilter<"ActiveAccount"> | string | null
-  expirationDate?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
-  createdAt?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"ActiveAccount"> | Date | string
-}
-
 export type ActiveAccountCreateWithoutScreensInput = {
   id?: string
   email: string
@@ -519,6 +644,7 @@ export type ActiveAccountCreateWithoutScreensInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   service?: Prisma.ServiceCreateNestedOneWithoutActiveAccountsInput
+  user: Prisma.UserCreateNestedOneWithoutActiveAccountsInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutActiveAccountInput
 }
 
@@ -528,6 +654,7 @@ export type ActiveAccountUncheckedCreateWithoutScreensInput = {
   password: string
   serviceId?: string | null
   expirationDate: Date | string
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutActiveAccountInput
@@ -557,6 +684,7 @@ export type ActiveAccountUpdateWithoutScreensInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   service?: Prisma.ServiceUpdateOneWithoutActiveAccountsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutActiveAccountsNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutActiveAccountNestedInput
 }
 
@@ -566,6 +694,7 @@ export type ActiveAccountUncheckedUpdateWithoutScreensInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutActiveAccountNestedInput
@@ -579,6 +708,7 @@ export type ActiveAccountCreateWithoutSubscriptionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   service?: Prisma.ServiceCreateNestedOneWithoutActiveAccountsInput
+  user: Prisma.UserCreateNestedOneWithoutActiveAccountsInput
   screens?: Prisma.ScreenCreateNestedManyWithoutActiveAccountInput
 }
 
@@ -588,6 +718,7 @@ export type ActiveAccountUncheckedCreateWithoutSubscriptionsInput = {
   password: string
   serviceId?: string | null
   expirationDate: Date | string
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   screens?: Prisma.ScreenUncheckedCreateNestedManyWithoutActiveAccountInput
@@ -617,6 +748,7 @@ export type ActiveAccountUpdateWithoutSubscriptionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   service?: Prisma.ServiceUpdateOneWithoutActiveAccountsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutActiveAccountsNestedInput
   screens?: Prisma.ScreenUpdateManyWithoutActiveAccountNestedInput
 }
 
@@ -626,9 +758,54 @@ export type ActiveAccountUncheckedUpdateWithoutSubscriptionsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   screens?: Prisma.ScreenUncheckedUpdateManyWithoutActiveAccountNestedInput
+}
+
+export type ActiveAccountCreateManyUserInput = {
+  id?: string
+  email: string
+  password: string
+  serviceId?: string | null
+  expirationDate: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ActiveAccountUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  service?: Prisma.ServiceUpdateOneWithoutActiveAccountsNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutActiveAccountNestedInput
+  screens?: Prisma.ScreenUpdateManyWithoutActiveAccountNestedInput
+}
+
+export type ActiveAccountUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutActiveAccountNestedInput
+  screens?: Prisma.ScreenUncheckedUpdateManyWithoutActiveAccountNestedInput
+}
+
+export type ActiveAccountUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActiveAccountCreateManyServiceInput = {
@@ -636,6 +813,7 @@ export type ActiveAccountCreateManyServiceInput = {
   email: string
   password: string
   expirationDate: Date | string
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -647,6 +825,7 @@ export type ActiveAccountUpdateWithoutServiceInput = {
   expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutActiveAccountsNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutActiveAccountNestedInput
   screens?: Prisma.ScreenUpdateManyWithoutActiveAccountNestedInput
 }
@@ -656,6 +835,7 @@ export type ActiveAccountUncheckedUpdateWithoutServiceInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutActiveAccountNestedInput
@@ -667,6 +847,7 @@ export type ActiveAccountUncheckedUpdateManyWithoutServiceInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -717,9 +898,11 @@ export type ActiveAccountSelect<ExtArgs extends runtime.Types.Extensions.Interna
   password?: boolean
   serviceId?: boolean
   expirationDate?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   service?: boolean | Prisma.ActiveAccount$serviceArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   subscriptions?: boolean | Prisma.ActiveAccount$subscriptionsArgs<ExtArgs>
   screens?: boolean | Prisma.ActiveAccount$screensArgs<ExtArgs>
   _count?: boolean | Prisma.ActiveAccountCountOutputTypeDefaultArgs<ExtArgs>
@@ -731,9 +914,11 @@ export type ActiveAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   password?: boolean
   serviceId?: boolean
   expirationDate?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   service?: boolean | Prisma.ActiveAccount$serviceArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["activeAccount"]>
 
 export type ActiveAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -742,9 +927,11 @@ export type ActiveAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   password?: boolean
   serviceId?: boolean
   expirationDate?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   service?: boolean | Prisma.ActiveAccount$serviceArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["activeAccount"]>
 
 export type ActiveAccountSelectScalar = {
@@ -753,28 +940,33 @@ export type ActiveAccountSelectScalar = {
   password?: boolean
   serviceId?: boolean
   expirationDate?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ActiveAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "serviceId" | "expirationDate" | "createdAt" | "updatedAt", ExtArgs["result"]["activeAccount"]>
+export type ActiveAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "serviceId" | "expirationDate" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["activeAccount"]>
 export type ActiveAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   service?: boolean | Prisma.ActiveAccount$serviceArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   subscriptions?: boolean | Prisma.ActiveAccount$subscriptionsArgs<ExtArgs>
   screens?: boolean | Prisma.ActiveAccount$screensArgs<ExtArgs>
   _count?: boolean | Prisma.ActiveAccountCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ActiveAccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   service?: boolean | Prisma.ActiveAccount$serviceArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type ActiveAccountIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   service?: boolean | Prisma.ActiveAccount$serviceArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $ActiveAccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ActiveAccount"
   objects: {
     service: Prisma.$ServicePayload<ExtArgs> | null
+    user: Prisma.$UserPayload<ExtArgs>
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
     screens: Prisma.$ScreenPayload<ExtArgs>[]
   }
@@ -784,6 +976,7 @@ export type $ActiveAccountPayload<ExtArgs extends runtime.Types.Extensions.Inter
     password: string
     serviceId: string | null
     expirationDate: Date
+    userId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["activeAccount"]>
@@ -1181,6 +1374,7 @@ readonly fields: ActiveAccountFieldRefs;
 export interface Prisma__ActiveAccountClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   service<T extends Prisma.ActiveAccount$serviceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActiveAccount$serviceArgs<ExtArgs>>): Prisma.Prisma__ServiceClient<runtime.Types.Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   subscriptions<T extends Prisma.ActiveAccount$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActiveAccount$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   screens<T extends Prisma.ActiveAccount$screensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActiveAccount$screensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScreenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1217,6 +1411,7 @@ export interface ActiveAccountFieldRefs {
   readonly password: Prisma.FieldRef<"ActiveAccount", 'String'>
   readonly serviceId: Prisma.FieldRef<"ActiveAccount", 'String'>
   readonly expirationDate: Prisma.FieldRef<"ActiveAccount", 'DateTime'>
+  readonly userId: Prisma.FieldRef<"ActiveAccount", 'String'>
   readonly createdAt: Prisma.FieldRef<"ActiveAccount", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ActiveAccount", 'DateTime'>
 }

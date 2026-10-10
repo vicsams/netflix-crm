@@ -161,6 +161,7 @@ export const ActiveAccountScalarFieldEnum = {
   password: 'password',
   serviceId: 'serviceId',
   expirationDate: 'expirationDate',
+  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -182,6 +183,7 @@ export const ClientScalarFieldEnum = {
   id: 'id',
   clientName: 'clientName',
   phoneNumber: 'phoneNumber',
+  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -196,8 +198,10 @@ export const SubscriptionScalarFieldEnum = {
   serviceId: 'serviceId',
   screenId: 'screenId',
   expirationDate: 'expirationDate',
+  purchaseDate: 'purchaseDate',
   amount: 'amount',
   status: 'status',
+  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -206,7 +210,7 @@ export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[k
 
 
 export const BankEarningsScalarFieldEnum = {
-  id: 'id',
+  userId: 'userId',
   total: 'total',
   totalUsdt: 'totalUsdt',
   updatedAt: 'updatedAt'
@@ -220,6 +224,7 @@ export const BankWithdrawalScalarFieldEnum = {
   currency: 'currency',
   amount: 'amount',
   reason: 'reason',
+  userId: 'userId',
   createdAt: 'createdAt'
 } as const
 

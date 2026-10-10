@@ -20,6 +20,7 @@ export type ClientStatus = {
   screenId: string;
   screen?: { id: string; profileName: string; profilePIN: number } | null;
   expirationDate?: string | null;
+  purchaseDate?: string | null;
   amount?: number | null;
   status: string;
   createdAt?: string;
@@ -28,6 +29,7 @@ export type ClientStatus = {
 
 export interface ClientStatusActionsProps {
   clientStatus: ClientStatus;
+  variant?: "menu" | "buttons";
 }
 
 export type ClientStatusMessageDialogProps = {
@@ -47,4 +49,15 @@ export type UpdateClientStatusDialogProps = {
   clientStatus: ClientStatus;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+};
+
+export type ClientStatusListProps = {
+  data: ClientStatus[];
+  emptyMessage?: string;
+};
+
+export type ClientStatusDetailsSheetProps = {
+  clientStatus: ClientStatus | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };

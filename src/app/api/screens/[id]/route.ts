@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/shared/lib/db";
+import { requireUser } from "@/shared/lib/session";
 
 export async function PUT(
   req: NextRequest,
@@ -7,6 +8,18 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
+    const owned = await prisma.screen.findFirst({
+      where: { id, activeAccount: { userId } },
+      select: { id: true },
+    });
+
+    if (!owned) {
+      return NextResponse.json({ message: "Screen not found" }, { status: 404 });
+    }
+
     const json = await req.json();
 
     const result = await prisma.screen.update({
@@ -35,6 +48,18 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
+    const owned = await prisma.screen.findFirst({
+      where: { id, activeAccount: { userId } },
+      select: { id: true },
+    });
+
+    if (!owned) {
+      return NextResponse.json({ message: "Screen not found" }, { status: 404 });
+    }
+
     await prisma.screen.delete({
       where: { id },
     });

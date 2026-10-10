@@ -7,7 +7,13 @@ import UpdateClientStatusDialog from "@/features/subscriptions/components/Update
 import ClientStatusRenewDialog from "@/features/subscriptions/components/ClientStatusRenewDialog";
 import ClientStatusMessageDialog from "@/features/subscriptions/components/ClientStatusMessageDialog";
 import { Button } from "@/shared/components/ui/button";
-import { Pencil, Trash, CreditCard, MessageCircle } from "lucide-react";
+import {
+  Pencil,
+  Trash,
+  CreditCard,
+  MessageCircle,
+  MoreHorizontal,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,16 +25,17 @@ import {
   AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/shared/components/ui/tooltip";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
 import { Spinner } from "@/shared/components/ui/spinner";
 import { ClientStatusActionsProps } from "@/features/subscriptions/types/clientStatus";
-import useIsMobile from "@/hooks/useIsMobile";
 
 export default function ClientStatusActions({
   clientStatus,
+  variant = "menu",
 }: ClientStatusActionsProps) {
   const clientName = clientStatus.client?.clientName ?? clientStatus.clientName;
   const phoneNumber =
@@ -39,7 +46,6 @@ export default function ClientStatusActions({
   const [showRenewDialog, setShowRenewDialog] = useState(false);
   const [showMessageDialog, setShowMessageDialog] = useState(false);
   const queryClient = useQueryClient();
-  const isMobile = useIsMobile();
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
@@ -104,121 +110,70 @@ export default function ClientStatusActions({
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="flex items-center justify-start gap-3">
-        {isMobile ? (
-          <>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowUpdateDialog(true)}
-              // title="Editar"
-              className="size-7! cursor-pointer rounded-md bg-neutral-200 text-black hover:bg-neutral-200 hover:text-black"
-            >
+      {variant === "buttons" ? (
+        <div className="grid grid-cols-4 gap-2">
+          <Button
+            onClick={() => setShowMessageDialog(true)}
+            className="flex h-auto flex-col gap-1 bg-green-500 py-2 text-xs text-white hover:bg-green-600"
+          >
+            <MessageCircle className="h-4 w-4" />
+            WhatsApp
+          </Button>
+          <Button
+            onClick={() => setShowRenewDialog(true)}
+            className="flex h-auto flex-col gap-1 py-2 text-xs"
+          >
+            <CreditCard className="h-4 w-4" />
+            Renovar
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowUpdateDialog(true)}
+            className="flex h-auto flex-col gap-1 py-2 text-xs"
+          >
+            <Pencil className="h-4 w-4" />
+            Editar
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowDeleteDialog(true)}
+            className="text-destructive hover:text-destructive flex h-auto flex-col gap-1 border-red-200 py-2 text-xs"
+          >
+            <Trash className="h-4 w-4" />
+            Eliminar
+          </Button>
+        </div>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Abrir menú</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setShowUpdateDialog(true)}>
               <Pencil className="h-4 w-4" />
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowDeleteDialog(true)}
-              className="text-destructive hover:text-destructive! size-7! cursor-pointer rounded-md bg-red-200!"
-              // title="Eliminar"
-            >
-              <Trash className="h-4 w-4" />
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowRenewDialog(true)}
-              className="size-7! cursor-pointer rounded-md bg-black! text-white hover:text-white!"
-              // title="Renovar"
-            >
+              <span>Editar</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowRenewDialog(true)}>
               <CreditCard className="h-4 w-4" />
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowMessageDialog(true)}
-              className="size-7! cursor-pointer rounded-md bg-green-500! text-white hover:text-white!"
-              // title="Enviar mensaje"
+              <span>Renovar</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowMessageDialog(true)}>
+              <MessageCircle className="h-4 w-4 text-green-600" />
+              <span>Enviar WhatsApp</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setShowDeleteDialog(true)}
+              className="text-destructive focus:text-destructive focus:bg-destructive/10"
             >
-              <MessageCircle className="h-4 w-4" strokeWidth={3} />
-            </Button>
-          </>
-        ) : (
-          <>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowUpdateDialog(true)}
-                  // title="Editar"
-                  className="size-7! cursor-pointer rounded-md bg-neutral-200 text-black hover:bg-neutral-200 hover:text-black"
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Editar suscripcion</p>
-              </TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowDeleteDialog(true)}
-                  className="text-destructive hover:text-destructive! size-7! cursor-pointer rounded-md bg-red-200!"
-                  // title="Eliminar"
-                >
-                  <Trash className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Eliminar suscripcion</p>
-              </TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowRenewDialog(true)}
-                  className="size-7! cursor-pointer rounded-md bg-black! text-white hover:text-white!"
-                  // title="Renovar"
-                >
-                  <CreditCard className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Renovar suscripcion</p>
-              </TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowMessageDialog(true)}
-                  className="size-7! cursor-pointer rounded-md bg-green-500! text-white hover:text-white!"
-                  // title="Enviar mensaje"
-                >
-                  <MessageCircle className="h-4 w-4" strokeWidth={3} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Enviar WhatsApp</p>
-              </TooltipContent>
-            </Tooltip>
-          </>
-        )}
-      </div>
+              <Trash className="text-destructive h-4 w-4" />
+              <span>Eliminar</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </>
   );
 }

@@ -39,6 +39,7 @@ export type BankWithdrawalMinAggregateOutputType = {
   currency: string | null
   amount: number | null
   reason: string | null
+  userId: string | null
   createdAt: Date | null
 }
 
@@ -47,6 +48,7 @@ export type BankWithdrawalMaxAggregateOutputType = {
   currency: string | null
   amount: number | null
   reason: string | null
+  userId: string | null
   createdAt: Date | null
 }
 
@@ -55,6 +57,7 @@ export type BankWithdrawalCountAggregateOutputType = {
   currency: number
   amount: number
   reason: number
+  userId: number
   createdAt: number
   _all: number
 }
@@ -73,6 +76,7 @@ export type BankWithdrawalMinAggregateInputType = {
   currency?: true
   amount?: true
   reason?: true
+  userId?: true
   createdAt?: true
 }
 
@@ -81,6 +85,7 @@ export type BankWithdrawalMaxAggregateInputType = {
   currency?: true
   amount?: true
   reason?: true
+  userId?: true
   createdAt?: true
 }
 
@@ -89,6 +94,7 @@ export type BankWithdrawalCountAggregateInputType = {
   currency?: true
   amount?: true
   reason?: true
+  userId?: true
   createdAt?: true
   _all?: true
 }
@@ -184,6 +190,7 @@ export type BankWithdrawalGroupByOutputType = {
   currency: string
   amount: number
   reason: string
+  userId: string
   createdAt: Date
   _count: BankWithdrawalCountAggregateOutputType | null
   _avg: BankWithdrawalAvgAggregateOutputType | null
@@ -215,7 +222,9 @@ export type BankWithdrawalWhereInput = {
   currency?: Prisma.StringFilter<"BankWithdrawal"> | string
   amount?: Prisma.IntFilter<"BankWithdrawal"> | number
   reason?: Prisma.StringFilter<"BankWithdrawal"> | string
+  userId?: Prisma.StringFilter<"BankWithdrawal"> | string
   createdAt?: Prisma.DateTimeFilter<"BankWithdrawal"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type BankWithdrawalOrderByWithRelationInput = {
@@ -223,7 +232,9 @@ export type BankWithdrawalOrderByWithRelationInput = {
   currency?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   reason?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type BankWithdrawalWhereUniqueInput = Prisma.AtLeast<{
@@ -234,7 +245,9 @@ export type BankWithdrawalWhereUniqueInput = Prisma.AtLeast<{
   currency?: Prisma.StringFilter<"BankWithdrawal"> | string
   amount?: Prisma.IntFilter<"BankWithdrawal"> | number
   reason?: Prisma.StringFilter<"BankWithdrawal"> | string
+  userId?: Prisma.StringFilter<"BankWithdrawal"> | string
   createdAt?: Prisma.DateTimeFilter<"BankWithdrawal"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type BankWithdrawalOrderByWithAggregationInput = {
@@ -242,6 +255,7 @@ export type BankWithdrawalOrderByWithAggregationInput = {
   currency?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   reason?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.BankWithdrawalCountOrderByAggregateInput
   _avg?: Prisma.BankWithdrawalAvgOrderByAggregateInput
@@ -258,6 +272,7 @@ export type BankWithdrawalScalarWhereWithAggregatesInput = {
   currency?: Prisma.StringWithAggregatesFilter<"BankWithdrawal"> | string
   amount?: Prisma.IntWithAggregatesFilter<"BankWithdrawal"> | number
   reason?: Prisma.StringWithAggregatesFilter<"BankWithdrawal"> | string
+  userId?: Prisma.StringWithAggregatesFilter<"BankWithdrawal"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BankWithdrawal"> | Date | string
 }
 
@@ -267,6 +282,7 @@ export type BankWithdrawalCreateInput = {
   amount: number
   reason: string
   createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutWithdrawalsInput
 }
 
 export type BankWithdrawalUncheckedCreateInput = {
@@ -274,6 +290,7 @@ export type BankWithdrawalUncheckedCreateInput = {
   currency: string
   amount: number
   reason: string
+  userId: string
   createdAt?: Date | string
 }
 
@@ -283,6 +300,7 @@ export type BankWithdrawalUpdateInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutWithdrawalsNestedInput
 }
 
 export type BankWithdrawalUncheckedUpdateInput = {
@@ -290,6 +308,7 @@ export type BankWithdrawalUncheckedUpdateInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   reason?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -298,6 +317,7 @@ export type BankWithdrawalCreateManyInput = {
   currency: string
   amount: number
   reason: string
+  userId: string
   createdAt?: Date | string
 }
 
@@ -314,7 +334,18 @@ export type BankWithdrawalUncheckedUpdateManyInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.IntFieldUpdateOperationsInput | number
   reason?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BankWithdrawalListRelationFilter = {
+  every?: Prisma.BankWithdrawalWhereInput
+  some?: Prisma.BankWithdrawalWhereInput
+  none?: Prisma.BankWithdrawalWhereInput
+}
+
+export type BankWithdrawalOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type BankWithdrawalCountOrderByAggregateInput = {
@@ -322,6 +353,7 @@ export type BankWithdrawalCountOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   reason?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -334,6 +366,7 @@ export type BankWithdrawalMaxOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   reason?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -342,11 +375,140 @@ export type BankWithdrawalMinOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   reason?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type BankWithdrawalSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
+}
+
+export type BankWithdrawalCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.BankWithdrawalCreateWithoutUserInput, Prisma.BankWithdrawalUncheckedCreateWithoutUserInput> | Prisma.BankWithdrawalCreateWithoutUserInput[] | Prisma.BankWithdrawalUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.BankWithdrawalCreateOrConnectWithoutUserInput | Prisma.BankWithdrawalCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.BankWithdrawalCreateManyUserInputEnvelope
+  connect?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+}
+
+export type BankWithdrawalUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.BankWithdrawalCreateWithoutUserInput, Prisma.BankWithdrawalUncheckedCreateWithoutUserInput> | Prisma.BankWithdrawalCreateWithoutUserInput[] | Prisma.BankWithdrawalUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.BankWithdrawalCreateOrConnectWithoutUserInput | Prisma.BankWithdrawalCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.BankWithdrawalCreateManyUserInputEnvelope
+  connect?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+}
+
+export type BankWithdrawalUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.BankWithdrawalCreateWithoutUserInput, Prisma.BankWithdrawalUncheckedCreateWithoutUserInput> | Prisma.BankWithdrawalCreateWithoutUserInput[] | Prisma.BankWithdrawalUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.BankWithdrawalCreateOrConnectWithoutUserInput | Prisma.BankWithdrawalCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.BankWithdrawalUpsertWithWhereUniqueWithoutUserInput | Prisma.BankWithdrawalUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.BankWithdrawalCreateManyUserInputEnvelope
+  set?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+  disconnect?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+  delete?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+  connect?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+  update?: Prisma.BankWithdrawalUpdateWithWhereUniqueWithoutUserInput | Prisma.BankWithdrawalUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.BankWithdrawalUpdateManyWithWhereWithoutUserInput | Prisma.BankWithdrawalUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.BankWithdrawalScalarWhereInput | Prisma.BankWithdrawalScalarWhereInput[]
+}
+
+export type BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.BankWithdrawalCreateWithoutUserInput, Prisma.BankWithdrawalUncheckedCreateWithoutUserInput> | Prisma.BankWithdrawalCreateWithoutUserInput[] | Prisma.BankWithdrawalUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.BankWithdrawalCreateOrConnectWithoutUserInput | Prisma.BankWithdrawalCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.BankWithdrawalUpsertWithWhereUniqueWithoutUserInput | Prisma.BankWithdrawalUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.BankWithdrawalCreateManyUserInputEnvelope
+  set?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+  disconnect?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+  delete?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+  connect?: Prisma.BankWithdrawalWhereUniqueInput | Prisma.BankWithdrawalWhereUniqueInput[]
+  update?: Prisma.BankWithdrawalUpdateWithWhereUniqueWithoutUserInput | Prisma.BankWithdrawalUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.BankWithdrawalUpdateManyWithWhereWithoutUserInput | Prisma.BankWithdrawalUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.BankWithdrawalScalarWhereInput | Prisma.BankWithdrawalScalarWhereInput[]
+}
+
+export type BankWithdrawalCreateWithoutUserInput = {
+  id?: string
+  currency: string
+  amount: number
+  reason: string
+  createdAt?: Date | string
+}
+
+export type BankWithdrawalUncheckedCreateWithoutUserInput = {
+  id?: string
+  currency: string
+  amount: number
+  reason: string
+  createdAt?: Date | string
+}
+
+export type BankWithdrawalCreateOrConnectWithoutUserInput = {
+  where: Prisma.BankWithdrawalWhereUniqueInput
+  create: Prisma.XOR<Prisma.BankWithdrawalCreateWithoutUserInput, Prisma.BankWithdrawalUncheckedCreateWithoutUserInput>
+}
+
+export type BankWithdrawalCreateManyUserInputEnvelope = {
+  data: Prisma.BankWithdrawalCreateManyUserInput | Prisma.BankWithdrawalCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type BankWithdrawalUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.BankWithdrawalWhereUniqueInput
+  update: Prisma.XOR<Prisma.BankWithdrawalUpdateWithoutUserInput, Prisma.BankWithdrawalUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.BankWithdrawalCreateWithoutUserInput, Prisma.BankWithdrawalUncheckedCreateWithoutUserInput>
+}
+
+export type BankWithdrawalUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.BankWithdrawalWhereUniqueInput
+  data: Prisma.XOR<Prisma.BankWithdrawalUpdateWithoutUserInput, Prisma.BankWithdrawalUncheckedUpdateWithoutUserInput>
+}
+
+export type BankWithdrawalUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.BankWithdrawalScalarWhereInput
+  data: Prisma.XOR<Prisma.BankWithdrawalUpdateManyMutationInput, Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserInput>
+}
+
+export type BankWithdrawalScalarWhereInput = {
+  AND?: Prisma.BankWithdrawalScalarWhereInput | Prisma.BankWithdrawalScalarWhereInput[]
+  OR?: Prisma.BankWithdrawalScalarWhereInput[]
+  NOT?: Prisma.BankWithdrawalScalarWhereInput | Prisma.BankWithdrawalScalarWhereInput[]
+  id?: Prisma.StringFilter<"BankWithdrawal"> | string
+  currency?: Prisma.StringFilter<"BankWithdrawal"> | string
+  amount?: Prisma.IntFilter<"BankWithdrawal"> | number
+  reason?: Prisma.StringFilter<"BankWithdrawal"> | string
+  userId?: Prisma.StringFilter<"BankWithdrawal"> | string
+  createdAt?: Prisma.DateTimeFilter<"BankWithdrawal"> | Date | string
+}
+
+export type BankWithdrawalCreateManyUserInput = {
+  id?: string
+  currency: string
+  amount: number
+  reason: string
+  createdAt?: Date | string
+}
+
+export type BankWithdrawalUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.IntFieldUpdateOperationsInput | number
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BankWithdrawalUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.IntFieldUpdateOperationsInput | number
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BankWithdrawalUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.IntFieldUpdateOperationsInput | number
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -356,7 +518,9 @@ export type BankWithdrawalSelect<ExtArgs extends runtime.Types.Extensions.Intern
   currency?: boolean
   amount?: boolean
   reason?: boolean
+  userId?: boolean
   createdAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bankWithdrawal"]>
 
 export type BankWithdrawalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -364,7 +528,9 @@ export type BankWithdrawalSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   currency?: boolean
   amount?: boolean
   reason?: boolean
+  userId?: boolean
   createdAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bankWithdrawal"]>
 
 export type BankWithdrawalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -372,7 +538,9 @@ export type BankWithdrawalSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   currency?: boolean
   amount?: boolean
   reason?: boolean
+  userId?: boolean
   createdAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bankWithdrawal"]>
 
 export type BankWithdrawalSelectScalar = {
@@ -380,19 +548,32 @@ export type BankWithdrawalSelectScalar = {
   currency?: boolean
   amount?: boolean
   reason?: boolean
+  userId?: boolean
   createdAt?: boolean
 }
 
-export type BankWithdrawalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "currency" | "amount" | "reason" | "createdAt", ExtArgs["result"]["bankWithdrawal"]>
+export type BankWithdrawalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "currency" | "amount" | "reason" | "userId" | "createdAt", ExtArgs["result"]["bankWithdrawal"]>
+export type BankWithdrawalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type BankWithdrawalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type BankWithdrawalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $BankWithdrawalPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BankWithdrawal"
-  objects: {}
+  objects: {
+    user: Prisma.$UserPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     currency: string
     amount: number
     reason: string
+    userId: string
     createdAt: Date
   }, ExtArgs["result"]["bankWithdrawal"]>
   composites: {}
@@ -788,6 +969,7 @@ readonly fields: BankWithdrawalFieldRefs;
  */
 export interface Prisma__BankWithdrawalClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -821,6 +1003,7 @@ export interface BankWithdrawalFieldRefs {
   readonly currency: Prisma.FieldRef<"BankWithdrawal", 'String'>
   readonly amount: Prisma.FieldRef<"BankWithdrawal", 'Int'>
   readonly reason: Prisma.FieldRef<"BankWithdrawal", 'String'>
+  readonly userId: Prisma.FieldRef<"BankWithdrawal", 'String'>
   readonly createdAt: Prisma.FieldRef<"BankWithdrawal", 'DateTime'>
 }
     
@@ -838,6 +1021,10 @@ export type BankWithdrawalFindUniqueArgs<ExtArgs extends runtime.Types.Extension
    * Omit specific fields from the BankWithdrawal
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
   /**
    * Filter, which BankWithdrawal to fetch.
    */
@@ -857,6 +1044,10 @@ export type BankWithdrawalFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
+  /**
    * Filter, which BankWithdrawal to fetch.
    */
   where: Prisma.BankWithdrawalWhereUniqueInput
@@ -874,6 +1065,10 @@ export type BankWithdrawalFindFirstArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the BankWithdrawal
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
   /**
    * Filter, which BankWithdrawal to fetch.
    */
@@ -923,6 +1118,10 @@ export type BankWithdrawalFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ext
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
+  /**
    * Filter, which BankWithdrawal to fetch.
    */
   where?: Prisma.BankWithdrawalWhereInput
@@ -971,6 +1170,10 @@ export type BankWithdrawalFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
+  /**
    * Filter, which BankWithdrawals to fetch.
    */
   where?: Prisma.BankWithdrawalWhereInput
@@ -1014,6 +1217,10 @@ export type BankWithdrawalCreateArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
+  /**
    * The data needed to create a BankWithdrawal.
    */
   data: Prisma.XOR<Prisma.BankWithdrawalCreateInput, Prisma.BankWithdrawalUncheckedCreateInput>
@@ -1047,6 +1254,10 @@ export type BankWithdrawalCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    */
   data: Prisma.BankWithdrawalCreateManyInput | Prisma.BankWithdrawalCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1061,6 +1272,10 @@ export type BankWithdrawalUpdateArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the BankWithdrawal
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
   /**
    * The data needed to update a BankWithdrawal.
    */
@@ -1113,6 +1328,10 @@ export type BankWithdrawalUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * Limit how many BankWithdrawals to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1127,6 +1346,10 @@ export type BankWithdrawalUpsertArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the BankWithdrawal
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
   /**
    * The filter to search for the BankWithdrawal to update in case it exists.
    */
@@ -1153,6 +1376,10 @@ export type BankWithdrawalDeleteArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the BankWithdrawal
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
   /**
    * Filter which BankWithdrawal to delete.
    */
@@ -1185,4 +1412,8 @@ export type BankWithdrawalDefaultArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the BankWithdrawal
    */
   omit?: Prisma.BankWithdrawalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BankWithdrawalInclude<ExtArgs> | null
 }

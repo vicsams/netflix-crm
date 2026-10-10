@@ -1,6 +1,6 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
-import { auth } from "@/shared/lib/auth";
+import { requireUser } from "@/shared/lib/session";
 import { createClientSchema } from "@/features/clients/schemas";
 
 function normalizePhoneNumber(phoneNumber: string) {
@@ -27,13 +27,11 @@ function toClientResponse(client: {
 
 export async function GET(req: Request) {
   try {
-    const session = await auth.api.getSession({ headers: req.headers });
-
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
 
     const clients = await prisma.client.findMany({
+      where: { userId },
       orderBy: [{ clientName: "asc" }, { createdAt: "desc" }],
       include: {
         _count: {
@@ -60,16 +58,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid data" }, { status: 400 });
     }
 
-    const session = await auth.api.getSession({ headers: req.headers });
-
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
 
     const client = await prisma.client.create({
       data: {
         clientName: parsed.data.clientName,
         phoneNumber: normalizePhoneNumber(parsed.data.phoneNumber),
+        userId,
       },
       include: {
         _count: {

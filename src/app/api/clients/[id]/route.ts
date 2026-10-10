@@ -1,6 +1,6 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
-import { auth } from "@/shared/lib/auth";
+import { requireUser } from "@/shared/lib/session";
 import { updateClientSchema } from "@/features/clients/schemas";
 
 function normalizePhoneNumber(phoneNumber: string) {
@@ -38,9 +38,19 @@ export async function PATCH(
       return NextResponse.json({ message: "Invalid data" }, { status: 400 });
     }
 
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
+    const owned = await prisma.client.findFirst({
+      where: { id, userId },
+      select: { id: true },
+    });
+
+    if (!owned) {
+      return NextResponse.json(
+        { message: "Client not found" },
+        { status: 404 },
+      );
     }
 
     const dataToUpdate = {
@@ -89,13 +99,11 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
 
-    const client = await prisma.client.findUnique({
-      where: { id },
+    const client = await prisma.client.findFirst({
+      where: { id, userId },
       select: {
         id: true,
         _count: {

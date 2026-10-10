@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { getResend } from "@/shared/lib/resend";
+import { EMAIL_FROM, getResend } from "@/shared/lib/resend";
 // If your Prisma file is located elsewhere, you can change the path
 import prisma from "@/shared/lib/db";
 import TwitchResetPasswordEmail from "@/features/auth/emails/ResetPassword";
@@ -37,8 +37,8 @@ export const auth = betterAuth({
         return;
       }
 
-      await resend.emails.send({
-        from: "onboarding@resend.dev",
+      const { error } = await resend.emails.send({
+        from: EMAIL_FROM,
         to: user.email!,
         subject: "Reset your password",
         react: TwitchResetPasswordEmail({
@@ -47,6 +47,10 @@ export const auth = betterAuth({
           updatedDate: new Date(),
         }),
       });
+
+      if (error) {
+        console.error("Failed to send reset password email:", error);
+      }
     },
 
     onPasswordReset: async ({ user }) => {
@@ -63,12 +67,17 @@ export const auth = betterAuth({
         return;
       }
 
-      await resend.emails.send({
-        from: "onboarding@resend.dev",
+      // Resend does not throw on failure, it returns { error }
+      const { error } = await resend.emails.send({
+        from: EMAIL_FROM,
         to: user.email!,
         subject: "Verify your email",
         html: `<p>Please verify your email by clicking <a href="${url}">here</a>.</p>`,
       });
+
+      if (error) {
+        console.error("Failed to send verification email:", error);
+      }
     },
   },
 

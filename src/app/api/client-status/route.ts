@@ -1,5 +1,6 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
+import { requireUser } from "@/shared/lib/session";
 import { ClientStatusEnum } from "@/shared/lib/generated/prisma/enums";
 import { createClientStatusRequestSchema } from "@/features/subscriptions/schemas";
 
@@ -9,6 +10,9 @@ function normalizePhoneNumber(phone: string) {
 
 export async function POST(req: Request) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const body = await req.json();
     const parsed = createClientStatusRequestSchema.safeParse(body);
 
@@ -38,8 +42,8 @@ export async function POST(req: Request) {
     }
 
     // Optionally verify referenced records exist
-    const accountExists = await prisma.activeAccount.findUnique({
-      where: { id: activeAccountId },
+    const accountExists = await prisma.activeAccount.findFirst({
+      where: { id: activeAccountId, userId },
     });
     if (!accountExists) {
       return NextResponse.json(
@@ -48,8 +52,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const serviceExists = await prisma.service.findUnique({
-      where: { id: serviceId },
+    const serviceExists = await prisma.service.findFirst({
+      where: { id: serviceId, createdById: userId },
     });
     if (!serviceExists) {
       return NextResponse.json(
@@ -58,8 +62,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const screenExists = await prisma.screen.findUnique({
-      where: { id: screenId },
+    const screenExists = await prisma.screen.findFirst({
+      where: { id: screenId, activeAccountId },
     });
     if (!screenExists) {
       return NextResponse.json(
@@ -82,13 +86,16 @@ export async function POST(req: Request) {
       const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
 
       const client = await prisma.client.upsert({
-        where: { phoneNumber: normalizedPhoneNumber },
+        where: {
+          userId_phoneNumber: { userId, phoneNumber: normalizedPhoneNumber },
+        },
         update: {
           clientName,
         },
         create: {
           clientName,
           phoneNumber: normalizedPhoneNumber,
+          userId,
         },
         select: {
           id: true,
@@ -105,8 +112,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const clientExists = await prisma.client.findUnique({
-      where: { id: resolvedClientId },
+    const clientExists = await prisma.client.findFirst({
+      where: { id: resolvedClientId, userId },
       select: {
         id: true,
       },
@@ -130,6 +137,7 @@ export async function POST(req: Request) {
             providedExpiration ?? accountExists.expirationDate ?? null,
           amount: actualAmount,
           status: status as ClientStatusEnum,
+          userId,
         },
         include: {
           client: {
@@ -142,14 +150,14 @@ export async function POST(req: Request) {
         },
       }),
       prisma.bankEarnings.upsert({
-        where: { id: 1 },
+        where: { userId },
         update: {
           total: {
             increment: actualAmount ?? 0,
           },
         },
         create: {
-          id: 1,
+          userId,
           total: actualAmount ?? 0,
         },
       }),
@@ -177,11 +185,15 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     // Auto-expire records
     await prisma.subscription.updateMany({
       where: {
+        userId,
         expirationDate: { lt: new Date() },
         status: { not: "EXPIRED" },
       },
@@ -191,6 +203,7 @@ export async function GET() {
     });
 
     const items = await prisma.subscription.findMany({
+      where: { userId },
       orderBy: { createdAt: "desc" },
       include: {
         client: {
