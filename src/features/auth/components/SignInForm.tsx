@@ -39,10 +39,24 @@ export default function SignInForm() {
         password: data.password,
       }),
     onSuccess: (res) => {
-      if (
-        (res as { error?: { status?: number } } | null)?.error?.status === 403
-      ) {
+      // better-auth does not throw on failure, it returns { error }
+      const error = (
+        res as { error?: { status?: number; message?: string } } | null
+      )?.error;
+
+      if (error?.status === 403) {
         router.push("/verify-email");
+        return;
+      }
+
+      if (error) {
+        form.setError("email", {
+          type: "server",
+          message:
+            error.status === 401
+              ? "Correo o contraseña incorrectos"
+              : (error.message ?? "Error al iniciar sesión"),
+        });
         return;
       }
       // Optionally invalidate or refetch session/user queries

@@ -226,7 +226,7 @@ export type ServiceGroupByOutputType = {
   imageUrl: string | null
   createdAt: Date
   updatedAt: Date
-  createdById: string | null
+  createdById: string
   _count: ServiceCountAggregateOutputType | null
   _avg: ServiceAvgAggregateOutputType | null
   _sum: ServiceSumAggregateOutputType | null
@@ -263,8 +263,8 @@ export type ServiceWhereInput = {
   imageUrl?: Prisma.StringNullableFilter<"Service"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Service"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
-  createdById?: Prisma.StringNullableFilter<"Service"> | string | null
-  createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  createdById?: Prisma.StringFilter<"Service"> | string
+  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   subscriptions?: Prisma.SubscriptionListRelationFilter
   activeAccounts?: Prisma.ActiveAccountListRelationFilter
 }
@@ -280,7 +280,7 @@ export type ServiceOrderByWithRelationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrder
   createdBy?: Prisma.UserOrderByWithRelationInput
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
   activeAccounts?: Prisma.ActiveAccountOrderByRelationAggregateInput
@@ -300,8 +300,8 @@ export type ServiceWhereUniqueInput = Prisma.AtLeast<{
   imageUrl?: Prisma.StringNullableFilter<"Service"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Service"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
-  createdById?: Prisma.StringNullableFilter<"Service"> | string | null
-  createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  createdById?: Prisma.StringFilter<"Service"> | string
+  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   subscriptions?: Prisma.SubscriptionListRelationFilter
   activeAccounts?: Prisma.ActiveAccountListRelationFilter
 }, "id">
@@ -317,7 +317,7 @@ export type ServiceOrderByWithAggregationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrder
   _count?: Prisma.ServiceCountOrderByAggregateInput
   _avg?: Prisma.ServiceAvgOrderByAggregateInput
   _max?: Prisma.ServiceMaxOrderByAggregateInput
@@ -339,7 +339,7 @@ export type ServiceScalarWhereWithAggregatesInput = {
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Service"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Service"> | Date | string
-  createdById?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  createdById?: Prisma.StringWithAggregatesFilter<"Service"> | string
 }
 
 export type ServiceCreateInput = {
@@ -353,7 +353,7 @@ export type ServiceCreateInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdBy?: Prisma.UserCreateNestedOneWithoutServicesInput
+  createdBy: Prisma.UserCreateNestedOneWithoutServicesInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutServiceInput
   activeAccounts?: Prisma.ActiveAccountCreateNestedManyWithoutServiceInput
 }
@@ -369,7 +369,7 @@ export type ServiceUncheckedCreateInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdById?: string | null
+  createdById: string
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutServiceInput
   activeAccounts?: Prisma.ActiveAccountUncheckedCreateNestedManyWithoutServiceInput
 }
@@ -385,7 +385,7 @@ export type ServiceUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneWithoutServicesNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutServicesNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutServiceNestedInput
   activeAccounts?: Prisma.ActiveAccountUpdateManyWithoutServiceNestedInput
 }
@@ -401,7 +401,7 @@ export type ServiceUncheckedUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutServiceNestedInput
   activeAccounts?: Prisma.ActiveAccountUncheckedUpdateManyWithoutServiceNestedInput
 }
@@ -417,7 +417,7 @@ export type ServiceCreateManyInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdById?: string | null
+  createdById: string
 }
 
 export type ServiceUpdateManyMutationInput = {
@@ -444,7 +444,7 @@ export type ServiceUncheckedUpdateManyInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ServiceListRelationFilter = {
@@ -667,7 +667,7 @@ export type ServiceScalarWhereInput = {
   imageUrl?: Prisma.StringNullableFilter<"Service"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Service"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
-  createdById?: Prisma.StringNullableFilter<"Service"> | string | null
+  createdById?: Prisma.StringFilter<"Service"> | string
 }
 
 export type ServiceCreateWithoutActiveAccountsInput = {
@@ -681,7 +681,7 @@ export type ServiceCreateWithoutActiveAccountsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdBy?: Prisma.UserCreateNestedOneWithoutServicesInput
+  createdBy: Prisma.UserCreateNestedOneWithoutServicesInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutServiceInput
 }
 
@@ -696,7 +696,7 @@ export type ServiceUncheckedCreateWithoutActiveAccountsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdById?: string | null
+  createdById: string
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutServiceInput
 }
 
@@ -727,7 +727,7 @@ export type ServiceUpdateWithoutActiveAccountsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneWithoutServicesNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutServicesNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutServiceNestedInput
 }
 
@@ -742,7 +742,7 @@ export type ServiceUncheckedUpdateWithoutActiveAccountsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutServiceNestedInput
 }
 
@@ -757,7 +757,7 @@ export type ServiceCreateWithoutSubscriptionsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdBy?: Prisma.UserCreateNestedOneWithoutServicesInput
+  createdBy: Prisma.UserCreateNestedOneWithoutServicesInput
   activeAccounts?: Prisma.ActiveAccountCreateNestedManyWithoutServiceInput
 }
 
@@ -772,7 +772,7 @@ export type ServiceUncheckedCreateWithoutSubscriptionsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdById?: string | null
+  createdById: string
   activeAccounts?: Prisma.ActiveAccountUncheckedCreateNestedManyWithoutServiceInput
 }
 
@@ -803,7 +803,7 @@ export type ServiceUpdateWithoutSubscriptionsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneWithoutServicesNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutServicesNestedInput
   activeAccounts?: Prisma.ActiveAccountUpdateManyWithoutServiceNestedInput
 }
 
@@ -818,7 +818,7 @@ export type ServiceUncheckedUpdateWithoutSubscriptionsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   activeAccounts?: Prisma.ActiveAccountUncheckedUpdateManyWithoutServiceNestedInput
 }
 
@@ -930,7 +930,7 @@ export type ServiceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
-  createdBy?: boolean | Prisma.Service$createdByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Service$subscriptionsArgs<ExtArgs>
   activeAccounts?: boolean | Prisma.Service$activeAccountsArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceCountOutputTypeDefaultArgs<ExtArgs>
@@ -948,7 +948,7 @@ export type ServiceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
-  createdBy?: boolean | Prisma.Service$createdByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["service"]>
 
 export type ServiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -963,7 +963,7 @@ export type ServiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   createdAt?: boolean
   updatedAt?: boolean
   createdById?: boolean
-  createdBy?: boolean | Prisma.Service$createdByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["service"]>
 
 export type ServiceSelectScalar = {
@@ -982,22 +982,22 @@ export type ServiceSelectScalar = {
 
 export type ServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "serviceName" | "description" | "price" | "currency" | "textColor" | "backgroundColor" | "imageUrl" | "createdAt" | "updatedAt" | "createdById", ExtArgs["result"]["service"]>
 export type ServiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  createdBy?: boolean | Prisma.Service$createdByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Service$subscriptionsArgs<ExtArgs>
   activeAccounts?: boolean | Prisma.Service$activeAccountsArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServiceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  createdBy?: boolean | Prisma.Service$createdByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type ServiceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  createdBy?: boolean | Prisma.Service$createdByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $ServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Service"
   objects: {
-    createdBy: Prisma.$UserPayload<ExtArgs> | null
+    createdBy: Prisma.$UserPayload<ExtArgs>
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
     activeAccounts: Prisma.$ActiveAccountPayload<ExtArgs>[]
   }
@@ -1012,7 +1012,7 @@ export type $ServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     imageUrl: string | null
     createdAt: Date
     updatedAt: Date
-    createdById: string | null
+    createdById: string
   }, ExtArgs["result"]["service"]>
   composites: {}
 }
@@ -1407,7 +1407,7 @@ readonly fields: ServiceFieldRefs;
  */
 export interface Prisma__ServiceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  createdBy<T extends Prisma.Service$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$createdByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   subscriptions<T extends Prisma.Service$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activeAccounts<T extends Prisma.Service$activeAccountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$activeAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActiveAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1843,25 +1843,6 @@ export type ServiceDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Services to delete.
    */
   limit?: number
-}
-
-/**
- * Service.createdBy
- */
-export type Service$createdByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the User
-   */
-  select?: Prisma.UserSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the User
-   */
-  omit?: Prisma.UserOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserInclude<ExtArgs> | null
-  where?: Prisma.UserWhereInput
 }
 
 /**

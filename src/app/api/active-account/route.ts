@@ -1,8 +1,13 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
+import { requireUser } from "@/shared/lib/session";
+import { decryptSecret, encryptSecret } from "@/shared/lib/crypto";
 
 export async function POST(req: Request) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const body = await req.json();
     const { email, password, expirationDate, serviceId } = body ?? {};
 
@@ -42,8 +47,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const serviceExists = await prisma.service.findUnique({
-      where: { id: serviceId },
+    const serviceExists = await prisma.service.findFirst({
+      where: { id: serviceId, createdById: userId },
       select: { id: true },
     });
 
@@ -57,9 +62,10 @@ export async function POST(req: Request) {
     const created = await prisma.activeAccount.create({
       data: {
         email,
-        password,
+        password: encryptSecret(password),
         serviceId,
         expirationDate: exp,
+        userId,
       },
     });
 
@@ -77,9 +83,13 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const accounts = await prisma.activeAccount.findMany({
+      where: { userId },
       select: {
         id: true,
         email: true,
@@ -99,7 +109,13 @@ export async function GET() {
         },
       },
     });
-    return NextResponse.json(accounts, { status: 200 });
+    return NextResponse.json(
+      accounts.map((account) => ({
+        ...account,
+        password: decryptSecret(account.password),
+      })),
+      { status: 200 },
+    );
   } catch (error) {
     console.error("GET Active Accounts error:", error);
     return NextResponse.json({ message: "Internal error" }, { status: 500 });

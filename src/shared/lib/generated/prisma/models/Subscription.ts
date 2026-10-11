@@ -41,8 +41,10 @@ export type SubscriptionMinAggregateOutputType = {
   serviceId: string | null
   screenId: string | null
   expirationDate: Date | null
+  purchaseDate: Date | null
   amount: number | null
   status: $Enums.ClientStatusEnum | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -54,8 +56,10 @@ export type SubscriptionMaxAggregateOutputType = {
   serviceId: string | null
   screenId: string | null
   expirationDate: Date | null
+  purchaseDate: Date | null
   amount: number | null
   status: $Enums.ClientStatusEnum | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -67,8 +71,10 @@ export type SubscriptionCountAggregateOutputType = {
   serviceId: number
   screenId: number
   expirationDate: number
+  purchaseDate: number
   amount: number
   status: number
+  userId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -90,8 +96,10 @@ export type SubscriptionMinAggregateInputType = {
   serviceId?: true
   screenId?: true
   expirationDate?: true
+  purchaseDate?: true
   amount?: true
   status?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -103,8 +111,10 @@ export type SubscriptionMaxAggregateInputType = {
   serviceId?: true
   screenId?: true
   expirationDate?: true
+  purchaseDate?: true
   amount?: true
   status?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -116,8 +126,10 @@ export type SubscriptionCountAggregateInputType = {
   serviceId?: true
   screenId?: true
   expirationDate?: true
+  purchaseDate?: true
   amount?: true
   status?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -216,8 +228,10 @@ export type SubscriptionGroupByOutputType = {
   serviceId: string
   screenId: string
   expirationDate: Date | null
+  purchaseDate: Date
   amount: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt: Date
   updatedAt: Date
   _count: SubscriptionCountAggregateOutputType | null
@@ -252,14 +266,17 @@ export type SubscriptionWhereInput = {
   serviceId?: Prisma.StringFilter<"Subscription"> | string
   screenId?: Prisma.StringFilter<"Subscription"> | string
   expirationDate?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
+  purchaseDate?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   amount?: Prisma.IntNullableFilter<"Subscription"> | number | null
   status?: Prisma.EnumClientStatusEnumFilter<"Subscription"> | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFilter<"Subscription"> | string
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
   activeAccount?: Prisma.XOR<Prisma.ActiveAccountScalarRelationFilter, Prisma.ActiveAccountWhereInput>
   service?: Prisma.XOR<Prisma.ServiceScalarRelationFilter, Prisma.ServiceWhereInput>
   screen?: Prisma.XOR<Prisma.ScreenScalarRelationFilter, Prisma.ScreenWhereInput>
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type SubscriptionOrderByWithRelationInput = {
@@ -269,14 +286,17 @@ export type SubscriptionOrderByWithRelationInput = {
   serviceId?: Prisma.SortOrder
   screenId?: Prisma.SortOrder
   expirationDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  purchaseDate?: Prisma.SortOrder
   amount?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   client?: Prisma.ClientOrderByWithRelationInput
   activeAccount?: Prisma.ActiveAccountOrderByWithRelationInput
   service?: Prisma.ServiceOrderByWithRelationInput
   screen?: Prisma.ScreenOrderByWithRelationInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
@@ -289,14 +309,17 @@ export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
   serviceId?: Prisma.StringFilter<"Subscription"> | string
   screenId?: Prisma.StringFilter<"Subscription"> | string
   expirationDate?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
+  purchaseDate?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   amount?: Prisma.IntNullableFilter<"Subscription"> | number | null
   status?: Prisma.EnumClientStatusEnumFilter<"Subscription"> | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFilter<"Subscription"> | string
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
   activeAccount?: Prisma.XOR<Prisma.ActiveAccountScalarRelationFilter, Prisma.ActiveAccountWhereInput>
   service?: Prisma.XOR<Prisma.ServiceScalarRelationFilter, Prisma.ServiceWhereInput>
   screen?: Prisma.XOR<Prisma.ScreenScalarRelationFilter, Prisma.ScreenWhereInput>
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type SubscriptionOrderByWithAggregationInput = {
@@ -306,8 +329,10 @@ export type SubscriptionOrderByWithAggregationInput = {
   serviceId?: Prisma.SortOrder
   screenId?: Prisma.SortOrder
   expirationDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  purchaseDate?: Prisma.SortOrder
   amount?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SubscriptionCountOrderByAggregateInput
@@ -327,8 +352,10 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
   serviceId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   screenId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   expirationDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
+  purchaseDate?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
   amount?: Prisma.IntNullableWithAggregatesFilter<"Subscription"> | number | null
   status?: Prisma.EnumClientStatusEnumWithAggregatesFilter<"Subscription"> | $Enums.ClientStatusEnum
+  userId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
 }
@@ -336,6 +363,7 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
 export type SubscriptionCreateInput = {
   id?: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
   createdAt?: Date | string
@@ -344,6 +372,7 @@ export type SubscriptionCreateInput = {
   activeAccount: Prisma.ActiveAccountCreateNestedOneWithoutSubscriptionsInput
   service: Prisma.ServiceCreateNestedOneWithoutSubscriptionsInput
   screen: Prisma.ScreenCreateNestedOneWithoutSubscriptionsInput
+  user: Prisma.UserCreateNestedOneWithoutSubscriptionsInput
 }
 
 export type SubscriptionUncheckedCreateInput = {
@@ -353,8 +382,10 @@ export type SubscriptionUncheckedCreateInput = {
   serviceId: string
   screenId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -362,6 +393,7 @@ export type SubscriptionUncheckedCreateInput = {
 export type SubscriptionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -370,6 +402,7 @@ export type SubscriptionUpdateInput = {
   activeAccount?: Prisma.ActiveAccountUpdateOneRequiredWithoutSubscriptionsNestedInput
   service?: Prisma.ServiceUpdateOneRequiredWithoutSubscriptionsNestedInput
   screen?: Prisma.ScreenUpdateOneRequiredWithoutSubscriptionsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutSubscriptionsNestedInput
 }
 
 export type SubscriptionUncheckedUpdateInput = {
@@ -379,8 +412,10 @@ export type SubscriptionUncheckedUpdateInput = {
   serviceId?: Prisma.StringFieldUpdateOperationsInput | string
   screenId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -392,8 +427,10 @@ export type SubscriptionCreateManyInput = {
   serviceId: string
   screenId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -401,6 +438,7 @@ export type SubscriptionCreateManyInput = {
 export type SubscriptionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -414,8 +452,10 @@ export type SubscriptionUncheckedUpdateManyInput = {
   serviceId?: Prisma.StringFieldUpdateOperationsInput | string
   screenId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -437,8 +477,10 @@ export type SubscriptionCountOrderByAggregateInput = {
   serviceId?: Prisma.SortOrder
   screenId?: Prisma.SortOrder
   expirationDate?: Prisma.SortOrder
+  purchaseDate?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -454,8 +496,10 @@ export type SubscriptionMaxOrderByAggregateInput = {
   serviceId?: Prisma.SortOrder
   screenId?: Prisma.SortOrder
   expirationDate?: Prisma.SortOrder
+  purchaseDate?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -467,14 +511,58 @@ export type SubscriptionMinOrderByAggregateInput = {
   serviceId?: Prisma.SortOrder
   screenId?: Prisma.SortOrder
   expirationDate?: Prisma.SortOrder
+  purchaseDate?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type SubscriptionSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
+}
+
+export type SubscriptionCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutUserInput, Prisma.SubscriptionUncheckedCreateWithoutUserInput> | Prisma.SubscriptionCreateWithoutUserInput[] | Prisma.SubscriptionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutUserInput | Prisma.SubscriptionCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.SubscriptionCreateManyUserInputEnvelope
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+}
+
+export type SubscriptionUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutUserInput, Prisma.SubscriptionUncheckedCreateWithoutUserInput> | Prisma.SubscriptionCreateWithoutUserInput[] | Prisma.SubscriptionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutUserInput | Prisma.SubscriptionCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.SubscriptionCreateManyUserInputEnvelope
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+}
+
+export type SubscriptionUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutUserInput, Prisma.SubscriptionUncheckedCreateWithoutUserInput> | Prisma.SubscriptionCreateWithoutUserInput[] | Prisma.SubscriptionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutUserInput | Prisma.SubscriptionCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.SubscriptionUpsertWithWhereUniqueWithoutUserInput | Prisma.SubscriptionUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.SubscriptionCreateManyUserInputEnvelope
+  set?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  disconnect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  delete?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  update?: Prisma.SubscriptionUpdateWithWhereUniqueWithoutUserInput | Prisma.SubscriptionUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.SubscriptionUpdateManyWithWhereWithoutUserInput | Prisma.SubscriptionUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
+}
+
+export type SubscriptionUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutUserInput, Prisma.SubscriptionUncheckedCreateWithoutUserInput> | Prisma.SubscriptionCreateWithoutUserInput[] | Prisma.SubscriptionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutUserInput | Prisma.SubscriptionCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.SubscriptionUpsertWithWhereUniqueWithoutUserInput | Prisma.SubscriptionUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.SubscriptionCreateManyUserInputEnvelope
+  set?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  disconnect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  delete?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  update?: Prisma.SubscriptionUpdateWithWhereUniqueWithoutUserInput | Prisma.SubscriptionUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.SubscriptionUpdateManyWithWhereWithoutUserInput | Prisma.SubscriptionUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
 }
 
 export type SubscriptionCreateNestedManyWithoutServiceInput = {
@@ -657,9 +745,82 @@ export type EnumClientStatusEnumFieldUpdateOperationsInput = {
   set?: $Enums.ClientStatusEnum
 }
 
+export type SubscriptionCreateWithoutUserInput = {
+  id?: string
+  expirationDate?: Date | string | null
+  purchaseDate?: Date | string
+  amount?: number | null
+  status: $Enums.ClientStatusEnum
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  client: Prisma.ClientCreateNestedOneWithoutSubscriptionsInput
+  activeAccount: Prisma.ActiveAccountCreateNestedOneWithoutSubscriptionsInput
+  service: Prisma.ServiceCreateNestedOneWithoutSubscriptionsInput
+  screen: Prisma.ScreenCreateNestedOneWithoutSubscriptionsInput
+}
+
+export type SubscriptionUncheckedCreateWithoutUserInput = {
+  id?: string
+  clientId: string
+  activeAccountId: string
+  serviceId: string
+  screenId: string
+  expirationDate?: Date | string | null
+  purchaseDate?: Date | string
+  amount?: number | null
+  status: $Enums.ClientStatusEnum
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SubscriptionCreateOrConnectWithoutUserInput = {
+  where: Prisma.SubscriptionWhereUniqueInput
+  create: Prisma.XOR<Prisma.SubscriptionCreateWithoutUserInput, Prisma.SubscriptionUncheckedCreateWithoutUserInput>
+}
+
+export type SubscriptionCreateManyUserInputEnvelope = {
+  data: Prisma.SubscriptionCreateManyUserInput | Prisma.SubscriptionCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type SubscriptionUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.SubscriptionWhereUniqueInput
+  update: Prisma.XOR<Prisma.SubscriptionUpdateWithoutUserInput, Prisma.SubscriptionUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.SubscriptionCreateWithoutUserInput, Prisma.SubscriptionUncheckedCreateWithoutUserInput>
+}
+
+export type SubscriptionUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.SubscriptionWhereUniqueInput
+  data: Prisma.XOR<Prisma.SubscriptionUpdateWithoutUserInput, Prisma.SubscriptionUncheckedUpdateWithoutUserInput>
+}
+
+export type SubscriptionUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.SubscriptionScalarWhereInput
+  data: Prisma.XOR<Prisma.SubscriptionUpdateManyMutationInput, Prisma.SubscriptionUncheckedUpdateManyWithoutUserInput>
+}
+
+export type SubscriptionScalarWhereInput = {
+  AND?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
+  OR?: Prisma.SubscriptionScalarWhereInput[]
+  NOT?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
+  id?: Prisma.StringFilter<"Subscription"> | string
+  clientId?: Prisma.StringFilter<"Subscription"> | string
+  activeAccountId?: Prisma.StringFilter<"Subscription"> | string
+  serviceId?: Prisma.StringFilter<"Subscription"> | string
+  screenId?: Prisma.StringFilter<"Subscription"> | string
+  expirationDate?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
+  purchaseDate?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+  amount?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  status?: Prisma.EnumClientStatusEnumFilter<"Subscription"> | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFilter<"Subscription"> | string
+  createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+}
+
 export type SubscriptionCreateWithoutServiceInput = {
   id?: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
   createdAt?: Date | string
@@ -667,6 +828,7 @@ export type SubscriptionCreateWithoutServiceInput = {
   client: Prisma.ClientCreateNestedOneWithoutSubscriptionsInput
   activeAccount: Prisma.ActiveAccountCreateNestedOneWithoutSubscriptionsInput
   screen: Prisma.ScreenCreateNestedOneWithoutSubscriptionsInput
+  user: Prisma.UserCreateNestedOneWithoutSubscriptionsInput
 }
 
 export type SubscriptionUncheckedCreateWithoutServiceInput = {
@@ -675,8 +837,10 @@ export type SubscriptionUncheckedCreateWithoutServiceInput = {
   activeAccountId: string
   screenId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -707,25 +871,10 @@ export type SubscriptionUpdateManyWithWhereWithoutServiceInput = {
   data: Prisma.XOR<Prisma.SubscriptionUpdateManyMutationInput, Prisma.SubscriptionUncheckedUpdateManyWithoutServiceInput>
 }
 
-export type SubscriptionScalarWhereInput = {
-  AND?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
-  OR?: Prisma.SubscriptionScalarWhereInput[]
-  NOT?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
-  id?: Prisma.StringFilter<"Subscription"> | string
-  clientId?: Prisma.StringFilter<"Subscription"> | string
-  activeAccountId?: Prisma.StringFilter<"Subscription"> | string
-  serviceId?: Prisma.StringFilter<"Subscription"> | string
-  screenId?: Prisma.StringFilter<"Subscription"> | string
-  expirationDate?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
-  amount?: Prisma.IntNullableFilter<"Subscription"> | number | null
-  status?: Prisma.EnumClientStatusEnumFilter<"Subscription"> | $Enums.ClientStatusEnum
-  createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
-}
-
 export type SubscriptionCreateWithoutActiveAccountInput = {
   id?: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
   createdAt?: Date | string
@@ -733,6 +882,7 @@ export type SubscriptionCreateWithoutActiveAccountInput = {
   client: Prisma.ClientCreateNestedOneWithoutSubscriptionsInput
   service: Prisma.ServiceCreateNestedOneWithoutSubscriptionsInput
   screen: Prisma.ScreenCreateNestedOneWithoutSubscriptionsInput
+  user: Prisma.UserCreateNestedOneWithoutSubscriptionsInput
 }
 
 export type SubscriptionUncheckedCreateWithoutActiveAccountInput = {
@@ -741,8 +891,10 @@ export type SubscriptionUncheckedCreateWithoutActiveAccountInput = {
   serviceId: string
   screenId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -776,6 +928,7 @@ export type SubscriptionUpdateManyWithWhereWithoutActiveAccountInput = {
 export type SubscriptionCreateWithoutScreenInput = {
   id?: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
   createdAt?: Date | string
@@ -783,6 +936,7 @@ export type SubscriptionCreateWithoutScreenInput = {
   client: Prisma.ClientCreateNestedOneWithoutSubscriptionsInput
   activeAccount: Prisma.ActiveAccountCreateNestedOneWithoutSubscriptionsInput
   service: Prisma.ServiceCreateNestedOneWithoutSubscriptionsInput
+  user: Prisma.UserCreateNestedOneWithoutSubscriptionsInput
 }
 
 export type SubscriptionUncheckedCreateWithoutScreenInput = {
@@ -791,8 +945,10 @@ export type SubscriptionUncheckedCreateWithoutScreenInput = {
   activeAccountId: string
   serviceId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -826,6 +982,7 @@ export type SubscriptionUpdateManyWithWhereWithoutScreenInput = {
 export type SubscriptionCreateWithoutClientInput = {
   id?: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
   createdAt?: Date | string
@@ -833,6 +990,7 @@ export type SubscriptionCreateWithoutClientInput = {
   activeAccount: Prisma.ActiveAccountCreateNestedOneWithoutSubscriptionsInput
   service: Prisma.ServiceCreateNestedOneWithoutSubscriptionsInput
   screen: Prisma.ScreenCreateNestedOneWithoutSubscriptionsInput
+  user: Prisma.UserCreateNestedOneWithoutSubscriptionsInput
 }
 
 export type SubscriptionUncheckedCreateWithoutClientInput = {
@@ -841,8 +999,10 @@ export type SubscriptionUncheckedCreateWithoutClientInput = {
   serviceId: string
   screenId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -873,14 +1033,72 @@ export type SubscriptionUpdateManyWithWhereWithoutClientInput = {
   data: Prisma.XOR<Prisma.SubscriptionUpdateManyMutationInput, Prisma.SubscriptionUncheckedUpdateManyWithoutClientInput>
 }
 
+export type SubscriptionCreateManyUserInput = {
+  id?: string
+  clientId: string
+  activeAccountId: string
+  serviceId: string
+  screenId: string
+  expirationDate?: Date | string | null
+  purchaseDate?: Date | string
+  amount?: number | null
+  status: $Enums.ClientStatusEnum
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SubscriptionUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  client?: Prisma.ClientUpdateOneRequiredWithoutSubscriptionsNestedInput
+  activeAccount?: Prisma.ActiveAccountUpdateOneRequiredWithoutSubscriptionsNestedInput
+  service?: Prisma.ServiceUpdateOneRequiredWithoutSubscriptionsNestedInput
+  screen?: Prisma.ScreenUpdateOneRequiredWithoutSubscriptionsNestedInput
+}
+
+export type SubscriptionUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  activeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceId?: Prisma.StringFieldUpdateOperationsInput | string
+  screenId?: Prisma.StringFieldUpdateOperationsInput | string
+  expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SubscriptionUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  activeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceId?: Prisma.StringFieldUpdateOperationsInput | string
+  screenId?: Prisma.StringFieldUpdateOperationsInput | string
+  expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type SubscriptionCreateManyServiceInput = {
   id?: string
   clientId: string
   activeAccountId: string
   screenId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -888,6 +1106,7 @@ export type SubscriptionCreateManyServiceInput = {
 export type SubscriptionUpdateWithoutServiceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -895,6 +1114,7 @@ export type SubscriptionUpdateWithoutServiceInput = {
   client?: Prisma.ClientUpdateOneRequiredWithoutSubscriptionsNestedInput
   activeAccount?: Prisma.ActiveAccountUpdateOneRequiredWithoutSubscriptionsNestedInput
   screen?: Prisma.ScreenUpdateOneRequiredWithoutSubscriptionsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutSubscriptionsNestedInput
 }
 
 export type SubscriptionUncheckedUpdateWithoutServiceInput = {
@@ -903,8 +1123,10 @@ export type SubscriptionUncheckedUpdateWithoutServiceInput = {
   activeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   screenId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -915,8 +1137,10 @@ export type SubscriptionUncheckedUpdateManyWithoutServiceInput = {
   activeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   screenId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -927,8 +1151,10 @@ export type SubscriptionCreateManyActiveAccountInput = {
   serviceId: string
   screenId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -936,6 +1162,7 @@ export type SubscriptionCreateManyActiveAccountInput = {
 export type SubscriptionUpdateWithoutActiveAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -943,6 +1170,7 @@ export type SubscriptionUpdateWithoutActiveAccountInput = {
   client?: Prisma.ClientUpdateOneRequiredWithoutSubscriptionsNestedInput
   service?: Prisma.ServiceUpdateOneRequiredWithoutSubscriptionsNestedInput
   screen?: Prisma.ScreenUpdateOneRequiredWithoutSubscriptionsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutSubscriptionsNestedInput
 }
 
 export type SubscriptionUncheckedUpdateWithoutActiveAccountInput = {
@@ -951,8 +1179,10 @@ export type SubscriptionUncheckedUpdateWithoutActiveAccountInput = {
   serviceId?: Prisma.StringFieldUpdateOperationsInput | string
   screenId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -963,8 +1193,10 @@ export type SubscriptionUncheckedUpdateManyWithoutActiveAccountInput = {
   serviceId?: Prisma.StringFieldUpdateOperationsInput | string
   screenId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -975,8 +1207,10 @@ export type SubscriptionCreateManyScreenInput = {
   activeAccountId: string
   serviceId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -984,6 +1218,7 @@ export type SubscriptionCreateManyScreenInput = {
 export type SubscriptionUpdateWithoutScreenInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -991,6 +1226,7 @@ export type SubscriptionUpdateWithoutScreenInput = {
   client?: Prisma.ClientUpdateOneRequiredWithoutSubscriptionsNestedInput
   activeAccount?: Prisma.ActiveAccountUpdateOneRequiredWithoutSubscriptionsNestedInput
   service?: Prisma.ServiceUpdateOneRequiredWithoutSubscriptionsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutSubscriptionsNestedInput
 }
 
 export type SubscriptionUncheckedUpdateWithoutScreenInput = {
@@ -999,8 +1235,10 @@ export type SubscriptionUncheckedUpdateWithoutScreenInput = {
   activeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   serviceId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1011,8 +1249,10 @@ export type SubscriptionUncheckedUpdateManyWithoutScreenInput = {
   activeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   serviceId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1023,8 +1263,10 @@ export type SubscriptionCreateManyClientInput = {
   serviceId: string
   screenId: string
   expirationDate?: Date | string | null
+  purchaseDate?: Date | string
   amount?: number | null
   status: $Enums.ClientStatusEnum
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1032,6 +1274,7 @@ export type SubscriptionCreateManyClientInput = {
 export type SubscriptionUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1039,6 +1282,7 @@ export type SubscriptionUpdateWithoutClientInput = {
   activeAccount?: Prisma.ActiveAccountUpdateOneRequiredWithoutSubscriptionsNestedInput
   service?: Prisma.ServiceUpdateOneRequiredWithoutSubscriptionsNestedInput
   screen?: Prisma.ScreenUpdateOneRequiredWithoutSubscriptionsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutSubscriptionsNestedInput
 }
 
 export type SubscriptionUncheckedUpdateWithoutClientInput = {
@@ -1047,8 +1291,10 @@ export type SubscriptionUncheckedUpdateWithoutClientInput = {
   serviceId?: Prisma.StringFieldUpdateOperationsInput | string
   screenId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1059,8 +1305,10 @@ export type SubscriptionUncheckedUpdateManyWithoutClientInput = {
   serviceId?: Prisma.StringFieldUpdateOperationsInput | string
   screenId?: Prisma.StringFieldUpdateOperationsInput | string
   expirationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   amount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumClientStatusEnumFieldUpdateOperationsInput | $Enums.ClientStatusEnum
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1074,14 +1322,17 @@ export type SubscriptionSelect<ExtArgs extends runtime.Types.Extensions.Internal
   serviceId?: boolean
   screenId?: boolean
   expirationDate?: boolean
+  purchaseDate?: boolean
   amount?: boolean
   status?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   activeAccount?: boolean | Prisma.ActiveAccountDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
   screen?: boolean | Prisma.ScreenDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["subscription"]>
 
 export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1091,14 +1342,17 @@ export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   serviceId?: boolean
   screenId?: boolean
   expirationDate?: boolean
+  purchaseDate?: boolean
   amount?: boolean
   status?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   activeAccount?: boolean | Prisma.ActiveAccountDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
   screen?: boolean | Prisma.ScreenDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["subscription"]>
 
 export type SubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1108,14 +1362,17 @@ export type SubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   serviceId?: boolean
   screenId?: boolean
   expirationDate?: boolean
+  purchaseDate?: boolean
   amount?: boolean
   status?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   activeAccount?: boolean | Prisma.ActiveAccountDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
   screen?: boolean | Prisma.ScreenDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["subscription"]>
 
 export type SubscriptionSelectScalar = {
@@ -1125,30 +1382,35 @@ export type SubscriptionSelectScalar = {
   serviceId?: boolean
   screenId?: boolean
   expirationDate?: boolean
+  purchaseDate?: boolean
   amount?: boolean
   status?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientId" | "activeAccountId" | "serviceId" | "screenId" | "expirationDate" | "amount" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
+export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientId" | "activeAccountId" | "serviceId" | "screenId" | "expirationDate" | "purchaseDate" | "amount" | "status" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
 export type SubscriptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   activeAccount?: boolean | Prisma.ActiveAccountDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
   screen?: boolean | Prisma.ScreenDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type SubscriptionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   activeAccount?: boolean | Prisma.ActiveAccountDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
   screen?: boolean | Prisma.ScreenDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type SubscriptionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   activeAccount?: boolean | Prisma.ActiveAccountDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
   screen?: boolean | Prisma.ScreenDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1158,6 +1420,7 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
     activeAccount: Prisma.$ActiveAccountPayload<ExtArgs>
     service: Prisma.$ServicePayload<ExtArgs>
     screen: Prisma.$ScreenPayload<ExtArgs>
+    user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1166,8 +1429,10 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
     serviceId: string
     screenId: string
     expirationDate: Date | null
+    purchaseDate: Date
     amount: number | null
     status: $Enums.ClientStatusEnum
+    userId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["subscription"]>
@@ -1568,6 +1833,7 @@ export interface Prisma__SubscriptionClient<T, Null = never, ExtArgs extends run
   activeAccount<T extends Prisma.ActiveAccountDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActiveAccountDefaultArgs<ExtArgs>>): Prisma.Prisma__ActiveAccountClient<runtime.Types.Result.GetResult<Prisma.$ActiveAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   service<T extends Prisma.ServiceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceDefaultArgs<ExtArgs>>): Prisma.Prisma__ServiceClient<runtime.Types.Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   screen<T extends Prisma.ScreenDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ScreenDefaultArgs<ExtArgs>>): Prisma.Prisma__ScreenClient<runtime.Types.Result.GetResult<Prisma.$ScreenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1603,8 +1869,10 @@ export interface SubscriptionFieldRefs {
   readonly serviceId: Prisma.FieldRef<"Subscription", 'String'>
   readonly screenId: Prisma.FieldRef<"Subscription", 'String'>
   readonly expirationDate: Prisma.FieldRef<"Subscription", 'DateTime'>
+  readonly purchaseDate: Prisma.FieldRef<"Subscription", 'DateTime'>
   readonly amount: Prisma.FieldRef<"Subscription", 'Int'>
   readonly status: Prisma.FieldRef<"Subscription", 'ClientStatusEnum'>
+  readonly userId: Prisma.FieldRef<"Subscription", 'String'>
   readonly createdAt: Prisma.FieldRef<"Subscription", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Subscription", 'DateTime'>
 }

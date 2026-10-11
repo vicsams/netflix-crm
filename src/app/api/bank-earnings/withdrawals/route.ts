@@ -1,9 +1,14 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
+import { requireUser } from "@/shared/lib/session";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const withdrawals = await prisma.bankWithdrawal.findMany({
+      where: { userId },
       select: {
         id: true,
         currency: true,

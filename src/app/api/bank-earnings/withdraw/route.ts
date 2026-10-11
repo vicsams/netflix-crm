@@ -1,10 +1,14 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
+import { requireUser } from "@/shared/lib/session";
 
 type WithdrawCurrency = "BS" | "USDT";
 
 export async function POST(req: Request) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const body = await req.json();
     const { currency, amount, reason } = body ?? {};
 
@@ -39,7 +43,7 @@ export async function POST(req: Request) {
     }
 
     const currentBank = await prisma.bankEarnings.findUnique({
-      where: { id: 1 },
+      where: { userId },
     });
 
     if (!currentBank) {
@@ -63,7 +67,7 @@ export async function POST(req: Request) {
 
     const [updatedBank, withdrawal] = await prisma.$transaction([
       prisma.bankEarnings.update({
-        where: { id: 1 },
+        where: { userId },
         data:
           currency === "BS"
             ? {
@@ -82,6 +86,7 @@ export async function POST(req: Request) {
           currency: currency as WithdrawCurrency,
           amount: amountInCents,
           reason: reason.trim(),
+          userId,
         },
       }),
     ]);

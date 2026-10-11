@@ -1,6 +1,6 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
-import { auth } from "@/shared/lib/auth";
+import { requireUser } from "@/shared/lib/session";
 import { createServiceSchema } from "@/features/streaming-services/schemas";
 
 export async function POST(req: Request) {
@@ -12,12 +12,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid data" }, { status: 400 });
     }
 
-    // forward headers so auth can read cookies
-    const session = await auth.api.getSession({ headers: req.headers });
-
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
 
     const {
       serviceName,
@@ -39,7 +35,7 @@ export async function POST(req: Request) {
         currency: currency ?? "USD",
         textColor: textColor.toLowerCase(),
         backgroundColor: backgroundColor.toLowerCase(),
-        createdById: session.user.id,
+        createdById: userId,
       },
     });
 
@@ -49,9 +45,13 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const services = await prisma.service.findMany({
+      where: { createdById: userId },
       // orderBy: { createdAt: "desc" },
       include: { createdBy: { select: { id: true, name: true } } },
     });

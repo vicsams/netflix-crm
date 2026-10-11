@@ -1,6 +1,6 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
-import { auth } from "@/shared/lib/auth";
+import { requireUser } from "@/shared/lib/session";
 import { createServiceSchema } from "@/features/streaming-services/schemas";
 
 export async function PATCH(
@@ -17,9 +17,19 @@ export async function PATCH(
       return NextResponse.json({ message: "Invalid data" }, { status: 400 });
     }
 
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
+    const owned = await prisma.service.findFirst({
+      where: { id, createdById: userId },
+      select: { id: true },
+    });
+
+    if (!owned) {
+      return NextResponse.json(
+        { message: "Service not found" },
+        { status: 404 },
+      );
     }
 
     const dataToUpdate = { ...parsed.data };
@@ -56,14 +66,19 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (!session) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
 
-    await prisma.service.delete({
-      where: { id },
+    const { count } = await prisma.service.deleteMany({
+      where: { id, createdById: userId },
     });
+
+    if (count === 0) {
+      return NextResponse.json(
+        { message: "Service not found" },
+        { status: 404 },
+      );
+    }
 
     return NextResponse.json({ message: "Service deleted" });
   } catch (error) {

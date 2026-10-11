@@ -1,10 +1,14 @@
 import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
+import { requireUser } from "@/shared/lib/session";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { userId, response } = await requireUser(req);
+    if (response) return response;
+
     const bankEarnings = await prisma.bankEarnings.findUnique({
-      where: { id: 1 },
+      where: { userId },
     });
 
     return NextResponse.json({

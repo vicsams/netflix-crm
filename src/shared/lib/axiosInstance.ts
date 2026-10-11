@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const baseUrl =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
+// Relative so requests always go to the domain the app is served from
+// (localhost, preview deploys, production). Only used from client components.
+const baseUrl = "/api";
 
 const axiosInstance = axios.create({
   baseURL: baseUrl,

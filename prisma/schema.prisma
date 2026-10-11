@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/lib/generated/prisma"
+  output   = "../src/shared/lib/generated/prisma"
 }
 
 datasource db {
@@ -24,6 +24,11 @@ model User {
   sessions      Session[]
   accounts      Account[]
   services      Service[]
+  activeAccounts ActiveAccount[]
+  clients       Client[]
+  subscriptions Subscription[]
+  bankEarnings  BankEarnings?
+  withdrawals   BankWithdrawal[]
 
   @@unique([email])
   @@map("user")
@@ -89,8 +94,8 @@ model Service {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  createdById String?
-  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   subscriptions Subscription[]
   activeAccounts ActiveAccount[]
@@ -106,13 +111,15 @@ model ActiveAccount {
   serviceId      String?  @map("service_id")
   service        Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
   expirationDate DateTime
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   subscriptions Subscription[]
   screens        Screen[]
 
-  @@unique([email])
+  @@unique([userId, email])
   @@index([serviceId])
   @@map("active_account")
 }
@@ -141,12 +148,14 @@ model Client {
   id            String         @id @default(uuid())
   clientName    String
   phoneNumber   String
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
   subscriptions Subscription[]
 
-  @@unique([phoneNumber])
+  @@unique([userId, phoneNumber])
   @@map("clients")
 }
 
@@ -161,11 +170,15 @@ model Subscription {
   screenId        String
   screen          Screen           @relation(fields: [screenId], references: [id], onDelete: Cascade)
   expirationDate  DateTime?
+  purchaseDate    DateTime         @default(now())
   amount          Int?
   status          ClientStatusEnum
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
+  @@index([userId])
   @@index([clientId])
   @@index([activeAccountId])
   @@index([serviceId])
@@ -174,7 +187,8 @@ model Subscription {
 }
 
 model BankEarnings {
-  id        Int      @id @default(1)
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   total     Int      @default(0)
   totalUsdt Int      @default(0)
   updatedAt DateTime @updatedAt
@@ -187,8 +201,11 @@ model BankWithdrawal {
   currency  String
   amount    Int
   reason    String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
+  @@index([userId])
   @@index([currency])
   @@map("bank_withdrawals")
 }

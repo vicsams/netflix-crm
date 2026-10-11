@@ -19,7 +19,7 @@ import type { ScreenProps } from "@/features/streaming-services/types/screen";
 import type { ActiveAccountProps } from "@/features/streaming-services/types/activeAccount";
 import { ChevronDown, Copy } from "lucide-react";
 import ColorContrastChecker from "color-contrast-checker";
-import useIsMobile from "@/hooks/useIsMobile";
+import useIsMobile from "@/shared/hooks/useIsMobile";
 
 const contrastChecker = new ColorContrastChecker();
 
