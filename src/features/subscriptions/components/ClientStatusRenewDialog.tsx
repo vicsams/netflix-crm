@@ -47,6 +47,7 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui/tabs";
 import { formatDate } from "@/shared/lib/date";
+import AmountNotice from "@/features/subscriptions/components/AmountNotice";
 import { ClientStatusRenewDialogProps } from "@/features/subscriptions/types/clientStatus";
 
 const RENEW_PERIODS = [
@@ -151,7 +152,12 @@ export default function ClientStatusRenewDialog({
 
     const days = differenceInDays(date, new Date());
     if (days <= 0)
-      return { cents: 0, usdFormatted: "0.00", bsFormatted: "0.00 Bs" };
+      return {
+        cents: 0,
+        waitingForRate: false,
+        usdFormatted: "0.00",
+        bsFormatted: "0.00 Bs",
+      };
 
     const usdPriceCents = (servicePriceCents / 30) * days;
     const usdPriceFormatted = (usdPriceCents / 100).toFixed(2);
@@ -172,6 +178,7 @@ export default function ClientStatusRenewDialog({
 
     return {
       cents: Math.round(netBsFloat * 100),
+      waitingForRate: !rate,
       usdFormatted: usdPriceFormatted,
       grossBsFormatted: rate
         ? `${grossBsFloat.toFixed(2)} Bs`
@@ -206,8 +213,15 @@ export default function ClientStatusRenewDialog({
     },
   });
 
+  // Without a rate the amount is not real yet, so saving is blocked; a real
+  // 0 Bs net is allowed but flagged (no earnings get recorded for it)
+  const waitingForRate = calculatedAmount?.waitingForRate ?? false;
+  const zeroAmount =
+    !!calculatedAmount && !waitingForRate && calculatedAmount.cents <= 0;
+
   const onSubmit = async () => {
     if (!date) return;
+    if (waitingForRate) return;
     await mutation.mutateAsync();
   };
 
@@ -399,6 +413,15 @@ export default function ClientStatusRenewDialog({
               </div>
             )}
 
+            <div className="mt-4">
+              <AmountNotice
+                waitingForRate={waitingForRate}
+                customRate={selectedPriceSource === "CUSTOM"}
+                zeroAmount={zeroAmount}
+                zeroAmountMessage="La fecha se extenderá, pero no se sumará nada a tus ganancias ni se actualizará la fecha de compra."
+              />
+            </div>
+
             {!date && (
               <p className="text-destructive mt-1 text-sm">
                 La fecha de expiración es requerida
@@ -414,12 +437,17 @@ export default function ClientStatusRenewDialog({
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={mutation.isPending || !date}>
+            <Button
+              type="submit"
+              disabled={mutation.isPending || !date || waitingForRate}
+            >
               {mutation.isPending ? (
                 <>
                   <Spinner />
                   Renovando
                 </>
+              ) : zeroAmount ? (
+                "Renovar con 0 Bs"
               ) : (
                 "Renovar"
               )}
