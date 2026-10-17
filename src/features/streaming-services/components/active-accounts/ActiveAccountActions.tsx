@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchClientStatuses } from "@/features/subscriptions/services/subscriptions";
+import type { ClientStatus } from "@/features/subscriptions/types/clientStatus";
 import { deleteActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
 import { ActiveAccountActionsProps } from "@/features/streaming-services/types/activeAccount";
 import UpdateActiveAccountDialog from "@/features/streaming-services/components/active-accounts/UpdateActiveAccountDialog";
@@ -25,6 +27,7 @@ import {
   AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
 import { Spinner } from "@/shared/components/ui/spinner";
+import DeleteConsequences from "@/features/streaming-services/components/DeleteConsequences";
 
 export default function ActiveAccountActions({
   activeAccount,
@@ -34,12 +37,31 @@ export default function ActiveAccountActions({
   const [showCreateScreenDialog, setShowCreateScreenDialog] = useState(false);
   const queryClient = useQueryClient();
 
+  // The database deletes this account's screens and subscriptions with it,
+  // so the confirmation spells out what else will go
+  const subscriptionsQuery = useQuery<ClientStatus[]>({
+    queryKey: ["clientStatuses"],
+    queryFn: fetchClientStatuses,
+    enabled: showDeleteDialog,
+  });
+  const linkedSubscriptions = (subscriptionsQuery.data ?? []).filter(
+    (subscription) => subscription.activeAccountId === activeAccount.id,
+  );
+  const activeSubscriptions = linkedSubscriptions.filter(
+    (subscription) =>
+      !subscription.expirationDate ||
+      new Date(subscription.expirationDate) >= new Date(),
+  ).length;
+  const screenCount = activeAccount.screens?.length ?? 0;
+  const deletesMore = screenCount > 0 || linkedSubscriptions.length > 0;
+
   const deleteMutation = useMutation({
     mutationFn: async () => {
       return await deleteActiveAccount(activeAccount.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
+      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       setShowDeleteDialog(false);
     },
     onError: (error) => {
@@ -69,19 +91,32 @@ export default function ActiveAccountActions({
               Esta acción no se puede deshacer. Esto eliminará permanentemente
               la cuenta activa &quot;{activeAccount.email}&quot;.
             </AlertDialogDescription>
+            <DeleteConsequences
+              loading={subscriptionsQuery.isLoading}
+              failed={subscriptionsQuery.isError}
+              screenCount={screenCount}
+              subscriptionCount={linkedSubscriptions.length}
+              activeSubscriptions={activeSubscriptions}
+            />
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteMutation.mutate()}
               className="bg-destructive hover:bg-destructive/90"
-              disabled={deleteMutation.isPending}
+              disabled={
+                deleteMutation.isPending ||
+                subscriptionsQuery.isLoading ||
+                subscriptionsQuery.isError
+              }
             >
               {deleteMutation.isPending ? (
                 <>
                   <Spinner />
                   Eliminando
                 </>
+              ) : deletesMore ? (
+                "Eliminar todo"
               ) : (
                 "Eliminar"
               )}
