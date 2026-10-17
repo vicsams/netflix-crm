@@ -5,6 +5,7 @@ import { ClientStatus } from "@/features/subscriptions/types/clientStatus";
 import ClientStatusActions from "@/features/subscriptions/components/ClientStatusActions";
 import { differenceInDays } from "date-fns";
 import { formatDate } from "@/shared/lib/date";
+import { getDerivedStatus } from "@/features/subscriptions/lib/status";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/lib/utils";
 import {
@@ -18,24 +19,6 @@ export const STATUS_LABEL: Record<string, string> = {
   EXPIRED: "Expirado",
   NEAR_EXPIRATION: "Cerca de expirar",
 };
-
-export function getDerivedStatus(
-  row: ClientStatus,
-): "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION" {
-  const currentStatus = row.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION";
-
-  if (currentStatus === "EXPIRED") return "EXPIRED";
-
-  if (!row.expirationDate)
-    return currentStatus === "NEAR_EXPIRATION" ? "NEAR_EXPIRATION" : "ACTIVE";
-
-  const days = differenceInDays(new Date(row.expirationDate), new Date()) + 1;
-
-  if (days < 0) return "EXPIRED";
-  if (days <= 3) return "NEAR_EXPIRATION";
-
-  return "ACTIVE";
-}
 
 export function formatAmount(amount?: number | null) {
   return amount != null ? `${(amount / 100).toFixed(2)} Bs` : "-";

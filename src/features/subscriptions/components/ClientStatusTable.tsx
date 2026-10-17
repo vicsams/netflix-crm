@@ -18,11 +18,11 @@ import { DataTable } from "@/shared/components/ui/data-table";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import {
   columns,
-  getDerivedStatus,
   STATUS_LABEL,
 } from "@/features/subscriptions/components/table/columns";
 import { differenceInDays } from "date-fns";
 import { formatDate, formatNumericDate } from "@/shared/lib/date";
+import { getDerivedStatus } from "@/features/subscriptions/lib/status";
 import { ClientStatus } from "@/features/subscriptions/types/clientStatus";
 import { Input } from "@/shared/components/ui/input";
 import {
@@ -32,7 +32,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { Search, X } from "lucide-react";
+import { ArrowUpDown, Search, X } from "lucide-react";
+import { Button } from "@/shared/components/ui/button";
 import ClientStatusList from "@/features/subscriptions/components/ClientStatusList";
 import useIsMobile from "@/shared/hooks/useIsMobile";
 
@@ -96,6 +97,49 @@ const SEARCH_FIELDS: SearchField[] = [
   },
 ];
 
+type DerivedStatus = ReturnType<typeof getDerivedStatus>;
+type StatusFilter = "ALL" | DerivedStatus;
+
+const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
+  { value: "ALL", label: "Todos" },
+  { value: "NEAR_EXPIRATION", label: "Cerca de expirar" },
+  { value: "ACTIVE", label: "Activos" },
+  { value: "EXPIRED", label: "Expirados" },
+];
+
+type SortOrder = "UPCOMING" | "LATEST_EXPIRATION" | "NEWEST";
+
+const SORT_OPTIONS: { value: SortOrder; label: string }[] = [
+  { value: "UPCOMING", label: "Próximos a vencer" },
+  { value: "LATEST_EXPIRATION", label: "Vencimiento más lejano" },
+  { value: "NEWEST", label: "Más recientes" },
+];
+
+function expirationTime(row: ClientStatus) {
+  return row.expirationDate ? new Date(row.expirationDate).getTime() : null;
+}
+
+// Rows without an expiration date always go last
+function compareRows(a: ClientStatus, b: ClientStatus, order: SortOrder) {
+  // The API already returns the newest first; a stable sort keeps that
+  if (order === "NEWEST") return 0;
+
+  const timeA = expirationTime(a);
+  const timeB = expirationTime(b);
+  if (timeA === null || timeB === null) {
+    return timeA === timeB ? 0 : timeA === null ? 1 : -1;
+  }
+
+  if (order === "LATEST_EXPIRATION") return timeB - timeA;
+
+  // "Who do I contact next": subscriptions still running, soonest first,
+  // then expired ones, most recently expired first
+  const expiredA = getDerivedStatus(a) === "EXPIRED";
+  const expiredB = getDerivedStatus(b) === "EXPIRED";
+  if (expiredA !== expiredB) return expiredA ? 1 : -1;
+  return expiredA ? timeB - timeA : timeA - timeB;
+}
+
 export default function ClientStatusTable() {
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
@@ -146,7 +190,10 @@ export default function ClientStatusTable() {
     SEARCH_FIELDS[0];
   const normalizedTerm = searchTerm.trim().toLowerCase();
 
-  const filteredStatuses = React.useMemo(() => {
+  const [statusFilter, setStatusFilter] = React.useState<StatusFilter>("ALL");
+  const [sortOrder, setSortOrder] = React.useState<SortOrder>("UPCOMING");
+
+  const searchedStatuses = React.useMemo(() => {
     if (!clientStatuses) return [];
     if (!normalizedTerm) return clientStatuses;
 
@@ -154,6 +201,34 @@ export default function ClientStatusTable() {
       activeField.getText(row).toLowerCase().includes(normalizedTerm),
     );
   }, [clientStatuses, activeField, normalizedTerm]);
+
+  // Counts follow the search, so each chip shows how many rows it would show
+  const statusCounts = React.useMemo(() => {
+    const counts: Record<StatusFilter, number> = {
+      ALL: searchedStatuses.length,
+      ACTIVE: 0,
+      NEAR_EXPIRATION: 0,
+      EXPIRED: 0,
+    };
+    for (const row of searchedStatuses) counts[getDerivedStatus(row)] += 1;
+    return counts;
+  }, [searchedStatuses]);
+
+  const filteredStatuses = React.useMemo(() => {
+    const rows =
+      statusFilter === "ALL"
+        ? searchedStatuses
+        : searchedStatuses.filter(
+            (row) => getDerivedStatus(row) === statusFilter,
+          );
+
+    return [...rows].sort((a, b) => compareRows(a, b, sortOrder));
+  }, [searchedStatuses, statusFilter, sortOrder]);
+
+  const emptyMessage =
+    normalizedTerm || statusFilter !== "ALL"
+      ? "No hay resultados para los filtros seleccionados"
+      : undefined;
 
   async function handleCreated() {
     await queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
@@ -198,6 +273,53 @@ export default function ClientStatusTable() {
               </button>
             )}
           </div>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <div
+            role="group"
+            aria-label="Filtrar por estado"
+            className="flex gap-1.5 overflow-x-auto max-sm:w-full max-sm:pb-1"
+          >
+            {STATUS_FILTERS.map((filter) => {
+              const selected = statusFilter === filter.value;
+              return (
+                <Button
+                  key={filter.value}
+                  type="button"
+                  size="sm"
+                  variant={selected ? "default" : "outline"}
+                  aria-pressed={selected}
+                  onClick={() => setStatusFilter(filter.value)}
+                  className="h-7 shrink-0 rounded-full px-3 text-xs"
+                >
+                  {filter.label}
+                  <span className="opacity-60">
+                    {statusCounts[filter.value]}
+                  </span>
+                </Button>
+              );
+            })}
+          </div>
+          <Select
+            value={sortOrder}
+            onValueChange={(value) => setSortOrder(value as SortOrder)}
+          >
+            <SelectTrigger
+              size="sm"
+              aria-label="Ordenar suscripciones"
+              className="w-52 max-sm:w-full"
+            >
+              <ArrowUpDown className="text-muted-foreground" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SORT_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </CardHeader>
       <CardContent className="px-0">
@@ -247,17 +369,13 @@ export default function ClientStatusTable() {
         ) : isMobile ? (
           <ClientStatusList
             data={filteredStatuses}
-            emptyMessage={
-              normalizedTerm ? "No hay resultados para la búsqueda" : undefined
-            }
+            emptyMessage={emptyMessage}
           />
         ) : (
           <DataTable
             columns={columns}
             data={filteredStatuses}
-            emptyMessage={
-              normalizedTerm ? "No hay resultados para la búsqueda" : undefined
-            }
+            emptyMessage={emptyMessage}
             // getRowClassName={(row) => {
             //   if (row.status === "ACTIVE")
             //     return "bg-green-100 dark:bg-green-900/30";
