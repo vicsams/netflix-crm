@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { convertCurrency } from "@/features/bank-funds/services/bankEarnings";
 import {
   Dialog,
@@ -9,7 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
-import { AxiosError } from "axios";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -32,6 +33,7 @@ export default function ConvertCurrencyDialog({
       return convertCurrency({ amountBs, rate });
     },
     onSuccess: () => {
+      toast.success("ConversiÃ³n realizada");
       queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
       onOpenChange(false);
       setAmountBs("");
@@ -39,11 +41,7 @@ export default function ConvertCurrencyDialog({
       setError(null);
     },
     onError: (err: unknown) => {
-      const axiosError = err as AxiosError<{ message?: string }>;
-      const message =
-        axiosError.response?.data?.message ||
-        "Ocurrió un error en la conversión";
-      setError(message);
+      setError(getErrorMessage(err, "OcurriÃ³ un error en la conversiÃ³n"));
     },
   });
 

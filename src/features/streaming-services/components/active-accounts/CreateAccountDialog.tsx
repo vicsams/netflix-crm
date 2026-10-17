@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { createActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
 import { fetchServices } from "@/features/streaming-services/services/service-management/services";
 import type { ServiceProps } from "@/features/streaming-services/types/service";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import type { AxiosError } from "axios";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -81,6 +82,7 @@ export default function CreateAccountDialog() {
       });
     },
     onSuccess: () => {
+      toast.success("Cuenta creada");
       queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
       reset();
       setServerError(null);
@@ -88,11 +90,7 @@ export default function CreateAccountDialog() {
       setOpen(false);
     },
     onError: (err: unknown) => {
-      const axiosErr = err as AxiosError<{ message?: string }>;
-      const message =
-        axiosErr?.response?.data?.message ??
-        (err instanceof Error ? err.message : "Failed to create account");
-      setServerError(message);
+      setServerError(getErrorMessage(err, "No se pudo crear la cuenta"));
     },
   });
 

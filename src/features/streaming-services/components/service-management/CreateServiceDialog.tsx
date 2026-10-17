@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { createService } from "@/features/streaming-services/services/service-management/services";
 import {
   createServiceSchema,
@@ -73,12 +75,13 @@ export default function CreateServiceDialog() {
       return await createService(payload);
     },
     onSuccess: () => {
+      toast.success("Servicio creado");
       queryClient.invalidateQueries({ queryKey: ["services"] });
       reset();
       setOpen(false);
     },
     onError: (error) => {
-      console.error("Failed to create service:", error);
+      toast.error(getErrorMessage(error, "No se pudo crear el servicio"));
     },
   });
 

@@ -5,6 +5,8 @@ import { format, differenceInDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/shared/lib/utils";
@@ -58,6 +60,7 @@ import { ServiceProps } from "@/features/streaming-services/types/service";
 import { ActiveAccountProps } from "@/features/streaming-services/types/activeAccount";
 import { ScreenProps } from "@/features/streaming-services/types/screen";
 import { Client } from "@/features/clients/types/client";
+import { emptyAsNull, emptyAsZero } from "@/shared/lib/forms";
 import AmountNotice from "@/features/subscriptions/components/AmountNotice";
 
 export type CreateClientStatusDialogProps = {
@@ -128,6 +131,7 @@ export default function CreateClientStatusDialog({
   const mutation = useMutation({
     mutationFn: createClientStatus,
     onSuccess: (created) => {
+      toast.success("SuscripciÃ³n creada");
       setOpen(false);
       reset();
       setDate(undefined);
@@ -136,12 +140,7 @@ export default function CreateClientStatusDialog({
       queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
     },
     onError: (err: unknown) => {
-      const message =
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (err as any).response?.data?.message ||
-        (err as Error).message ||
-        "Request failed";
-      setError(message);
+      setError(getErrorMessage(err, "No se pudo crear la suscripciÃ³n"));
     },
   });
 
@@ -441,7 +440,7 @@ export default function CreateClientStatusDialog({
                   step="0.01"
                   min="0"
                   placeholder="Ej: 105.25"
-                  {...register("customUsdtRate", { valueAsNumber: true })}
+                  {...register("customUsdtRate", { setValueAs: emptyAsNull })}
                 />
                 {errors.customUsdtRate && (
                   <p className="text-destructive text-sm">
@@ -459,7 +458,7 @@ export default function CreateClientStatusDialog({
               step="0.01"
               min="0"
               placeholder="Ej: 250.00"
-              {...register("supplierPrice", { valueAsNumber: true })}
+              {...register("supplierPrice", { setValueAs: emptyAsZero })}
             />
             {errors.supplierPrice && (
               <p className="text-destructive text-sm">

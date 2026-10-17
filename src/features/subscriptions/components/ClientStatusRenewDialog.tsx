@@ -7,6 +7,8 @@ import { CalendarIcon } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { cn } from "@/shared/lib/utils";
 import { useBinancePrice } from "@/shared/context/BinancePriceContext";
 import { updateClientStatus } from "@/features/subscriptions/services/subscriptions";
@@ -47,6 +49,7 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui/tabs";
 import { formatDate } from "@/shared/lib/date";
+import { emptyAsNull, emptyAsZero } from "@/shared/lib/forms";
 import AmountNotice from "@/features/subscriptions/components/AmountNotice";
 import { ClientStatusRenewDialogProps } from "@/features/subscriptions/types/clientStatus";
 
@@ -204,12 +207,15 @@ export default function ClientStatusRenewDialog({
       });
     },
     onSuccess: () => {
+      toast.success(
+        `SuscripciÃ³n renovada hasta el ${formatDate(date?.toISOString())}`,
+      );
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
       onOpenChange(false);
     },
     onError: (error) => {
-      console.error("Failed to renew client status:", error);
+      toast.error(getErrorMessage(error, "No se pudo renovar la suscripciÃ³n"));
     },
   });
 
@@ -352,7 +358,7 @@ export default function ClientStatusRenewDialog({
                     step="0.01"
                     min="0"
                     placeholder="Ej: 105.25"
-                    {...register("customUsdtRate", { valueAsNumber: true })}
+                    {...register("customUsdtRate", { setValueAs: emptyAsNull })}
                   />
                   {errors.customUsdtRate && (
                     <p className="text-destructive mt-1 text-sm">
@@ -371,7 +377,7 @@ export default function ClientStatusRenewDialog({
                 step="0.01"
                 min="0"
                 placeholder="Ej: 250.00"
-                {...register("supplierPrice", { valueAsNumber: true })}
+                {...register("supplierPrice", { setValueAs: emptyAsZero })}
               />
               {errors.supplierPrice && (
                 <p className="text-destructive mt-1 text-sm">

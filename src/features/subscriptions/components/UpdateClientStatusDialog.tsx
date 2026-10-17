@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { updateClientStatus } from "@/features/subscriptions/services/subscriptions";
 import { fetchClients } from "@/features/clients/services/clients";
 import { fetchServices } from "@/features/streaming-services/services/service-management/services";
@@ -155,11 +157,14 @@ export default function UpdateClientStatusDialog({
       });
     },
     onSuccess: () => {
+      toast.success("SuscripciÃ³n actualizada");
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       if (setOpen) setOpen(false);
     },
     onError: (error) => {
-      console.error("Failed to update client status:", error);
+      toast.error(
+        getErrorMessage(error, "No se pudo actualizar la suscripciÃ³n"),
+      );
     },
   });
 

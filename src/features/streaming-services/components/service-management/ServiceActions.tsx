@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { fetchClientStatuses } from "@/features/subscriptions/services/subscriptions";
 import type { ClientStatus } from "@/features/subscriptions/types/clientStatus";
 import { fetchActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
@@ -66,13 +68,14 @@ export default function ServiceActions({ service }: ServiceActionsProps) {
       return await deleteService(service.id);
     },
     onSuccess: () => {
+      toast.success("Servicio eliminado");
       queryClient.invalidateQueries({ queryKey: ["services"] });
       queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       setShowDeleteDialog(false);
     },
     onError: (error) => {
-      console.error("Failed to delete service:", error);
+      toast.error(getErrorMessage(error, "No se pudo eliminar el servicio"));
     },
   });
 

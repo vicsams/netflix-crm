@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { deleteClient } from "@/features/clients/services/clients";
 import UpdateClientDialog from "@/features/clients/components/UpdateClientDialog";
 import {
@@ -34,27 +36,14 @@ export default function ClientActions({ client }: ClientActionsProps) {
   const deleteMutation = useMutation({
     mutationFn: async () => deleteClient(client.id),
     onSuccess: () => {
+      toast.success("Cliente eliminado");
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       setErrorMessage(null);
       setShowDeleteDialog(false);
     },
     onError: (error: unknown) => {
-      const message =
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof error.response === "object" &&
-        error.response !== null &&
-        "data" in error.response &&
-        typeof error.response.data === "object" &&
-        error.response.data !== null &&
-        "message" in error.response.data &&
-        typeof error.response.data.message === "string"
-          ? error.response.data.message
-          : "No se pudo eliminar el cliente";
-
-      setErrorMessage(message);
+      setErrorMessage(getErrorMessage(error, "No se pudo eliminar el cliente"));
     },
   });
 

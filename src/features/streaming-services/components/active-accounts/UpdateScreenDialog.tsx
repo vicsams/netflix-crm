@@ -3,6 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { updateScreen } from "@/features/streaming-services/services/active-accounts/screens";
 import {
   updateScreenSchema,
@@ -47,12 +49,13 @@ export default function UpdateScreenDialog({
       return await updateScreen(screen.id, data);
     },
     onSuccess: () => {
+      toast.success("Pantalla actualizada");
       queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       onOpenChange(false);
     },
     onError: (error) => {
-      console.error("Failed to update screen:", error);
+      toast.error(getErrorMessage(error, "No se pudo actualizar la pantalla"));
     },
   });
 

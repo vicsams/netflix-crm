@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { AxiosError } from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { withdrawFunds, type WithdrawCurrency } from "@/features/bank-funds/services/bankEarnings";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
+import {
+  withdrawFunds,
+  type WithdrawCurrency,
+} from "@/features/bank-funds/services/bankEarnings";
 import {
   Dialog,
   DialogContent,
@@ -43,6 +47,7 @@ export default function WithdrawFundsDialog({
       });
     },
     onSuccess: () => {
+      toast.success("Retiro registrado");
       queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
       queryClient.invalidateQueries({ queryKey: ["bankWithdrawals"] });
       onOpenChange(false);
@@ -51,11 +56,7 @@ export default function WithdrawFundsDialog({
       setError(null);
     },
     onError: (err: unknown) => {
-      const axiosError = err as AxiosError<{ message?: string }>;
-      const message =
-        axiosError.response?.data?.message ||
-        "Ocurrió un error al retirar fondos";
-      setError(message);
+      setError(getErrorMessage(err, "OcurriÃ³ un error al retirar fondos"));
     },
   });
 

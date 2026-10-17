@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { fetchClientStatuses } from "@/features/subscriptions/services/subscriptions";
 import type { ClientStatus } from "@/features/subscriptions/types/clientStatus";
 import { deleteActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
@@ -60,12 +62,13 @@ export default function ActiveAccountActions({
       return await deleteActiveAccount(activeAccount.id);
     },
     onSuccess: () => {
+      toast.success("Cuenta eliminada");
       queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       setShowDeleteDialog(false);
     },
     onError: (error) => {
-      console.error("Failed to delete active account:", error);
+      toast.error(getErrorMessage(error, "No se pudo eliminar la cuenta"));
     },
   });
 

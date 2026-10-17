@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { deleteClientStatus } from "@/features/subscriptions/services/subscriptions";
 import UpdateClientStatusDialog from "@/features/subscriptions/components/UpdateClientStatusDialog";
 import ClientStatusRenewDialog from "@/features/subscriptions/components/ClientStatusRenewDialog";
@@ -52,11 +54,14 @@ export default function ClientStatusActions({
       return await deleteClientStatus(clientStatus.id);
     },
     onSuccess: () => {
+      toast.success("SuscripciÃ³n eliminada");
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       setShowDeleteDialog(false);
     },
     onError: (error) => {
-      console.error("Failed to delete client status:", error);
+      toast.error(
+        getErrorMessage(error, "No se pudo eliminar la suscripciÃ³n"),
+      );
     },
   });
 

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { updateService } from "@/features/streaming-services/services/service-management/services";
 import {
   createServiceSchema,
@@ -81,11 +83,12 @@ export default function UpdateServiceDialog({
       return await updateService(service.id, payload);
     },
     onSuccess: () => {
+      toast.success("Servicio actualizado");
       queryClient.invalidateQueries({ queryKey: ["services"] });
       setOpen?.(false);
     },
     onError: (error) => {
-      console.error("Failed to update service:", error);
+      toast.error(getErrorMessage(error, "No se pudo actualizar el servicio"));
     },
   });
 

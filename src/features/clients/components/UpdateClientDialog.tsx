@@ -5,6 +5,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { updateClient } from "@/features/clients/services/clients";
 import { createClientSchema } from "@/features/clients/schemas";
 
@@ -58,27 +60,16 @@ export default function UpdateClientDialog({
     mutationFn: (data: z.infer<typeof createClientSchema>) =>
       updateClient(client.id, data),
     onSuccess: () => {
+      toast.success("Cliente actualizado");
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       setErrorMessage(null);
       setOpen?.(false);
     },
     onError: (error: unknown) => {
-      const message =
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof error.response === "object" &&
-        error.response !== null &&
-        "data" in error.response &&
-        typeof error.response.data === "object" &&
-        error.response.data !== null &&
-        "message" in error.response.data &&
-        typeof error.response.data.message === "string"
-          ? error.response.data.message
-          : "No se pudo actualizar el cliente";
-
-      setErrorMessage(message);
+      setErrorMessage(
+        getErrorMessage(error, "No se pudo actualizar el cliente"),
+      );
     },
   });
 

@@ -5,6 +5,8 @@ import { format, parse } from "date-fns";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { updateActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
 import { fetchServices } from "@/features/streaming-services/services/service-management/services";
 import {
@@ -86,11 +88,12 @@ export default function UpdateActiveAccountDialog({
       return await updateActiveAccount(activeAccount.id, data);
     },
     onSuccess: () => {
+      toast.success("Cuenta actualizada");
       queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
       if (setOpen) setOpen(false);
     },
     onError: (error) => {
-      console.error("Failed to update active account:", error);
+      toast.error(getErrorMessage(error, "No se pudo actualizar la cuenta"));
     },
   });
 
