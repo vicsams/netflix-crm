@@ -142,7 +142,7 @@ export default function ClientStatusRenewDialog({
     name: "supplierPrice",
   });
 
-  const { price: binancePrice } = useBinancePrice();
+  const { price: binancePrice, isError: binanceFailed } = useBinancePrice();
 
   const calculatedAmount = useMemo(() => {
     const serviceWithPrice = clientStatus.service as { price?: number } | null;
@@ -423,6 +423,7 @@ export default function ClientStatusRenewDialog({
               <AmountNotice
                 waitingForRate={waitingForRate}
                 customRate={selectedPriceSource === "CUSTOM"}
+                binanceFailed={binanceFailed}
                 zeroAmount={zeroAmount}
                 zeroAmountMessage="La fecha se extenderá, pero no se sumará nada a tus ganancias ni se actualizará la fecha de compra."
               />

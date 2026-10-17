@@ -130,7 +130,7 @@ export default function CreateClientStatusDialog({
     queryFn: fetchActiveAccount,
   });
 
-  const { price: binancePrice } = useBinancePrice();
+  const { price: binancePrice, isError: binanceFailed } = useBinancePrice();
 
   const { data: screens = [] } = useQuery<ScreenProps[]>({
     queryKey: ["screens", selectedAccountId],
@@ -543,6 +543,7 @@ export default function CreateClientStatusDialog({
             <AmountNotice
               waitingForRate={waitingForRate}
               customRate={selectedPriceSource === "CUSTOM"}
+              binanceFailed={binanceFailed}
               zeroAmount={zeroAmount}
               zeroAmountMessage="La suscripción se creará sin registrar ningún ingreso en tus ganancias."
             />

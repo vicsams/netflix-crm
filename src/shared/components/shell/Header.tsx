@@ -9,11 +9,15 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import BinancePriceCard from "@/shared/components/shell/BinancePriceCard";
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
 import { authClient } from "@/shared/lib/auth-client";
 import { useRouter } from "next/navigation";
 
-export default function Header({ price }: { price: number | null }) {
+export default function Header() {
   const router = useRouter();
   const { data: session } = authClient.useSession();
 
@@ -39,7 +43,7 @@ export default function Header({ price }: { price: number | null }) {
     <header className="sticky top-0 z-49 flex items-center justify-between bg-white px-10 py-2 max-sm:px-4">
       <div className="flex gap-4">
         <h1 className="text-2xl font-bold">Streamings PZO</h1>
-        <BinancePriceCard price={price} />
+        <BinancePriceCard />
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex cursor-pointer items-center gap-3 rounded-xl p-2 text-left transition hover:bg-neutral-200/50">
