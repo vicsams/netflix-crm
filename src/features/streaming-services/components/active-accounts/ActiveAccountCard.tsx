@@ -2,7 +2,8 @@ import { useState } from "react";
 import ActiveAccountActions from "@/features/streaming-services/components/active-accounts/ActiveAccountActions";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
-import { toast } from "sonner";
+import { copyToClipboard } from "@/shared/lib/clipboard";
+import { formatDate } from "@/shared/lib/date";
 import {
   Item,
   ItemActions,
@@ -45,6 +46,28 @@ function resolveServiceTextColor(activeAccount: ActiveAccountProps): string {
   }
 }
 
+function CopyButton({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+      className="text-muted-foreground hover:text-foreground size-6 shrink-0"
+    >
+      <Copy className="size-3.5" />
+    </Button>
+  );
+}
+
 export default function ActiveAccountCard({
   activeAccount,
 }: {
@@ -59,12 +82,11 @@ export default function ActiveAccountCard({
 
   const handleCopyProfile = (e: React.MouseEvent, screen: ScreenProps) => {
     e.stopPropagation();
-    const textToCopy = `Correo electronico: ${activeAccount.email}
+    const textToCopy = `Correo electrónico: ${activeAccount.email}
 Contraseña: ${activeAccount.password}
 Perfil: ${screen.profileName}
 PIN: ${screen.profilePIN}`;
-    navigator.clipboard.writeText(textToCopy);
-    toast.success("Datos copiados al portapapeles");
+    copyToClipboard(textToCopy, "Datos del perfil copiados");
   };
 
   return (
@@ -82,17 +104,29 @@ PIN: ${screen.profilePIN}`;
             ) : (
               <p>Sin servicio</p>
             )}
-            <ItemDescription className="text-black">
-              <span className="font-semibold">Correo:</span>{" "}
-              {activeAccount.email}
+            <ItemDescription className="flex items-center gap-1 text-black">
+              <span className="font-semibold">Correo:</span>
+              <span className="truncate">{activeAccount.email}</span>
+              <CopyButton
+                label="Copiar correo"
+                onClick={() =>
+                  copyToClipboard(activeAccount.email, "Correo copiado")
+                }
+              />
+            </ItemDescription>
+            <ItemDescription className="flex items-center gap-1 text-black">
+              <span className="font-semibold">Contraseña:</span>
+              <span className="truncate">{activeAccount.password}</span>
+              <CopyButton
+                label="Copiar contraseña"
+                onClick={() =>
+                  copyToClipboard(activeAccount.password, "Contraseña copiada")
+                }
+              />
             </ItemDescription>
             <ItemDescription className="text-black">
-              <span className="font-semibold">Contraseña:</span>{" "}
-              {activeAccount.password}
-            </ItemDescription>
-            <ItemDescription className="text-black">
-              <span className="font-semibold">Expiracion:</span>{" "}
-              {new Date(activeAccount.expirationDate).toLocaleDateString()}
+              <span className="font-semibold">Expiración:</span>{" "}
+              {formatDate(new Date(activeAccount.expirationDate).toISOString())}
             </ItemDescription>
           </div>
         </div>
@@ -144,6 +178,7 @@ PIN: ${screen.profilePIN}`;
                           <Button
                             variant="ghost"
                             size="icon"
+                            aria-label={`Copiar datos del perfil ${screen.profileName}`}
                             className="h-7 w-7 shrink-0 rounded-full transition-opacity group-hover:opacity-100 hover:bg-neutral-100!"
                             onClick={(e) => {
                               handleCopyProfile(e, {
@@ -182,6 +217,7 @@ PIN: ${screen.profilePIN}`;
                           <Button
                             variant="ghost"
                             size="icon"
+                            aria-label={`Copiar datos del perfil ${screen.profileName}`}
                             className="h-7 w-7 shrink-0 rounded-full transition-opacity group-hover:opacity-100 hover:bg-neutral-100!"
                             onClick={(e) => {
                               handleCopyProfile(e, {
