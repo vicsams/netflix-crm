@@ -194,7 +194,11 @@ export type SignInFormValues = z.infer<typeof signInFormSchema>;
 export const signUpFormSchema = z.object({
   name: z.string().min(2, "El nombre es obligatorio"),
   email: z.email("Correo no valido"),
-  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  // Same limits as Better Auth's defaults (8–128), which the server enforces
+  password: z
+    .string()
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .max(128, "La contraseña no puede tener más de 128 caracteres"),
 });
 
 export type SignUpFormValues = z.infer<typeof signUpFormSchema>;

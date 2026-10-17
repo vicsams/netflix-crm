@@ -1,10 +1,13 @@
-export type SignUpResult = {
-  error?: { status?: number } | null;
-  [key: string]: unknown;
-} | null;
-
-export type SignUpError = {
+// Better Auth returns failures as { error } instead of throwing
+export type SignUpApiError = {
   status?: number;
   code?: string;
   message?: string;
-} & Error;
+};
+
+export type SignUpResult = {
+  error?: SignUpApiError | null;
+  [key: string]: unknown;
+} | null;
+
+export type SignUpError = SignUpApiError & Error;

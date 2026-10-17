@@ -58,6 +58,7 @@ import { ServiceProps } from "@/features/streaming-services/types/service";
 import { ActiveAccountProps } from "@/features/streaming-services/types/activeAccount";
 import { ScreenProps } from "@/features/streaming-services/types/screen";
 import { Client } from "@/features/clients/types/client";
+import AmountNotice from "@/features/subscriptions/components/AmountNotice";
 
 export type CreateClientStatusDialogProps = {
   onCreated?: (item: CreateClientStatusPayload) => void;
@@ -151,7 +152,12 @@ export default function CreateClientStatusDialog({
 
     const days = differenceInDays(date, new Date());
     if (days <= 0)
-      return { cents: 0, usdFormatted: "0.00", bsFormatted: "0.00 Bs" };
+      return {
+        cents: 0,
+        waitingForRate: false,
+        usdFormatted: "0.00",
+        bsFormatted: "0.00 Bs",
+      };
 
     // service.price is in cents
     const usdPriceCents = (selectedService.price / 30) * days;
@@ -173,6 +179,7 @@ export default function CreateClientStatusDialog({
 
     return {
       cents: Math.round(netBsFloat * 100),
+      waitingForRate: !rate,
       usdFormatted: usdPriceFormatted,
       grossBsFormatted: rate
         ? `${grossBsFloat.toFixed(2)} Bs`
@@ -193,8 +200,15 @@ export default function CreateClientStatusDialog({
   const selectedClient =
     clients.find((client) => client.id === selectedClientId) ?? null;
 
+  // Without a rate the amount is not real yet, so saving is blocked; a real
+  // 0 Bs net is allowed but flagged (no earnings get recorded for it)
+  const waitingForRate = calculatedAmount?.waitingForRate ?? false;
+  const zeroAmount =
+    !!calculatedAmount && !waitingForRate && calculatedAmount.cents <= 0;
+
   const onSubmit = (data: CreateClientStatusValues) => {
     setError(null);
+    if (waitingForRate) return;
     let expirationDate = data.expirationDate;
 
     if (date) {
@@ -494,6 +508,15 @@ export default function CreateClientStatusDialog({
             </div>
           )}
 
+          <div className="col-span-2">
+            <AmountNotice
+              waitingForRate={waitingForRate}
+              customRate={selectedPriceSource === "CUSTOM"}
+              zeroAmount={zeroAmount}
+              zeroAmountMessage="La suscripción se creará sin registrar ningún ingreso en tus ganancias."
+            />
+          </div>
+
           {error && <div className="text-destructive text-sm">{error}</div>}
 
           <DialogFooter className="col-span-2 flex-row justify-end">
@@ -506,12 +529,17 @@ export default function CreateClientStatusDialog({
                 Cancelar
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={mutation.isPending}>
+            <Button
+              type="submit"
+              disabled={mutation.isPending || waitingForRate}
+            >
               {mutation.isPending ? (
                 <>
                   <Spinner />
                   Creando
                 </>
+              ) : zeroAmount ? (
+                "Crear con 0 Bs"
               ) : (
                 "Crear"
               )}

@@ -32,7 +32,19 @@ import {
   signUpFormSchema,
   type SignUpFormValues,
 } from "@/features/auth/schemas";
-import { type SignUpError, type SignUpResult } from "../types/signUp";
+import {
+  type SignUpApiError,
+  type SignUpError,
+  type SignUpResult,
+} from "../types/signUp";
+
+type GeneralError = { title: string; description: string };
+
+const EMAIL_IN_USE: GeneralError = {
+  title: "El correo ingresado ya esta en uso",
+  description:
+    "Por favor intente nuevamente con otro correo o compruebe que haya introducido correctamente su correo.",
+};
 
 export default function SignUpForm() {
   const queryClient = useQueryClient();
@@ -46,7 +58,44 @@ export default function SignUpForm() {
     },
   });
 
-  const [generalError, setGeneralError] = useState<string | null>(null);
+  const [generalError, setGeneralError] = useState<GeneralError | null>(null);
+
+  // Any error means no account was created: show it and stay on the form
+  // instead of sending the user to "check your email"
+  function handleSignUpError(error: SignUpApiError) {
+    switch (error.code) {
+      case "USER_ALREADY_EXISTS":
+      case "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL":
+        setGeneralError(EMAIL_IN_USE);
+        return;
+      case "PASSWORD_TOO_SHORT":
+        form.setError("password", {
+          type: "server",
+          message: "La contraseña debe tener al menos 8 caracteres",
+        });
+        return;
+      case "PASSWORD_TOO_LONG":
+        form.setError("password", {
+          type: "server",
+          message: "La contraseña no puede tener más de 128 caracteres",
+        });
+        return;
+      case "INVALID_EMAIL":
+        form.setError("email", { type: "server", message: "Correo no valido" });
+        return;
+    }
+
+    if (error.status === 422) {
+      setGeneralError(EMAIL_IN_USE);
+      return;
+    }
+
+    setGeneralError({
+      title: "No se pudo crear la cuenta",
+      description:
+        "Ocurrió un error inesperado. Por favor intente nuevamente en unos minutos.",
+    });
+  }
 
   const signUpMutation = useMutation<
     SignUpResult,
@@ -63,8 +112,8 @@ export default function SignUpForm() {
       setGeneralError(null);
     },
     onSuccess: (data: SignUpResult) => {
-      if (data?.error?.status === 422) {
-        setGeneralError("El correo ingresado ya esta en uso");
+      if (data?.error) {
+        handleSignUpError(data.error);
         return;
       }
 
@@ -72,16 +121,7 @@ export default function SignUpForm() {
       router.push("/verify-email");
     },
     onError: (err: SignUpError) => {
-      if (err?.status === 422 || err?.code === "API_ERROR") {
-        setGeneralError("El correo ingresado ya esta en uso");
-        return;
-      }
-      const message = err?.message || "Error durante el registro";
-      if (message.toLowerCase().includes("email")) {
-        form.setError("email", { type: "server", message });
-      } else {
-        form.setError("email", { type: "server", message });
-      }
+      handleSignUpError(err);
     },
   });
 
@@ -173,10 +213,9 @@ export default function SignUpForm() {
           <Dialog defaultOpen={true}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{generalError}</DialogTitle>
+                <DialogTitle>{generalError.title}</DialogTitle>
                 <DialogDescription>
-                  Por favor intente nuevamente con otro correo o compruebe que
-                  haya introducido correctamente su correo.
+                  {generalError.description}
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
