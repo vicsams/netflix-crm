@@ -55,12 +55,19 @@ export default function ClientActions({ client }: ClientActionsProps) {
         onOpenChange={setShowUpdateDialog}
       />
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <AlertDialog
+        open={showDeleteDialog}
+        onOpenChange={(open) => {
+          if (deleteMutation.isPending) return;
+          if (!open) setErrorMessage(null);
+          setShowDeleteDialog(open);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Estas seguro?</AlertDialogTitle>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta accion no se puede deshacer. Esto eliminara permanentemente
+              Esta acción no se puede deshacer. Esto eliminará permanentemente
               al cliente &quot;{client.clientName}&quot;.
             </AlertDialogDescription>
             {errorMessage && (
@@ -68,11 +75,16 @@ export default function ClientActions({ client }: ClientActionsProps) {
             )}
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setErrorMessage(null)}>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteMutation.mutate()}
+              onClick={(event) => {
+                // AlertDialogAction closes the dialog on click; keep it open
+                // so the spinner and any error show, and close it on success
+                event.preventDefault();
+                deleteMutation.mutate();
+              }}
               className="bg-destructive hover:bg-destructive/90"
               disabled={deleteMutation.isPending}
             >

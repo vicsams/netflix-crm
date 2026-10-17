@@ -86,7 +86,12 @@ export default function ClientStatusActions({
         onOpenChange={setShowMessageDialog}
       />
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <AlertDialog
+        open={showDeleteDialog}
+        onOpenChange={(open) => {
+          if (!deleteMutation.isPending) setShowDeleteDialog(open);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
@@ -96,9 +101,16 @@ export default function ClientStatusActions({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
+              Cancelar
+            </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteMutation.mutate()}
+              onClick={(event) => {
+                // AlertDialogAction closes the dialog on click; keep it open
+                // so the spinner and any error show, and close it on success
+                event.preventDefault();
+                deleteMutation.mutate();
+              }}
               className="bg-destructive hover:bg-destructive/90"
               disabled={deleteMutation.isPending}
             >
