@@ -4,12 +4,18 @@
 //   bun scripts/copy-user-data.ts <from-email> <to-email>            (dry run)
 //   bun scripts/copy-user-data.ts <from-email> <to-email> --confirm  (apply)
 import { randomUUID } from "crypto";
+import net from "net";
 import prisma from "@/shared/lib/db";
 
 const [fromEmail, toEmail] = process.argv
   .slice(2)
   .filter((a) => !a.startsWith("--"));
 const confirm = process.argv.includes("--confirm");
+
+// Under Bun, `pg` connections to Neon time out (ETIMEDOUT) while Bun races
+// the host's addresses (autoSelectFamily); connecting to one at a time works.
+// The pool connects lazily, so setting this before the first query is enough
+net.setDefaultAutoSelectFamily(false);
 
 if (!fromEmail || !toEmail) {
   console.error(
@@ -208,7 +214,11 @@ async function main() {
 
 main()
   .catch((error) => {
-    console.error(error instanceof Error ? error.message : error);
+    // Prisma errors carry a code (e.g. ETIMEDOUT) that is not in the message,
+    // so log them whole; the script's own errors only need their message
+    console.error(
+      error instanceof Error && !("code" in error) ? error.message : error,
+    );
     process.exitCode = 1;
   })
   .finally(() => prisma.$disconnect());
