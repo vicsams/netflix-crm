@@ -17,6 +17,9 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("Error fetching bank earnings:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

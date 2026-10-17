@@ -44,7 +44,7 @@ async function checkEmailVerification(email: string) {
   if (!res.ok) {
     return {
       ok: false as const,
-      error: { message: json?.message || "Error checking email" },
+      error: { message: json?.message || "Error verificando el correo" },
     };
   }
 
@@ -75,7 +75,8 @@ export default function ForgotPasswordForm() {
           return {
             error: {
               code: "not_verified",
-              message: "The email sent is not verified",
+              message:
+                "Este correo aún no está verificado. Revisa tu bandeja de entrada y verifícalo primero.",
             },
           };
         }

@@ -14,21 +14,21 @@ export async function POST(req: Request) {
 
     if (currency !== "BS" && currency !== "USDT") {
       return NextResponse.json(
-        { message: "Invalid currency. Use BS or USDT" },
+        { message: "Moneda inválida. Usa BS o USDT" },
         { status: 400 },
       );
     }
 
     if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json(
-        { message: "Amount must be a number greater than 0" },
+        { message: "El monto debe ser mayor que 0" },
         { status: 400 },
       );
     }
 
     if (typeof reason !== "string" || reason.trim().length === 0) {
       return NextResponse.json(
-        { message: "Reason is required" },
+        { message: "El motivo es obligatorio" },
         { status: 400 },
       );
     }
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
     if (amountInCents <= 0) {
       return NextResponse.json(
-        { message: "Amount must be greater than 0" },
+        { message: "El monto debe ser mayor que 0" },
         { status: 400 },
       );
     }
@@ -47,7 +47,10 @@ export async function POST(req: Request) {
     });
 
     if (!currentBank) {
-      return NextResponse.json({ message: "Bank not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "No hay fondos registrados" },
+        { status: 404 },
+      );
     }
 
     const available =
@@ -58,8 +61,8 @@ export async function POST(req: Request) {
         {
           message:
             currency === "BS"
-              ? "Insufficient Bs funds in bank"
-              : "Insufficient USDT funds in bank",
+              ? "No tienes suficientes fondos en Bs"
+              : "No tienes suficientes fondos en USDT",
         },
         { status: 400 },
       );
@@ -97,6 +100,9 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("Error withdrawing bank funds:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

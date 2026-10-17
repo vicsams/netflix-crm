@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import CreateServiceDialog from "@/features/streaming-services/components/service-management/CreateServiceDialog";
 import { useQuery } from "@tanstack/react-query";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { fetchServices } from "@/features/streaming-services/services/service-management/services";
 import type { ServiceProps } from "@/features/streaming-services/types/service";
 import ServiceActions from "@/features/streaming-services/components/service-management/ServiceActions";
@@ -88,7 +89,7 @@ export default function ServicesSection() {
         )}
         {isError && (
           <div className="text-red-600">
-            Error loading services: {error?.message ?? String(error)}
+            {getErrorMessage(error, "No se pudieron cargar los servicios")}
           </div>
         )}
 

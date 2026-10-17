@@ -45,7 +45,10 @@ export async function GET(req: Request) {
     return NextResponse.json(clients.map(toClientResponse));
   } catch (error) {
     console.error("Error fetching clients:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }
 
@@ -55,7 +58,7 @@ export async function POST(req: Request) {
 
     const parsed = createClientSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid data" }, { status: 400 });
+      return NextResponse.json({ message: "Datos inválidos" }, { status: 400 });
     }
 
     const { userId, response } = await requireUser(req);
@@ -85,12 +88,15 @@ export async function POST(req: Request) {
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { message: "Ya existe un cliente con ese numero de telefono" },
+        { message: "Ya existe un cliente con ese número de teléfono" },
         { status: 409 },
       );
     }
 
     console.error("Error creating client:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

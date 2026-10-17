@@ -40,7 +40,7 @@ export const auth = betterAuth({
       const { error } = await resend.emails.send({
         from: EMAIL_FROM,
         to: user.email!,
-        subject: "Reset your password",
+        subject: "Restablece tu contraseña",
         react: TwitchResetPasswordEmail({
           resetUrl,
           username: user.name!,
@@ -71,8 +71,8 @@ export const auth = betterAuth({
       const { error } = await resend.emails.send({
         from: EMAIL_FROM,
         to: user.email!,
-        subject: "Verify your email",
-        html: `<p>Please verify your email by clicking <a href="${url}">here</a>.</p>`,
+        subject: "Verifica tu correo",
+        html: `<p>Hola,</p><p>Para activar tu cuenta, verifica tu correo haciendo clic <a href="${url}">aquí</a>.</p><p>Si no creaste esta cuenta, puedes ignorar este correo.</p>`,
       });
 
       if (error) {

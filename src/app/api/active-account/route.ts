@@ -2,6 +2,7 @@ import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
 import { requireUser } from "@/shared/lib/session";
 import { decryptSecret, encryptSecret } from "@/shared/lib/crypto";
+import { isUniqueViolation } from "@/shared/lib/db-errors";
 
 export async function POST(req: Request) {
   try {
@@ -13,28 +14,28 @@ export async function POST(req: Request) {
 
     if (!email || typeof email !== "string") {
       return NextResponse.json(
-        { message: "Email is required" },
+        { message: "El correo es obligatorio" },
         { status: 400 },
       );
     }
 
     if (!password || typeof password !== "string") {
       return NextResponse.json(
-        { message: "Password is required" },
+        { message: "La contraseña es obligatoria" },
         { status: 400 },
       );
     }
 
     if (!expirationDate || typeof expirationDate !== "string") {
       return NextResponse.json(
-        { message: "expirationDate is required (ISO string)" },
+        { message: "La fecha de expiración es obligatoria" },
         { status: 400 },
       );
     }
 
     if (!serviceId || typeof serviceId !== "string") {
       return NextResponse.json(
-        { message: "serviceId is required" },
+        { message: "Selecciona un servicio" },
         { status: 400 },
       );
     }
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
     const exp = new Date(expirationDate);
     if (isNaN(exp.getTime())) {
       return NextResponse.json(
-        { message: "Invalid expirationDate" },
+        { message: "Fecha de expiración inválida" },
         { status: 400 },
       );
     }
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
 
     if (!serviceExists) {
       return NextResponse.json(
-        { message: "service not found" },
+        { message: "Servicio no encontrado" },
         { status: 404 },
       );
     }
@@ -78,8 +79,18 @@ export async function POST(req: Request) {
       },
       { status: 201 },
     );
-  } catch {
-    return NextResponse.json({ err: "Internal error" }, { status: 500 });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      return NextResponse.json(
+        { message: "Ya existe una cuenta con ese correo" },
+        { status: 409 },
+      );
+    }
+    console.error("Error creating active account:", error);
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }
 
@@ -118,6 +129,9 @@ export async function GET(req: Request) {
     );
   } catch (error) {
     console.error("GET Active Accounts error:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

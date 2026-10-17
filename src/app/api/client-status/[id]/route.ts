@@ -21,7 +21,7 @@ export async function PATCH(
     const parsed = updateClientStatusSchema.partial().safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid data" }, { status: 400 });
+      return NextResponse.json({ message: "Datos inválidos" }, { status: 400 });
     }
 
     const subscriptionData: Record<string, unknown> = {
@@ -84,7 +84,7 @@ export async function PATCH(
 
     if (!currentSubscription) {
       return NextResponse.json(
-        { message: "Subscription not found" },
+        { message: "Suscripción no encontrada" },
         { status: 404 },
       );
     }
@@ -119,28 +119,31 @@ export async function PATCH(
 
     if (!nextActiveAccount) {
       return NextResponse.json(
-        { message: "Active account not found" },
+        { message: "Cuenta no encontrada" },
         { status: 404 },
       );
     }
 
     if (!nextService) {
       return NextResponse.json(
-        { message: "Service not found" },
+        { message: "Servicio no encontrado" },
         { status: 404 },
       );
     }
 
     if (!nextScreen) {
       return NextResponse.json(
-        { message: "Screen not found" },
+        { message: "Pantalla no encontrada" },
         { status: 404 },
       );
     }
 
     if (nextScreen.activeAccountId !== nextActiveAccount.id) {
       return NextResponse.json(
-        { message: "Selected profile does not belong to the selected account" },
+        {
+          message:
+            "El perfil seleccionado no pertenece a la cuenta seleccionada",
+        },
         { status: 400 },
       );
     }
@@ -150,7 +153,10 @@ export async function PATCH(
       nextActiveAccount.serviceId !== nextService.id
     ) {
       return NextResponse.json(
-        { message: "Selected account does not belong to the selected service" },
+        {
+          message:
+            "La cuenta seleccionada no pertenece al servicio seleccionado",
+        },
         { status: 400 },
       );
     }
@@ -166,7 +172,7 @@ export async function PATCH(
 
       if (!clientExists) {
         return NextResponse.json(
-          { message: "Client not found" },
+          { message: "Cliente no encontrado" },
           { status: 404 },
         );
       }
@@ -257,7 +263,10 @@ export async function PATCH(
       );
     }
 
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }
 
@@ -276,14 +285,17 @@ export async function DELETE(
 
     if (count === 0) {
       return NextResponse.json(
-        { message: "Subscription not found" },
+        { message: "Suscripción no encontrada" },
         { status: 404 },
       );
     }
 
-    return NextResponse.json({ message: "Client status deleted" });
+    return NextResponse.json({ message: "Suscripción eliminada" });
   } catch (error) {
     console.error("Error deleting client status:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

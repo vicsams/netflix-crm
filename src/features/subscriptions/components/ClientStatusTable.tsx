@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getErrorMessage } from "@/shared/lib/errors";
 import CreateClientStatusDialog from "./CreateClientStatusDialog";
 import {
   fetchClientStatuses,
@@ -241,7 +242,7 @@ export default function ClientStatusTable() {
           </div>
         ) : isError ? (
           <div className="text-destructive">
-            {error instanceof Error ? error.message : "An error occurred"}
+            {getErrorMessage(error, "No se pudieron cargar las suscripciones")}
           </div>
         ) : isMobile ? (
           <ClientStatusList

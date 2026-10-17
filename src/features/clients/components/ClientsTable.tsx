@@ -1,7 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { getErrorMessage } from "@/shared/lib/errors";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { DataTable } from "@/shared/components/ui/data-table";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import CreateClientDialog from "@/features/clients/components/CreateClientDialog";
@@ -50,7 +56,7 @@ export default function ClientsTable() {
           </div>
         ) : isError ? (
           <div className="text-destructive px-4 py-3">
-            {error instanceof Error ? error.message : "An error occurred"}
+            {getErrorMessage(error, "No se pudieron cargar los clientes")}
           </div>
         ) : (
           <DataTable

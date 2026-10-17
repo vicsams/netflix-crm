@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       rate <= 0
     ) {
       return NextResponse.json(
-        { message: "Invalid amount or rate provided" },
+        { message: "Monto o tasa inválidos" },
         { status: 400 },
       );
     }
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           message:
-            "The change rate cannot be higher than the amount you want to convert",
+            "La tasa de cambio no puede ser mayor que el monto a convertir",
         },
         { status: 400 },
       );
@@ -37,14 +37,17 @@ export async function POST(req: Request) {
     });
 
     if (!currentBank) {
-      return NextResponse.json({ message: "Bank not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "No hay fondos registrados" },
+        { status: 404 },
+      );
     }
 
     const amountInCents = Math.round(amountBs * 100);
 
     if (currentBank.total < amountInCents) {
       return NextResponse.json(
-        { message: "Insufficient Bs funds in bank" },
+        { message: "No tienes suficientes fondos en Bs" },
         { status: 400 },
       );
     }
@@ -67,6 +70,9 @@ export async function POST(req: Request) {
     return NextResponse.json(updatedBank);
   } catch (error) {
     console.error("Error converting bank currency:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }
