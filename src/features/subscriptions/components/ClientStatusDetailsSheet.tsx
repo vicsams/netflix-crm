@@ -3,11 +3,11 @@
 import ClientStatusActions from "@/features/subscriptions/components/ClientStatusActions";
 import {
   formatAmount,
-  formatDate,
   getRemainingDaysLabel,
   ServiceBadge,
   StatusBadge,
 } from "@/features/subscriptions/components/table/columns";
+import { formatDate } from "@/shared/lib/date";
 import { ClientStatusDetailsSheetProps } from "@/features/subscriptions/types/clientStatus";
 import {
   Drawer,

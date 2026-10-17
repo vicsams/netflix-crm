@@ -4,6 +4,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  RowData,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -15,6 +16,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import { cn } from "@/shared/lib/utils";
+
+// Lets a column pass classes to its header and body cells, e.g. "w-px" to
+// shrink the column to its content
+declare module "@tanstack/react-table" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ColumnMeta<TData extends RowData, TValue> {
+    className?: string;
+  }
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -45,7 +56,10 @@ export function DataTable<TData, TValue>({
                 return (
                   <TableHead
                     key={header.id}
-                    className="sticky top-0 z-10 bg-neutral-700 font-bold text-white"
+                    className={cn(
+                      "sticky top-0 z-10 bg-neutral-700 font-bold text-white",
+                      header.column.columnDef.meta?.className,
+                    )}
                   >
                     {header.isPlaceholder
                       ? null
@@ -68,7 +82,10 @@ export function DataTable<TData, TValue>({
                 className={getRowClassName?.(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell
+                    key={cell.id}
+                    className={cell.column.columnDef.meta?.className}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

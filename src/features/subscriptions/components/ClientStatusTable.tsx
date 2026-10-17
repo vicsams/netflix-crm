@@ -17,11 +17,11 @@ import { DataTable } from "@/shared/components/ui/data-table";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import {
   columns,
-  formatDate,
   getDerivedStatus,
   STATUS_LABEL,
 } from "@/features/subscriptions/components/table/columns";
 import { differenceInDays } from "date-fns";
+import { formatDate, formatNumericDate } from "@/shared/lib/date";
 import { ClientStatus } from "@/features/subscriptions/types/clientStatus";
 import { Input } from "@/shared/components/ui/input";
 import {
@@ -82,14 +82,16 @@ const SEARCH_FIELDS: SearchField[] = [
   {
     value: "purchaseDate",
     label: "Fecha de compra",
-    placeholder: "dd/mm/aaaa",
-    getText: (row) => formatDate(row.purchaseDate),
+    placeholder: "dd/mm/aaaa o 10 de abril",
+    getText: (row) =>
+      `${formatNumericDate(row.purchaseDate)} ${formatDate(row.purchaseDate)}`,
   },
   {
     value: "expirationDate",
     label: "Fecha de vencimiento",
-    placeholder: "dd/mm/aaaa",
-    getText: (row) => formatDate(row.expirationDate),
+    placeholder: "dd/mm/aaaa o 10 de abril",
+    getText: (row) =>
+      `${formatNumericDate(row.expirationDate)} ${formatDate(row.expirationDate)}`,
   },
 ];
 
