@@ -6,6 +6,7 @@ import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { refreshAfterChange } from "@/shared/lib/refresh";
+import useOnOpen from "@/shared/hooks/useOnOpen";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { useForm, useWatch } from "react-hook-form";
@@ -104,6 +105,15 @@ export default function CreateClientStatusDialog({
   const customUsdtRate = useWatch({ control, name: "customUsdtRate" });
   const supplierPrice = useWatch({ control, name: "supplierPrice" });
   const selectedClientId = useWatch({ control, name: "clientId" });
+  const selectedScreenId = useWatch({ control, name: "screenId" });
+
+  // Start from a blank form each time it opens, so a cancelled attempt
+  // doesn't come back
+  useOnOpen(open, () => {
+    reset();
+    setDate(undefined);
+    setError(null);
+  });
 
   const { data: clients = [] } = useQuery<Client[]>({
     queryKey: ["clients"],
@@ -297,7 +307,21 @@ export default function CreateClientStatusDialog({
 
             <div className="col-span-1">
               <Label>Cuenta activa</Label>
-              <Select onValueChange={(val) => setValue("activeAccountId", val)}>
+              <Select
+                value={selectedAccountId || ""}
+                onValueChange={(val) => {
+                  setValue("activeAccountId", val, { shouldValidate: true });
+                  // A profile belongs to one account: clear the previous
+                  // account's, and take the service from the new account
+                  setValue("screenId", "");
+                  const account = accounts.find((a) => a.id === val);
+                  if (account?.serviceId) {
+                    setValue("serviceId", account.serviceId, {
+                      shouldValidate: true,
+                    });
+                  }
+                }}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Seleccionar cuenta" />
                 </SelectTrigger>
@@ -323,7 +347,12 @@ export default function CreateClientStatusDialog({
           <div className="col-span-2 grid grid-cols-2 gap-4">
             <div className="col-span-1">
               <Label>Servicio</Label>
-              <Select onValueChange={(val) => setValue("serviceId", val)}>
+              <Select
+                value={selectedServiceId || ""}
+                onValueChange={(val) =>
+                  setValue("serviceId", val, { shouldValidate: true })
+                }
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Seleccionar servicio" />
                 </SelectTrigger>
@@ -348,7 +377,10 @@ export default function CreateClientStatusDialog({
             <div className="col-span-1">
               <Label>Pantalla / Perfil</Label>
               <Select
-                onValueChange={(val) => setValue("screenId", val)}
+                value={selectedScreenId || ""}
+                onValueChange={(val) =>
+                  setValue("screenId", val, { shouldValidate: true })
+                }
                 disabled={!selectedAccountId || screens.length === 0}
               >
                 <SelectTrigger className="w-full">
@@ -415,7 +447,7 @@ export default function CreateClientStatusDialog({
             <div className="col-span-1">
               <Label>Modo de tasa USDT</Label>
               <Select
-                defaultValue="BINANCE"
+                value={selectedPriceSource}
                 onValueChange={(val) =>
                   setValue("priceSource", val as "BINANCE" | "CUSTOM")
                 }

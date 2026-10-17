@@ -62,13 +62,27 @@ export async function POST(req: Request) {
       );
     }
 
+    // Same consistency rules as editing a subscription
+    if (accountExists.serviceId && accountExists.serviceId !== serviceId) {
+      return NextResponse.json(
+        {
+          message:
+            "La cuenta seleccionada no pertenece al servicio seleccionado",
+        },
+        { status: 400 },
+      );
+    }
+
     const screenExists = await prisma.screen.findFirst({
       where: { id: screenId, activeAccountId },
     });
     if (!screenExists) {
       return NextResponse.json(
-        { message: "Pantalla no encontrada" },
-        { status: 404 },
+        {
+          message:
+            "El perfil seleccionado no pertenece a la cuenta seleccionada",
+        },
+        { status: 400 },
       );
     }
 

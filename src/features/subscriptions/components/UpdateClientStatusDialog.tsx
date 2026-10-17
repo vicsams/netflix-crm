@@ -5,6 +5,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { refreshAfterChange } from "@/shared/lib/refresh";
+import useOnOpen from "@/shared/hooks/useOnOpen";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { updateClientStatus } from "@/features/subscriptions/services/subscriptions";
@@ -89,11 +90,16 @@ export default function UpdateClientStatusDialog({
   const [expirationDate, setExpirationDate] = useState<Date | undefined>(() =>
     toDate(clientStatus.expirationDate),
   );
-  const [prevOpen, setPrevOpen] = useState(open);
-  if (open !== prevOpen) {
-    setPrevOpen(open);
-    if (open) setExpirationDate(toDate(clientStatus.expirationDate));
-  }
+
+  const currentValues = (): UpdateClientStatusValues => ({
+    clientId: clientStatus.clientId,
+    activeAccountId: clientStatus.activeAccountId,
+    serviceId: clientStatus.serviceId,
+    screenId: clientStatus.screenId,
+    status:
+      (clientStatus.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION") ??
+      "NEAR_EXPIRATION",
+  });
 
   const {
     handleSubmit,
@@ -103,15 +109,14 @@ export default function UpdateClientStatusDialog({
     formState: { errors },
   } = useForm<UpdateClientStatusValues>({
     resolver: zodResolver(updateClientStatusSchema),
-    defaultValues: {
-      clientId: clientStatus.clientId,
-      activeAccountId: clientStatus.activeAccountId,
-      serviceId: clientStatus.serviceId,
-      screenId: clientStatus.screenId,
-      status:
-        (clientStatus.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION") ??
-        "NEAR_EXPIRATION",
-    },
+    defaultValues: currentValues(),
+  });
+
+  // Load the subscription's current values each time it opens. Only on open:
+  // resetting whenever the list refetched wiped edits in progress
+  useOnOpen(open, () => {
+    reset(currentValues());
+    setExpirationDate(toDate(clientStatus.expirationDate));
   });
 
   const selectedAccountId = useWatch({
@@ -143,20 +148,6 @@ export default function UpdateClientStatusDialog({
       selectedAccountId ? fetchScreens(selectedAccountId) : Promise.resolve([]),
     enabled: !!selectedAccountId,
   });
-
-  useEffect(() => {
-    if (!open) return;
-
-    reset({
-      clientId: clientStatus.clientId,
-      activeAccountId: clientStatus.activeAccountId,
-      serviceId: clientStatus.serviceId,
-      screenId: clientStatus.screenId,
-      status:
-        (clientStatus.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION") ??
-        "NEAR_EXPIRATION",
-    });
-  }, [clientStatus, open, reset]);
 
   useEffect(() => {
     if (!selectedAccountId || !screens.data || !selectedScreenId) return;

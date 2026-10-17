@@ -6,6 +6,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { refreshAfterChange } from "@/shared/lib/refresh";
+import useOnOpen from "@/shared/hooks/useOnOpen";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { updateActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
@@ -58,21 +59,28 @@ export default function UpdateActiveAccountDialog({
   const setOpen = isControlled ? setControlledOpen : setUncontrolledOpen;
   const queryClient = useQueryClient();
 
+  const currentValues = () => ({
+    email: activeAccount.email,
+    password: activeAccount.password,
+    serviceId: activeAccount.serviceId ?? "",
+    expirationDate: toDateInputValue(activeAccount.expirationDate),
+  });
+
   const {
     register,
     handleSubmit,
     control,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<z.infer<typeof createActiveAccountSchema>>({
     resolver: zodResolver(createActiveAccountSchema),
-    defaultValues: {
-      email: activeAccount.email,
-      password: activeAccount.password,
-      serviceId: activeAccount.serviceId ?? "",
-      expirationDate: toDateInputValue(activeAccount.expirationDate),
-    },
+    defaultValues: currentValues(),
   });
+
+  // Load the account's current values each time it opens: a cancelled edit
+  // doesn't come back, and a previous save is reflected
+  useOnOpen(open, () => reset(currentValues()));
 
   const selectedServiceId = useWatch({
     control,

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useOnOpen from "@/shared/hooks/useOnOpen";
 import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
@@ -61,6 +62,12 @@ export default function CreateServiceDialog() {
   const backgroundColor = useWatch({
     control,
     name: "backgroundColor",
+  });
+
+  // Start from a blank form each time it opens, so a cancelled attempt
+  // doesn't come back
+  useOnOpen(open, () => {
+    reset();
   });
 
   const mutation = useMutation({

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import useOnOpen from "@/shared/hooks/useOnOpen";
 import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
@@ -67,6 +68,14 @@ export default function CreateAccountDialog() {
   const servicesQuery = useQuery<ServiceProps[]>({
     queryKey: ["services"],
     queryFn: fetchServices,
+  });
+
+  // Start from a blank form each time it opens, so a cancelled attempt
+  // doesn't come back
+  useOnOpen(open, () => {
+    reset();
+    setServerError(null);
+    setDate(undefined);
   });
 
   const mutation = useMutation({

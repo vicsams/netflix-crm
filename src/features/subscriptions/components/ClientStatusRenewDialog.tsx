@@ -8,6 +8,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { refreshAfterChange } from "@/shared/lib/refresh";
+import useOnOpen from "@/shared/hooks/useOnOpen";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { cn } from "@/shared/lib/utils";
@@ -96,17 +97,6 @@ export default function ClientStatusRenewDialog({
       ? getRenewDate(clientStatus.expirationDate, presetMonths)
       : customDate;
 
-  // The dialog stays mounted, so reset the choice every time it opens
-  const [prevOpen, setPrevOpen] = useState(open);
-  if (open !== prevOpen) {
-    setPrevOpen(open);
-    if (open) {
-      setMode("PRESET");
-      setPresetMonths(1);
-      setCustomDate(undefined);
-    }
-  }
-
   function changeMode(next: RenewMode) {
     // Start the calendar on the date the preset was showing
     if (next === "CUSTOM" && !customDate) setCustomDate(date);
@@ -118,6 +108,7 @@ export default function ClientStatusRenewDialog({
     handleSubmit,
     control,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<RenewClientStatusValues>({
     resolver: zodResolver(renewClientStatusSchema),
@@ -127,6 +118,15 @@ export default function ClientStatusRenewDialog({
       customUsdtRate: null,
       supplierPrice: 0,
     },
+  });
+
+  // The dialog stays mounted, so start over every time it opens: period, rate
+  // mode, manual rate and supplier price from a cancelled renewal don't carry
+  useOnOpen(open, () => {
+    setMode("PRESET");
+    setPresetMonths(1);
+    setCustomDate(undefined);
+    reset();
   });
 
   const selectedPriceSource = useWatch({
@@ -332,7 +332,7 @@ export default function ClientStatusRenewDialog({
               <div>
                 <Label>Modo de tasa USDT</Label>
                 <Select
-                  defaultValue="BINANCE"
+                  value={selectedPriceSource}
                   onValueChange={(val) =>
                     setValue("priceSource", val as "BINANCE" | "CUSTOM")
                   }
