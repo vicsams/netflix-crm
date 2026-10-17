@@ -5,6 +5,7 @@ import { format, differenceInDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { useForm, useWatch } from "react-hook-form";
@@ -136,8 +137,7 @@ export default function CreateClientStatusDialog({
       reset();
       setDate(undefined);
       onCreated?.(created);
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
-      queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
+      refreshAfterChange(queryClient, "subscription", "bank");
     },
     onError: (err: unknown) => {
       setError(getErrorMessage(err, "No se pudo crear la suscripción"));

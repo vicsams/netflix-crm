@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { createClient } from "@/features/clients/services/clients";
@@ -45,7 +46,7 @@ export default function CreateClientDialog() {
     mutationFn: createClient,
     onSuccess: () => {
       toast.success("Cliente creado");
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      refreshAfterChange(queryClient, "client");
       reset();
       setErrorMessage(null);
       setOpen(false);

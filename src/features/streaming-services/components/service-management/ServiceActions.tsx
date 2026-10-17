@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { fetchClientStatuses } from "@/features/subscriptions/services/subscriptions";
@@ -69,9 +70,7 @@ export default function ServiceActions({ service }: ServiceActionsProps) {
     },
     onSuccess: () => {
       toast.success("Servicio eliminado");
-      queryClient.invalidateQueries({ queryKey: ["services"] });
-      queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      refreshAfterChange(queryClient, "service");
       setShowDeleteDialog(false);
     },
     onError: (error) => {

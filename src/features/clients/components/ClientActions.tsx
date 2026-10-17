@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { deleteClient } from "@/features/clients/services/clients";
@@ -37,8 +38,7 @@ export default function ClientActions({ client }: ClientActionsProps) {
     mutationFn: async () => deleteClient(client.id),
     onSuccess: () => {
       toast.success("Cliente eliminado");
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      refreshAfterChange(queryClient, "client");
       setErrorMessage(null);
       setShowDeleteDialog(false);
     },

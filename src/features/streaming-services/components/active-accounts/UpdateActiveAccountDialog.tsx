@@ -5,6 +5,7 @@ import { format, parse } from "date-fns";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { updateActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
@@ -89,7 +90,7 @@ export default function UpdateActiveAccountDialog({
     },
     onSuccess: () => {
       toast.success("Cuenta actualizada");
-      queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
+      refreshAfterChange(queryClient, "account");
       if (setOpen) setOpen(false);
     },
     onError: (error) => {

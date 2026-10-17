@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { updateClient } from "@/features/clients/services/clients";
@@ -61,8 +62,7 @@ export default function UpdateClientDialog({
       updateClient(client.id, data),
     onSuccess: () => {
       toast.success("Cliente actualizado");
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      refreshAfterChange(queryClient, "client");
       setErrorMessage(null);
       setOpen?.(false);
     },

@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { updateScreen } from "@/features/streaming-services/services/active-accounts/screens";
@@ -50,8 +51,7 @@ export default function UpdateScreenDialog({
     },
     onSuccess: () => {
       toast.success("Pantalla actualizada");
-      queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      refreshAfterChange(queryClient, "screen");
       onOpenChange(false);
     },
     onError: (error) => {

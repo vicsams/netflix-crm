@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { createActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
@@ -83,7 +84,7 @@ export default function CreateAccountDialog() {
     },
     onSuccess: () => {
       toast.success("Cuenta creada");
-      queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
+      refreshAfterChange(queryClient, "account");
       reset();
       setServerError(null);
       setDate(undefined);

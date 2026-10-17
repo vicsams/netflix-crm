@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { z } from "zod";
@@ -68,8 +69,7 @@ export default function CreateScreenDialog({
       setOpen(false);
       reset();
       setServerError(null);
-      queryClient.invalidateQueries({ queryKey: ["screens"] });
-      queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
+      refreshAfterChange(queryClient, "screen");
     },
     onError: (err: unknown) => {
       setServerError(getErrorMessage(err, "No se pudo crear la pantalla"));

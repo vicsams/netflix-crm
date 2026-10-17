@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { formatMoney } from "@/shared/lib/money";
@@ -69,8 +70,7 @@ export default function WithdrawFundsDialog({
     },
     onSuccess: () => {
       toast.success("Retiro registrado");
-      queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
-      queryClient.invalidateQueries({ queryKey: ["bankWithdrawals"] });
+      refreshAfterChange(queryClient, "bank");
       onOpenChange(false);
       resetForm();
     },

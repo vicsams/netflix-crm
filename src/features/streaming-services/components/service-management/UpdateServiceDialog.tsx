@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { updateService } from "@/features/streaming-services/services/service-management/services";
@@ -84,7 +85,7 @@ export default function UpdateServiceDialog({
     },
     onSuccess: () => {
       toast.success("Servicio actualizado");
-      queryClient.invalidateQueries({ queryKey: ["services"] });
+      refreshAfterChange(queryClient, "service");
       setOpen?.(false);
     },
     onError: (error) => {

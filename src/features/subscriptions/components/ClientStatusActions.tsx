@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { deleteClientStatus } from "@/features/subscriptions/services/subscriptions";
@@ -53,7 +54,7 @@ export default function ClientStatusActions({
     },
     onSuccess: () => {
       toast.success("Suscripción eliminada");
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      refreshAfterChange(queryClient, "subscription");
       setShowDeleteDialog(false);
     },
     onError: (error) => {

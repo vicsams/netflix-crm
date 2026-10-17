@@ -7,6 +7,7 @@ import { CalendarIcon } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
 import { cn } from "@/shared/lib/utils";
@@ -210,8 +211,7 @@ export default function ClientStatusRenewDialog({
       toast.success(
         `Suscripción renovada hasta el ${formatDate(date?.toISOString())}`,
       );
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
-      queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
+      refreshAfterChange(queryClient, "subscription", "bank");
       onOpenChange(false);
     },
     onError: (error) => {
