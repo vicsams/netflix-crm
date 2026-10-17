@@ -22,16 +22,6 @@ export async function POST(req: Request) {
       );
     }
 
-    if (rate > amountBs) {
-      return NextResponse.json(
-        {
-          message:
-            "La tasa de cambio no puede ser mayor que el monto a convertir",
-        },
-        { status: 400 },
-      );
-    }
-
     const currentBank = await prisma.bankEarnings.findUnique({
       where: { userId },
     });
