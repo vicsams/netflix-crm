@@ -208,14 +208,14 @@ export default function ClientStatusRenewDialog({
     },
     onSuccess: () => {
       toast.success(
-        `SuscripciÃ³n renovada hasta el ${formatDate(date?.toISOString())}`,
+        `Suscripción renovada hasta el ${formatDate(date?.toISOString())}`,
       );
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
       onOpenChange(false);
     },
     onError: (error) => {
-      toast.error(getErrorMessage(error, "No se pudo renovar la suscripciÃ³n"));
+      toast.error(getErrorMessage(error, "No se pudo renovar la suscripción"));
     },
   });
 

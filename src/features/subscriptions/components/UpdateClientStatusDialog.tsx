@@ -157,13 +157,13 @@ export default function UpdateClientStatusDialog({
       });
     },
     onSuccess: () => {
-      toast.success("SuscripciÃ³n actualizada");
+      toast.success("Suscripción actualizada");
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       if (setOpen) setOpen(false);
     },
     onError: (error) => {
       toast.error(
-        getErrorMessage(error, "No se pudo actualizar la suscripciÃ³n"),
+        getErrorMessage(error, "No se pudo actualizar la suscripción"),
       );
     },
   });

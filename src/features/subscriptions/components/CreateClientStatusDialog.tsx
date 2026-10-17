@@ -131,7 +131,7 @@ export default function CreateClientStatusDialog({
   const mutation = useMutation({
     mutationFn: createClientStatus,
     onSuccess: (created) => {
-      toast.success("SuscripciÃ³n creada");
+      toast.success("Suscripción creada");
       setOpen(false);
       reset();
       setDate(undefined);
@@ -140,7 +140,7 @@ export default function CreateClientStatusDialog({
       queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
     },
     onError: (err: unknown) => {
-      setError(getErrorMessage(err, "No se pudo crear la suscripciÃ³n"));
+      setError(getErrorMessage(err, "No se pudo crear la suscripción"));
     },
   });
 

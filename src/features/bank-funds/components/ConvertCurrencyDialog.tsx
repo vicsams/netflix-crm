@@ -33,7 +33,7 @@ export default function ConvertCurrencyDialog({
       return convertCurrency({ amountBs, rate });
     },
     onSuccess: () => {
-      toast.success("ConversiÃ³n realizada");
+      toast.success("Conversión realizada");
       queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
       onOpenChange(false);
       setAmountBs("");
@@ -41,7 +41,7 @@ export default function ConvertCurrencyDialog({
       setError(null);
     },
     onError: (err: unknown) => {
-      setError(getErrorMessage(err, "OcurriÃ³ un error en la conversiÃ³n"));
+      setError(getErrorMessage(err, "Ocurrió un error en la conversión"));
     },
   });
 

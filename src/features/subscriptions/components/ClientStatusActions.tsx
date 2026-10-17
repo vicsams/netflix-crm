@@ -54,13 +54,13 @@ export default function ClientStatusActions({
       return await deleteClientStatus(clientStatus.id);
     },
     onSuccess: () => {
-      toast.success("SuscripciÃ³n eliminada");
+      toast.success("Suscripción eliminada");
       queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
       setShowDeleteDialog(false);
     },
     onError: (error) => {
       toast.error(
-        getErrorMessage(error, "No se pudo eliminar la suscripciÃ³n"),
+        getErrorMessage(error, "No se pudo eliminar la suscripción"),
       );
     },
   });

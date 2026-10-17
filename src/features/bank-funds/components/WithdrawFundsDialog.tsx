@@ -56,7 +56,7 @@ export default function WithdrawFundsDialog({
       setError(null);
     },
     onError: (err: unknown) => {
-      setError(getErrorMessage(err, "OcurriÃ³ un error al retirar fondos"));
+      setError(getErrorMessage(err, "Ocurrió un error al retirar fondos"));
     },
   });
 
