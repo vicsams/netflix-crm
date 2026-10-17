@@ -35,8 +35,7 @@ export interface ClientStatusActionsProps {
 export type ClientStatusMessageDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  clientName: string;
-  phoneNumber: string;
+  clientStatus: ClientStatus;
 };
 
 export interface ClientStatusRenewDialogProps {

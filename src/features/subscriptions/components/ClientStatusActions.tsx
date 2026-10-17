@@ -40,8 +40,6 @@ export default function ClientStatusActions({
   variant = "menu",
 }: ClientStatusActionsProps) {
   const clientName = clientStatus.client?.clientName ?? clientStatus.clientName;
-  const phoneNumber =
-    clientStatus.client?.phoneNumber ?? clientStatus.phoneNumber;
 
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -59,9 +57,7 @@ export default function ClientStatusActions({
       setShowDeleteDialog(false);
     },
     onError: (error) => {
-      toast.error(
-        getErrorMessage(error, "No se pudo eliminar la suscripción"),
-      );
+      toast.error(getErrorMessage(error, "No se pudo eliminar la suscripción"));
     },
   });
 
@@ -80,8 +76,7 @@ export default function ClientStatusActions({
       />
 
       <ClientStatusMessageDialog
-        clientName={clientName}
-        phoneNumber={phoneNumber}
+        clientStatus={clientStatus}
         open={showMessageDialog}
         onOpenChange={setShowMessageDialog}
       />
