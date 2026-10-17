@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { format, parse } from "date-fns";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -36,6 +37,13 @@ import { Spinner } from "@/shared/components/ui/spinner";
 import { z } from "zod";
 import { UpdateActiveAccountDialogProps } from "@/features/streaming-services/types/activeAccount";
 
+// The date input works in "YYYY-MM-DD"; read and write it in local time.
+// toISOString() gives the UTC day, and the server reads a bare "YYYY-MM-DD" as
+// UTC midnight, which in UTC- timezones is the previous day
+function toDateInputValue(value: Date | string) {
+  return format(new Date(value), "yyyy-MM-dd");
+}
+
 export default function UpdateActiveAccountDialog({
   activeAccount,
   open: controlledOpen,
@@ -59,9 +67,7 @@ export default function UpdateActiveAccountDialog({
       email: activeAccount.email,
       password: activeAccount.password,
       serviceId: activeAccount.serviceId ?? "",
-      expirationDate: new Date(activeAccount.expirationDate)
-        .toISOString()
-        .split("T")[0],
+      expirationDate: toDateInputValue(activeAccount.expirationDate),
     },
   });
 
@@ -76,7 +82,7 @@ export default function UpdateActiveAccountDialog({
   });
 
   const mutation = useMutation({
-    mutationFn: async (data: CreateActiveAccountValues) => {
+    mutationFn: async (data: Partial<CreateActiveAccountValues>) => {
       return await updateActiveAccount(activeAccount.id, data);
     },
     onSuccess: () => {
@@ -88,8 +94,25 @@ export default function UpdateActiveAccountDialog({
     },
   });
 
-  const onSubmit = async (values: CreateActiveAccountValues) => {
-    await mutation.mutateAsync(values);
+  const onSubmit = async ({
+    expirationDate,
+    ...values
+  }: CreateActiveAccountValues) => {
+    // Only send the date when it was changed, as a full local-midnight
+    // timestamp, so editing other fields never moves it
+    const dateChanged =
+      expirationDate !== toDateInputValue(activeAccount.expirationDate);
+
+    await mutation.mutateAsync({
+      ...values,
+      ...(dateChanged && {
+        expirationDate: parse(
+          expirationDate,
+          "yyyy-MM-dd",
+          new Date(),
+        ).toISOString(),
+      }),
+    });
   };
 
   return (

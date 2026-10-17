@@ -67,6 +67,9 @@ export default function UpdateClientStatusDialog({
     queryFn: fetchActiveAccount,
   });
 
+  // No expiration date here: this form has no date field, and resending the
+  // stored one (cut to "YYYY-MM-DD") made the server read it as UTC midnight,
+  // moving it back a day. Dates change through Renovar
   const {
     handleSubmit,
     reset,
@@ -83,9 +86,6 @@ export default function UpdateClientStatusDialog({
       status:
         (clientStatus.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION") ??
         "NEAR_EXPIRATION",
-      expirationDate: clientStatus.expirationDate
-        ? new Date(clientStatus.expirationDate).toISOString().split("T")[0]
-        : null,
     },
   });
 
@@ -130,9 +130,6 @@ export default function UpdateClientStatusDialog({
       status:
         (clientStatus.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION") ??
         "NEAR_EXPIRATION",
-      expirationDate: clientStatus.expirationDate
-        ? new Date(clientStatus.expirationDate).toISOString().split("T")[0]
-        : null,
     });
   }, [clientStatus, open, reset]);
 
