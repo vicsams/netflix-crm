@@ -41,7 +41,20 @@ import {
   SelectLabel,
   SelectGroup,
 } from "@/shared/components/ui/select";
+import { Calendar } from "@/shared/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/shared/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { isBefore, isSameDay, startOfToday } from "date-fns";
+import { formatDate } from "@/shared/lib/date";
 import { UpdateClientStatusDialogProps } from "@/features/subscriptions/types/clientStatus";
+
+function toDate(value?: string | null) {
+  return value ? new Date(value) : undefined;
+}
 
 export default function UpdateClientStatusDialog({
   clientStatus,
@@ -69,9 +82,18 @@ export default function UpdateClientStatusDialog({
     queryFn: fetchActiveAccount,
   });
 
-  // No expiration date here: this form has no date field, and resending the
-  // stored one (cut to "YYYY-MM-DD") made the server read it as UTC midnight,
-  // moving it back a day. Dates change through Renovar
+  // The expiration date lives outside the form: it is only sent when the user
+  // changes it, as a full timestamp. Resending the stored one (cut to
+  // "YYYY-MM-DD") made the server read it as UTC midnight, a day earlier
+  const [expirationDate, setExpirationDate] = useState<Date | undefined>(() =>
+    toDate(clientStatus.expirationDate),
+  );
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) setExpirationDate(toDate(clientStatus.expirationDate));
+  }
+
   const {
     handleSubmit,
     reset,
@@ -169,7 +191,20 @@ export default function UpdateClientStatusDialog({
   });
 
   const onSubmit = async (values: UpdateClientStatusValues) => {
-    await mutation.mutateAsync(values);
+    const originalDate = toDate(clientStatus.expirationDate);
+    const dateChanged =
+      !!expirationDate &&
+      (!originalDate || !isSameDay(expirationDate, originalDate));
+
+    await mutation.mutateAsync({
+      ...values,
+      // A corrected date also corrects the status; no amount is sent, so the
+      // server records no earnings (that is what Renovar is for)
+      ...(dateChanged && {
+        expirationDate: expirationDate.toISOString(),
+        status: isBefore(expirationDate, startOfToday()) ? "EXPIRED" : "ACTIVE",
+      }),
+    });
   };
 
   return (
@@ -355,6 +390,39 @@ export default function UpdateClientStatusDialog({
                 </p>
               )}
             </div>
+          </div>
+
+          <div>
+            <Label>Fecha de vencimiento</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-muted-foreground w-full justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {expirationDate ? (
+                    formatDate(expirationDate.toISOString())
+                  ) : (
+                    <span>Sin fecha de vencimiento</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={expirationDate}
+                  defaultMonth={expirationDate}
+                  onSelect={setExpirationDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Corrige la fecha sin registrar un pago. Para cobrar una
+              renovación, usa Renovar.
+            </p>
           </div>
 
           <div className="mt-4 flex justify-end gap-2">
