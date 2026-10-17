@@ -145,6 +145,8 @@ export default function ForgotPasswordForm() {
                     <FieldLabel htmlFor="email">Correo</FieldLabel>
                     <Input
                       id="email"
+                      type="email"
+                      autoComplete="email"
                       placeholder="correo@ejemplo.com"
                       {...field}
                     />
@@ -191,7 +193,7 @@ export default function ForgotPasswordForm() {
               <p className="text-center">Revisa tu correo electrónico</p>
             </DialogTitle>
             <DialogDescription className="mt-4">
-              Hemos enviado un correo a tu buzon de entrada. Ingresa a tu correo
+              Hemos enviado un correo a tu buzón de entrada. Ingresa a tu correo
               para restablecer tu contraseña.
             </DialogDescription>
           </DialogHeader>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
+import { PasswordInput } from "@/shared/components/ui/password-input";
 import { Spinner } from "@/shared/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import {
@@ -41,7 +42,7 @@ import {
 type GeneralError = { title: string; description: string };
 
 const EMAIL_IN_USE: GeneralError = {
-  title: "El correo ingresado ya esta en uso",
+  title: "El correo ingresado ya está en uso",
   description:
     "Por favor intente nuevamente con otro correo o compruebe que haya introducido correctamente su correo.",
 };
@@ -81,7 +82,7 @@ export default function SignUpForm() {
         });
         return;
       case "INVALID_EMAIL":
-        form.setError("email", { type: "server", message: "Correo no valido" });
+        form.setError("email", { type: "server", message: "Correo no válido" });
         return;
     }
 
@@ -111,14 +112,14 @@ export default function SignUpForm() {
     onMutate: () => {
       setGeneralError(null);
     },
-    onSuccess: (data: SignUpResult) => {
+    onSuccess: (data: SignUpResult, variables) => {
       if (data?.error) {
         handleSignUpError(data.error);
         return;
       }
 
       queryClient.invalidateQueries({ queryKey: ["session"] });
-      router.push("/verify-email");
+      router.push(`/verify-email?email=${encodeURIComponent(variables.email)}`);
     },
     onError: (err: SignUpError) => {
       handleSignUpError(err);
@@ -134,7 +135,7 @@ export default function SignUpForm() {
       <div className="h-fit w-full max-w-md rounded-lg bg-white p-8 shadow-md">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
-            <FieldLegend>Formulario de creacion de cuenta</FieldLegend>
+            <FieldLegend>Formulario de creación de cuenta</FieldLegend>
             <FieldDescription>
               Complete el formulario para crear una nueva cuenta.
             </FieldDescription>
@@ -146,7 +147,12 @@ export default function SignUpForm() {
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel htmlFor="name">Nombre Completo</FieldLabel>
-                    <Input id="name" placeholder="Su nombre" {...field} />
+                    <Input
+                      id="name"
+                      autoComplete="name"
+                      placeholder="Su nombre"
+                      {...field}
+                    />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -162,6 +168,8 @@ export default function SignUpForm() {
                     <FieldLabel htmlFor="email">Correo</FieldLabel>
                     <Input
                       id="email"
+                      type="email"
+                      autoComplete="email"
                       placeholder="correo@ejemplo.com"
                       {...field}
                     />
@@ -178,9 +186,9 @@ export default function SignUpForm() {
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                    <Input
+                    <PasswordInput
                       id="password"
-                      type="password"
+                      autoComplete="new-password"
                       placeholder="Ingrese una contraseña"
                       {...field}
                     />
@@ -223,9 +231,9 @@ export default function SignUpForm() {
         )}
 
         <p className="text-muted-foreground mt-6 text-center text-sm">
-          Ya tiene una cuenta?{" "}
+          ¿Ya tiene una cuenta?{" "}
           <Link href="/signin" className="text-primary underline">
-            Inicie Sesion
+            Inicie Sesión
           </Link>
         </p>
       </div>

@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import { Input } from "@/shared/components/ui/input";
+import { PasswordInput } from "@/shared/components/ui/password-input";
 import { authClient } from "@/shared/lib/auth-client";
 import {
   Field,
@@ -81,9 +81,13 @@ export default function ResetPasswordForm({
                 <FieldSet>
                   <FieldGroup>
                     <Field>
-                      <FieldLabel>Contraseña</FieldLabel>
+                      <FieldLabel htmlFor="password">Contraseña</FieldLabel>
                       <FieldContent>
-                        <Input {...form.register("password")} type="password" />
+                        <PasswordInput
+                          id="password"
+                          autoComplete="new-password"
+                          {...form.register("password")}
+                        />
                         <FieldError
                           errors={
                             form.formState.errors.password
@@ -102,11 +106,14 @@ export default function ResetPasswordForm({
                     </Field>
 
                     <Field>
-                      <FieldLabel>Confirmar Contraseña</FieldLabel>
+                      <FieldLabel htmlFor="confirmPassword">
+                        Confirmar Contraseña
+                      </FieldLabel>
                       <FieldContent>
-                        <Input
+                        <PasswordInput
+                          id="confirmPassword"
+                          autoComplete="new-password"
                           {...form.register("confirmPassword")}
-                          type="password"
                         />
                         <FieldError
                           errors={
