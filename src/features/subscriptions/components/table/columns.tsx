@@ -5,6 +5,7 @@ import { ClientStatus } from "@/features/subscriptions/types/clientStatus";
 import ClientStatusActions from "@/features/subscriptions/components/ClientStatusActions";
 import { differenceInDays } from "date-fns";
 import { formatDate } from "@/shared/lib/date";
+import { formatPin } from "@/shared/lib/pin";
 import { getDerivedStatus } from "@/features/subscriptions/lib/status";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/lib/utils";
@@ -197,7 +198,7 @@ export const columns: ColumnDef<ClientStatus>[] = [
     id: "profilePIN",
     header: "PIN",
     meta: { className: "w-px" },
-    accessorFn: (row) => row.screen?.profilePIN ?? "-",
+    accessorFn: (row) => formatPin(row.screen?.profilePIN),
   },
   {
     id: "purchaseDate",

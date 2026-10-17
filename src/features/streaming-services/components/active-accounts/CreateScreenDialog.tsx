@@ -58,7 +58,7 @@ export default function CreateScreenDialog({
     resolver: zodResolver(createScreenSchema),
     defaultValues: {
       profileName: "",
-      profilePIN: 0,
+      profilePIN: "",
       activeAccountId,
     },
   });
@@ -124,7 +124,8 @@ export default function CreateScreenDialog({
               maxLength={4}
               inputMode="numeric"
               placeholder="1234"
-              {...register("profilePIN", { valueAsNumber: true })}
+              autoComplete="off"
+              {...register("profilePIN")}
             />
             {errors.profilePIN && (
               <p className="text-destructive text-sm">

@@ -52,6 +52,7 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { isBefore, isSameDay, startOfToday } from "date-fns";
 import { formatDate } from "@/shared/lib/date";
+import { formatPin } from "@/shared/lib/pin";
 import { UpdateClientStatusDialogProps } from "@/features/subscriptions/types/clientStatus";
 
 function toDate(value?: string | null) {
@@ -210,9 +211,9 @@ export default function UpdateClientStatusDialog({
       )}
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Actualizar suscripcion</DialogTitle>
+          <DialogTitle>Actualizar suscripción</DialogTitle>
           <DialogDescription>
-            Modifique los datos de la suscripcion.
+            Modifique los datos de la suscripción.
           </DialogDescription>
         </DialogHeader>
 
@@ -255,7 +256,7 @@ export default function UpdateClientStatusDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Telefono</Label>
+              <Label>Teléfono</Label>
               <Input value={selectedClient?.phoneNumber ?? ""} readOnly />
             </div>
 
@@ -370,7 +371,8 @@ export default function UpdateClientStatusDialog({
                     <SelectLabel>Perfiles</SelectLabel>
                     {screens.data?.map((screen: ScreenProps) => (
                       <SelectItem key={screen.id} value={screen.id}>
-                        {screen.profileName} (PIN: {screen.profilePIN})
+                        {screen.profileName} (PIN:{" "}
+                        {formatPin(screen.profilePIN)})
                       </SelectItem>
                     ))}
                   </SelectGroup>

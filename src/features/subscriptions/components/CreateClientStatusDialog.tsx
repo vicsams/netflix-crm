@@ -6,6 +6,7 @@ import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { refreshAfterChange } from "@/shared/lib/refresh";
+import { formatPin } from "@/shared/lib/pin";
 import useOnOpen from "@/shared/hooks/useOnOpen";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/shared/lib/errors";
@@ -238,15 +239,15 @@ export default function CreateClientStatusDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Nueva Suscripcion</Button>
+        <Button variant="outline">Nueva Suscripción</Button>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Crear suscripcion</DialogTitle>
+          <DialogTitle>Crear suscripción</DialogTitle>
           <DialogDescription>
             Seleccione un cliente existente y complete los datos de la
-            suscripcion.
+            suscripción.
           </DialogDescription>
         </DialogHeader>
 
@@ -399,7 +400,7 @@ export default function CreateClientStatusDialog({
                     <SelectLabel>Pantallas de la cuenta</SelectLabel>
                     {screens.map((s) => (
                       <SelectItem key={s.id} value={s.id}>
-                        {s.profileName} (PIN: {s.profilePIN})
+                        {s.profileName} (PIN: {formatPin(s.profilePIN)})
                       </SelectItem>
                     ))}
                   </SelectGroup>

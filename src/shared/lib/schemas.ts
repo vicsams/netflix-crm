@@ -156,13 +156,22 @@ export const updateClientStatusSchema = z.object({
 
 export type UpdateClientStatusValues = z.infer<typeof updateClientStatusSchema>;
 
+// A 4-digit PIN, which may start with 0 ("0123"). Forms send the typed text;
+// the stored value is a number, so leading zeros come back via formatPin
+const PIN_MESSAGE = "El PIN debe tener 4 dígitos";
+const pinSchema = z
+  .union(
+    [
+      z.string().regex(/^\d{4}$/, PIN_MESSAGE),
+      z.number().int(PIN_MESSAGE).min(0, PIN_MESSAGE).max(9999, PIN_MESSAGE),
+    ],
+    { error: PIN_MESSAGE },
+  )
+  .transform(Number);
+
 export const createScreenSchema = z.object({
   profileName: z.string().min(1, "El nombre del perfil es obligatorio"),
-  profilePIN: z.coerce
-    .number({ error: "El PIN debe tener 4 dígitos" })
-    .int()
-    .gte(1000, "El PIN debe tener 4 dígitos")
-    .lte(9999, "El PIN debe tener 4 dígitos"),
+  profilePIN: pinSchema,
   activeAccountId: z.string().min(1, "Selecciona una cuenta"),
 });
 
@@ -182,11 +191,7 @@ export type CreateScreenValues = z.infer<typeof createScreenSchema>;
 
 export const updateScreenSchema = z.object({
   profileName: z.string().optional(),
-  profilePIN: z.coerce
-    .number({ error: "El PIN debe tener 4 dígitos" })
-    .int()
-    .gte(1000, "El PIN debe tener 4 dígitos")
-    .lte(9999, "El PIN debe tener 4 dígitos"),
+  profilePIN: pinSchema,
 });
 
 export type UpdateScreenFormValues = z.input<typeof updateScreenSchema>;

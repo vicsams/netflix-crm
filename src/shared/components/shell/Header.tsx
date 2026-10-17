@@ -65,7 +65,7 @@ export default function Header() {
           <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={signOutAction} data-variant="destructive">
-            Cerrar Sesion
+            Cerrar Sesión
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

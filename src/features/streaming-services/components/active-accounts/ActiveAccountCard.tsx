@@ -4,6 +4,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { copyToClipboard } from "@/shared/lib/clipboard";
 import { formatDate } from "@/shared/lib/date";
+import { formatPin } from "@/shared/lib/pin";
 import {
   Item,
   ItemActions,
@@ -85,7 +86,7 @@ export default function ActiveAccountCard({
     const textToCopy = `Correo electrónico: ${activeAccount.email}
 Contraseña: ${activeAccount.password}
 Perfil: ${screen.profileName}
-PIN: ${screen.profilePIN}`;
+PIN: ${formatPin(screen.profilePIN)}`;
     copyToClipboard(textToCopy, "Datos del perfil copiados");
   };
 
@@ -171,7 +172,7 @@ PIN: ${screen.profilePIN}`;
                               <span>{screen.profileName}</span>
                               <Separator orientation="vertical" />
                               <span className="text-left text-xs text-neutral-400">
-                                PIN: {screen.profilePIN}
+                                PIN: {formatPin(screen.profilePIN)}
                               </span>
                             </div>
                           </div>
@@ -210,7 +211,7 @@ PIN: ${screen.profilePIN}`;
                               <span>{screen.profileName}</span>
                               <Separator orientation="vertical" />
                               <span className="text-left text-xs text-neutral-400">
-                                PIN: {screen.profilePIN}
+                                PIN: {formatPin(screen.profilePIN)}
                               </span>
                             </div>
                           </div>

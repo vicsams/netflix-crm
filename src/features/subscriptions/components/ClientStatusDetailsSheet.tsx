@@ -8,6 +8,7 @@ import {
   StatusBadge,
 } from "@/features/subscriptions/components/table/columns";
 import { formatDate } from "@/shared/lib/date";
+import { formatPin } from "@/shared/lib/pin";
 import { ClientStatusDetailsSheetProps } from "@/features/subscriptions/types/clientStatus";
 import {
   Drawer,
@@ -71,7 +72,7 @@ export default function ClientStatusDetailsSheet({
                 {clientStatus.screen?.profileName ?? "-"}
               </DetailRow>
               <DetailRow label="PIN">
-                {clientStatus.screen?.profilePIN ?? "-"}
+                {formatPin(clientStatus.screen?.profilePIN)}
               </DetailRow>
               <DetailRow label="Fecha de compra">
                 {formatDate(clientStatus.purchaseDate)}
