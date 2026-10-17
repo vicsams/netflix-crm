@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { format, differenceInDays } from "date-fns";
+import { format, differenceInDays, addMonths } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
@@ -40,7 +40,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
+import { formatDate } from "@/shared/lib/date";
 import { ClientStatusRenewDialogProps } from "@/features/subscriptions/types/clientStatus";
+
+const RENEW_PERIODS = [
+  { months: 1, label: "1 Mes" },
+  { months: 3, label: "3 Meses" },
+  { months: 12, label: "1 Año" },
+] as const;
+
+type RenewMode = "PRESET" | "CUSTOM";
+
+// Mode panels are stacked and cross-faded: the outgoing one fades out fast,
+// then the incoming one fades in. Hidden with opacity, not `invisible`:
+// children with `transition-all` (e.g. Button) animate an inherited
+// visibility change, so they would linger on top of the incoming panel
+const PANEL_CLASS =
+  "col-start-1 row-start-1 transition-opacity ease-out motion-reduce:transition-none data-[state=active]:opacity-100 data-[state=active]:duration-200 data-[state=active]:delay-75 data-[state=inactive]:pointer-events-none data-[state=inactive]:opacity-0 data-[state=inactive]:duration-100";
+
+// Renewals extend from the current expiration date (today if there is none)
+function getRenewDate(
+  expirationDate: string | null | undefined,
+  months: number,
+) {
+  return addMonths(
+    expirationDate ? new Date(expirationDate) : new Date(),
+    months,
+  );
+}
 
 export default function ClientStatusRenewDialog({
   clientStatus,
@@ -49,7 +82,31 @@ export default function ClientStatusRenewDialog({
 }: ClientStatusRenewDialogProps) {
   const clientName = clientStatus.client?.clientName ?? clientStatus.clientName;
   const queryClient = useQueryClient();
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [mode, setMode] = useState<RenewMode>("PRESET");
+  const [presetMonths, setPresetMonths] = useState<number>(1);
+  const [customDate, setCustomDate] = useState<Date | undefined>();
+
+  const date =
+    mode === "PRESET"
+      ? getRenewDate(clientStatus.expirationDate, presetMonths)
+      : customDate;
+
+  // The dialog stays mounted, so reset the choice every time it opens
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setMode("PRESET");
+      setPresetMonths(1);
+      setCustomDate(undefined);
+    }
+  }
+
+  function changeMode(next: RenewMode) {
+    // Start the calendar on the date the preset was showing
+    if (next === "CUSTOM" && !customDate) setCustomDate(date);
+    setMode(next);
+  }
 
   const {
     register,
@@ -168,31 +225,88 @@ export default function ClientStatusRenewDialog({
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <Label>Nueva fecha de expiración</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "text-muted-foreground mt-2 w-full justify-start text-left font-normal",
-                  )}
+            <Tabs
+              value={mode}
+              onValueChange={(value) => changeMode(value as RenewMode)}
+              className="mt-2"
+            >
+              <TabsList className="w-full">
+                <TabsTrigger value="PRESET">Tiempo predefinido</TabsTrigger>
+                <TabsTrigger value="CUSTOM">Fecha personalizada</TabsTrigger>
+              </TabsList>
+
+              {/* Both panels stay mounted and share one grid cell, so the area
+                  is as tall as the taller panel and switching does not shift
+                  the layout */}
+              <div className="grid">
+                <TabsContent
+                  value="PRESET"
+                  forceMount
+                  inert={mode !== "PRESET"}
+                  className={cn(PANEL_CLASS, "space-y-2")}
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? (
-                    format(date, "PPP", { locale: es })
-                  ) : (
-                    <span>Elige una fecha</span>
+                  <div className="grid grid-cols-3 gap-2">
+                    {RENEW_PERIODS.map((period) => (
+                      <Button
+                        key={period.months}
+                        type="button"
+                        variant={
+                          presetMonths === period.months ? "default" : "outline"
+                        }
+                        aria-pressed={presetMonths === period.months}
+                        onClick={() => setPresetMonths(period.months)}
+                      >
+                        {period.label}
+                      </Button>
+                    ))}
+                  </div>
+                  {date && (
+                    <p className="text-muted-foreground text-sm">
+                      Vence el{" "}
+                      <span className="text-foreground font-medium">
+                        {formatDate(date.toISOString())}
+                      </span>
+                    </p>
                   )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+                </TabsContent>
+
+                <TabsContent
+                  value="CUSTOM"
+                  forceMount
+                  inert={mode !== "CUSTOM"}
+                  className={PANEL_CLASS}
+                >
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        type="button"
+                        variant={"outline"}
+                        className={cn(
+                          "text-muted-foreground w-full justify-start text-left font-normal",
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {date ? (
+                          format(date, "PPP", { locale: es })
+                        ) : (
+                          <span>Elige una fecha</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        required
+                        selected={date}
+                        defaultMonth={date}
+                        onSelect={setCustomDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </TabsContent>
+              </div>
+            </Tabs>
 
             <div className="mt-4 grid grid-cols-2 gap-4">
               <div>
