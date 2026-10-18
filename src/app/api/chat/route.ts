@@ -59,7 +59,31 @@ function errorMessage(error: unknown) {
   return "Ocurrió un error al responder. Intenta de nuevo.";
 }
 
+// Errors before streaming starts (e.g. the database) would otherwise reach
+// the chat as a raw 500; answer them in Spanish instead
 export async function POST(req: Request) {
+  try {
+    return await answer(req);
+  } catch (error) {
+    console.error("Assistant request failed:", error);
+    // P2021: the chat tables are missing (migration not applied)
+    const tablesMissing =
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2021";
+    return NextResponse.json(
+      {
+        message: tablesMissing
+          ? "El asistente aún no está listo: falta crear sus tablas en la base de datos."
+          : "Ocurrió un error al responder. Intenta de nuevo.",
+      },
+      { status: tablesMissing ? 503 : 500 },
+    );
+  }
+}
+
+async function answer(req: Request) {
   const { userId, response } = await requireUser(req);
   if (response) return response;
 
