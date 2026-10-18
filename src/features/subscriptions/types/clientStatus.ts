@@ -60,3 +60,10 @@ export type ClientStatusDetailsSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
+
+// What status and date displays need, so rows that aren't full ClientStatus
+// records (e.g. assistant results) can use the same badge and helpers
+export type SubscriptionDates = Pick<
+  ClientStatus,
+  "status" | "expirationDate" | "purchaseDate"
+>;
