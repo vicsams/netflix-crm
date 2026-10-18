@@ -24,7 +24,7 @@ export default function ClientsTable() {
   return (
     <Card className="gap-0 py-0 pb-0!">
       <CardHeader className="gap-0 py-4 shadow-md max-sm:gap-0 max-sm:px-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="text-lg font-bold">Clientes</CardTitle>
           <CreateClientDialog />
         </div>

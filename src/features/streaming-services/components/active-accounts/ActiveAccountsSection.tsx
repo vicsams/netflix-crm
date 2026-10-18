@@ -43,7 +43,7 @@ export default function ActiveAccountsSection() {
     >
       <div
         onClick={handleAccountClick}
-        className="sticky top-0 z-10 flex items-center justify-between bg-white p-4"
+        className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-2 bg-white p-4"
       >
         <div className="flex items-center gap-1">
           <h2 className="text-lg font-bold">Correos Activos</h2>

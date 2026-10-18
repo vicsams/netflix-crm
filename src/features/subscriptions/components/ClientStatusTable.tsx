@@ -237,7 +237,7 @@ export default function ClientStatusTable() {
   return (
     <Card className="col-span-4 gap-0 py-0 pb-0! max-sm:col-span-1">
       <CardHeader className="gap-0 py-4 shadow-md max-sm:gap-0 max-sm:px-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="text-lg font-bold">Suscripciones</CardTitle>
           <CreateClientStatusDialog onCreated={handleCreated} />
         </div>
@@ -278,7 +278,7 @@ export default function ClientStatusTable() {
           <div
             role="group"
             aria-label="Filtrar por estado"
-            className="flex gap-1.5 overflow-x-auto max-sm:w-full max-sm:pb-1"
+            className="flex flex-wrap gap-1.5"
           >
             {STATUS_FILTERS.map((filter) => {
               const selected = statusFilter === filter.value;
