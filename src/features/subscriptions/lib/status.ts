@@ -1,9 +1,14 @@
 import { differenceInDays } from "date-fns";
 import type { SubscriptionDates } from "@/features/subscriptions/types/clientStatus";
 
+// Accepts API rows (ISO strings) and Prisma rows (Date objects) alike
+type StatusInput = Pick<SubscriptionDates, "status"> & {
+  expirationDate?: string | Date | null;
+};
+
 // Status as shown to the user: the stored status can lag behind the date
 export function getDerivedStatus(
-  row: Pick<SubscriptionDates, "status" | "expirationDate">,
+  row: StatusInput,
 ): "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION" {
   const currentStatus = row.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION";
 
