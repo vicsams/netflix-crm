@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import useOnOpen from "@/shared/hooks/useOnOpen";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { updateClientStatus } from "@/features/subscriptions/services/subscriptions";
 import { fetchClients } from "@/features/clients/services/clients";
 import { fetchServices } from "@/features/streaming-services/services/service-management/services";
@@ -39,7 +43,21 @@ import {
   SelectLabel,
   SelectGroup,
 } from "@/shared/components/ui/select";
+import { Calendar } from "@/shared/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/shared/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { isBefore, isSameDay, startOfToday } from "date-fns";
+import { formatDate } from "@/shared/lib/date";
+import { formatPin } from "@/shared/lib/pin";
 import { UpdateClientStatusDialogProps } from "@/features/subscriptions/types/clientStatus";
+
+function toDate(value?: string | null) {
+  return value ? new Date(value) : undefined;
+}
 
 export default function UpdateClientStatusDialog({
   clientStatus,
@@ -67,9 +85,23 @@ export default function UpdateClientStatusDialog({
     queryFn: fetchActiveAccount,
   });
 
-  // No expiration date here: this form has no date field, and resending the
-  // stored one (cut to "YYYY-MM-DD") made the server read it as UTC midnight,
-  // moving it back a day. Dates change through Renovar
+  // The expiration date lives outside the form: it is only sent when the user
+  // changes it, as a full timestamp. Resending the stored one (cut to
+  // "YYYY-MM-DD") made the server read it as UTC midnight, a day earlier
+  const [expirationDate, setExpirationDate] = useState<Date | undefined>(() =>
+    toDate(clientStatus.expirationDate),
+  );
+
+  const currentValues = (): UpdateClientStatusValues => ({
+    clientId: clientStatus.clientId,
+    activeAccountId: clientStatus.activeAccountId,
+    serviceId: clientStatus.serviceId,
+    screenId: clientStatus.screenId,
+    status:
+      (clientStatus.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION") ??
+      "NEAR_EXPIRATION",
+  });
+
   const {
     handleSubmit,
     reset,
@@ -78,15 +110,14 @@ export default function UpdateClientStatusDialog({
     formState: { errors },
   } = useForm<UpdateClientStatusValues>({
     resolver: zodResolver(updateClientStatusSchema),
-    defaultValues: {
-      clientId: clientStatus.clientId,
-      activeAccountId: clientStatus.activeAccountId,
-      serviceId: clientStatus.serviceId,
-      screenId: clientStatus.screenId,
-      status:
-        (clientStatus.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION") ??
-        "NEAR_EXPIRATION",
-    },
+    defaultValues: currentValues(),
+  });
+
+  // Load the subscription's current values each time it opens. Only on open:
+  // resetting whenever the list refetched wiped edits in progress
+  useOnOpen(open, () => {
+    reset(currentValues());
+    setExpirationDate(toDate(clientStatus.expirationDate));
   });
 
   const selectedAccountId = useWatch({
@@ -120,20 +151,6 @@ export default function UpdateClientStatusDialog({
   });
 
   useEffect(() => {
-    if (!open) return;
-
-    reset({
-      clientId: clientStatus.clientId,
-      activeAccountId: clientStatus.activeAccountId,
-      serviceId: clientStatus.serviceId,
-      screenId: clientStatus.screenId,
-      status:
-        (clientStatus.status as "ACTIVE" | "EXPIRED" | "NEAR_EXPIRATION") ??
-        "NEAR_EXPIRATION",
-    });
-  }, [clientStatus, open, reset]);
-
-  useEffect(() => {
     if (!selectedAccountId || !screens.data || !selectedScreenId) return;
 
     const screenBelongsToSelectedAccount = screens.data.some(
@@ -155,16 +172,32 @@ export default function UpdateClientStatusDialog({
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      toast.success("Suscripción actualizada");
+      refreshAfterChange(queryClient, "subscription");
       if (setOpen) setOpen(false);
     },
     onError: (error) => {
-      console.error("Failed to update client status:", error);
+      toast.error(
+        getErrorMessage(error, "No se pudo actualizar la suscripción"),
+      );
     },
   });
 
   const onSubmit = async (values: UpdateClientStatusValues) => {
-    await mutation.mutateAsync(values);
+    const originalDate = toDate(clientStatus.expirationDate);
+    const dateChanged =
+      !!expirationDate &&
+      (!originalDate || !isSameDay(expirationDate, originalDate));
+
+    await mutation.mutateAsync({
+      ...values,
+      // A corrected date also corrects the status; no amount is sent, so the
+      // server records no earnings (that is what Renovar is for)
+      ...(dateChanged && {
+        expirationDate: expirationDate.toISOString(),
+        status: isBefore(expirationDate, startOfToday()) ? "EXPIRED" : "ACTIVE",
+      }),
+    });
   };
 
   return (
@@ -178,9 +211,9 @@ export default function UpdateClientStatusDialog({
       )}
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Actualizar suscripcion</DialogTitle>
+          <DialogTitle>Actualizar suscripción</DialogTitle>
           <DialogDescription>
-            Modifique los datos de la suscripcion.
+            Modifique los datos de la suscripción.
           </DialogDescription>
         </DialogHeader>
 
@@ -223,7 +256,7 @@ export default function UpdateClientStatusDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Telefono</Label>
+              <Label>Teléfono</Label>
               <Input value={selectedClient?.phoneNumber ?? ""} readOnly />
             </div>
 
@@ -338,7 +371,8 @@ export default function UpdateClientStatusDialog({
                     <SelectLabel>Perfiles</SelectLabel>
                     {screens.data?.map((screen: ScreenProps) => (
                       <SelectItem key={screen.id} value={screen.id}>
-                        {screen.profileName} (PIN: {screen.profilePIN})
+                        {screen.profileName} (PIN:{" "}
+                        {formatPin(screen.profilePIN)})
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -350,6 +384,39 @@ export default function UpdateClientStatusDialog({
                 </p>
               )}
             </div>
+          </div>
+
+          <div>
+            <Label>Fecha de vencimiento</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-muted-foreground w-full justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {expirationDate ? (
+                    formatDate(expirationDate.toISOString())
+                  ) : (
+                    <span>Sin fecha de vencimiento</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={expirationDate}
+                  defaultMonth={expirationDate}
+                  onSelect={setExpirationDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Corrige la fecha sin registrar un pago. Para cobrar una
+              renovación, usa Renovar.
+            </p>
           </div>
 
           <div className="mt-4 flex justify-end gap-2">

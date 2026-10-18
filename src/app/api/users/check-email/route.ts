@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 
     if (!email || typeof email !== "string") {
       return NextResponse.json(
-        { message: "Email is required" },
+        { message: "El correo es obligatorio" },
         { status: 400 },
       );
     }
@@ -24,6 +24,9 @@ export async function POST(req: Request) {
       emailVerified: !!user.emailVerified,
     });
   } catch {
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

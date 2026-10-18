@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useOnOpen from "@/shared/hooks/useOnOpen";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { z } from "zod";
 
 import {
@@ -54,28 +58,29 @@ export default function CreateScreenDialog({
     resolver: zodResolver(createScreenSchema),
     defaultValues: {
       profileName: "",
-      profilePIN: 0,
+      profilePIN: "",
       activeAccountId,
     },
+  });
+
+  // Start from a blank form each time it opens, so a cancelled attempt
+  // doesn't come back
+  useOnOpen(open, () => {
+    reset();
+    setServerError(null);
   });
 
   const mutation = useMutation({
     mutationFn: createScreen,
     onSuccess: () => {
+      toast.success("Pantalla creada");
       setOpen(false);
       reset();
       setServerError(null);
-      queryClient.invalidateQueries({ queryKey: ["screens"] });
-      queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
+      refreshAfterChange(queryClient, "screen");
     },
     onError: (err: unknown) => {
-      const message =
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (err as any).response?.data?.message ||
-        (err as Error).message ||
-        "Failed to create screen";
-
-      setServerError(message);
+      setServerError(getErrorMessage(err, "No se pudo crear la pantalla"));
     },
   });
 
@@ -119,7 +124,8 @@ export default function CreateScreenDialog({
               maxLength={4}
               inputMode="numeric"
               placeholder="1234"
-              {...register("profilePIN", { valueAsNumber: true })}
+              autoComplete="off"
+              {...register("profilePIN")}
             />
             {errors.profilePIN && (
               <p className="text-destructive text-sm">

@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { deleteClientStatus } from "@/features/subscriptions/services/subscriptions";
 import UpdateClientStatusDialog from "@/features/subscriptions/components/UpdateClientStatusDialog";
 import ClientStatusRenewDialog from "@/features/subscriptions/components/ClientStatusRenewDialog";
@@ -38,8 +41,6 @@ export default function ClientStatusActions({
   variant = "menu",
 }: ClientStatusActionsProps) {
   const clientName = clientStatus.client?.clientName ?? clientStatus.clientName;
-  const phoneNumber =
-    clientStatus.client?.phoneNumber ?? clientStatus.phoneNumber;
 
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -52,11 +53,12 @@ export default function ClientStatusActions({
       return await deleteClientStatus(clientStatus.id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      toast.success("Suscripción eliminada");
+      refreshAfterChange(queryClient, "subscription");
       setShowDeleteDialog(false);
     },
     onError: (error) => {
-      console.error("Failed to delete client status:", error);
+      toast.error(getErrorMessage(error, "No se pudo eliminar la suscripción"));
     },
   });
 
@@ -75,13 +77,17 @@ export default function ClientStatusActions({
       />
 
       <ClientStatusMessageDialog
-        clientName={clientName}
-        phoneNumber={phoneNumber}
+        clientStatus={clientStatus}
         open={showMessageDialog}
         onOpenChange={setShowMessageDialog}
       />
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <AlertDialog
+        open={showDeleteDialog}
+        onOpenChange={(open) => {
+          if (!deleteMutation.isPending) setShowDeleteDialog(open);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
@@ -91,9 +97,16 @@ export default function ClientStatusActions({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
+              Cancelar
+            </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteMutation.mutate()}
+              onClick={(event) => {
+                // AlertDialogAction closes the dialog on click; keep it open
+                // so the spinner and any error show, and close it on success
+                event.preventDefault();
+                deleteMutation.mutate();
+              }}
               className="bg-destructive hover:bg-destructive/90"
               disabled={deleteMutation.isPending}
             >

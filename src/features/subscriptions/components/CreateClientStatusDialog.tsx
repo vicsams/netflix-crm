@@ -5,6 +5,11 @@ import { format, differenceInDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import { formatPin } from "@/shared/lib/pin";
+import useOnOpen from "@/shared/hooks/useOnOpen";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/shared/lib/utils";
@@ -58,6 +63,7 @@ import { ServiceProps } from "@/features/streaming-services/types/service";
 import { ActiveAccountProps } from "@/features/streaming-services/types/activeAccount";
 import { ScreenProps } from "@/features/streaming-services/types/screen";
 import { Client } from "@/features/clients/types/client";
+import { emptyAsNull, emptyAsZero } from "@/shared/lib/forms";
 import AmountNotice from "@/features/subscriptions/components/AmountNotice";
 
 export type CreateClientStatusDialogProps = {
@@ -100,6 +106,15 @@ export default function CreateClientStatusDialog({
   const customUsdtRate = useWatch({ control, name: "customUsdtRate" });
   const supplierPrice = useWatch({ control, name: "supplierPrice" });
   const selectedClientId = useWatch({ control, name: "clientId" });
+  const selectedScreenId = useWatch({ control, name: "screenId" });
+
+  // Start from a blank form each time it opens, so a cancelled attempt
+  // doesn't come back
+  useOnOpen(open, () => {
+    reset();
+    setDate(undefined);
+    setError(null);
+  });
 
   const { data: clients = [] } = useQuery<Client[]>({
     queryKey: ["clients"],
@@ -116,7 +131,7 @@ export default function CreateClientStatusDialog({
     queryFn: fetchActiveAccount,
   });
 
-  const { price: binancePrice } = useBinancePrice();
+  const { price: binancePrice, isError: binanceFailed } = useBinancePrice();
 
   const { data: screens = [] } = useQuery<ScreenProps[]>({
     queryKey: ["screens", selectedAccountId],
@@ -128,20 +143,15 @@ export default function CreateClientStatusDialog({
   const mutation = useMutation({
     mutationFn: createClientStatus,
     onSuccess: (created) => {
+      toast.success("Suscripción creada");
       setOpen(false);
       reset();
       setDate(undefined);
       onCreated?.(created);
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
-      queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
+      refreshAfterChange(queryClient, "subscription", "bank");
     },
     onError: (err: unknown) => {
-      const message =
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (err as any).response?.data?.message ||
-        (err as Error).message ||
-        "Request failed";
-      setError(message);
+      setError(getErrorMessage(err, "No se pudo crear la suscripción"));
     },
   });
 
@@ -229,15 +239,15 @@ export default function CreateClientStatusDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Nueva Suscripcion</Button>
+        <Button variant="outline">Nueva Suscripción</Button>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Crear suscripcion</DialogTitle>
+          <DialogTitle>Crear suscripción</DialogTitle>
           <DialogDescription>
             Seleccione un cliente existente y complete los datos de la
-            suscripcion.
+            suscripción.
           </DialogDescription>
         </DialogHeader>
 
@@ -298,7 +308,21 @@ export default function CreateClientStatusDialog({
 
             <div className="col-span-1">
               <Label>Cuenta activa</Label>
-              <Select onValueChange={(val) => setValue("activeAccountId", val)}>
+              <Select
+                value={selectedAccountId || ""}
+                onValueChange={(val) => {
+                  setValue("activeAccountId", val, { shouldValidate: true });
+                  // A profile belongs to one account: clear the previous
+                  // account's, and take the service from the new account
+                  setValue("screenId", "");
+                  const account = accounts.find((a) => a.id === val);
+                  if (account?.serviceId) {
+                    setValue("serviceId", account.serviceId, {
+                      shouldValidate: true,
+                    });
+                  }
+                }}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Seleccionar cuenta" />
                 </SelectTrigger>
@@ -324,7 +348,12 @@ export default function CreateClientStatusDialog({
           <div className="col-span-2 grid grid-cols-2 gap-4">
             <div className="col-span-1">
               <Label>Servicio</Label>
-              <Select onValueChange={(val) => setValue("serviceId", val)}>
+              <Select
+                value={selectedServiceId || ""}
+                onValueChange={(val) =>
+                  setValue("serviceId", val, { shouldValidate: true })
+                }
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Seleccionar servicio" />
                 </SelectTrigger>
@@ -349,7 +378,10 @@ export default function CreateClientStatusDialog({
             <div className="col-span-1">
               <Label>Pantalla / Perfil</Label>
               <Select
-                onValueChange={(val) => setValue("screenId", val)}
+                value={selectedScreenId || ""}
+                onValueChange={(val) =>
+                  setValue("screenId", val, { shouldValidate: true })
+                }
                 disabled={!selectedAccountId || screens.length === 0}
               >
                 <SelectTrigger className="w-full">
@@ -368,7 +400,7 @@ export default function CreateClientStatusDialog({
                     <SelectLabel>Pantallas de la cuenta</SelectLabel>
                     {screens.map((s) => (
                       <SelectItem key={s.id} value={s.id}>
-                        {s.profileName} (PIN: {s.profilePIN})
+                        {s.profileName} (PIN: {formatPin(s.profilePIN)})
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -416,7 +448,7 @@ export default function CreateClientStatusDialog({
             <div className="col-span-1">
               <Label>Modo de tasa USDT</Label>
               <Select
-                defaultValue="BINANCE"
+                value={selectedPriceSource}
                 onValueChange={(val) =>
                   setValue("priceSource", val as "BINANCE" | "CUSTOM")
                 }
@@ -441,7 +473,7 @@ export default function CreateClientStatusDialog({
                   step="0.01"
                   min="0"
                   placeholder="Ej: 105.25"
-                  {...register("customUsdtRate", { valueAsNumber: true })}
+                  {...register("customUsdtRate", { setValueAs: emptyAsNull })}
                 />
                 {errors.customUsdtRate && (
                   <p className="text-destructive text-sm">
@@ -459,7 +491,7 @@ export default function CreateClientStatusDialog({
               step="0.01"
               min="0"
               placeholder="Ej: 250.00"
-              {...register("supplierPrice", { valueAsNumber: true })}
+              {...register("supplierPrice", { setValueAs: emptyAsZero })}
             />
             {errors.supplierPrice && (
               <p className="text-destructive text-sm">
@@ -512,6 +544,7 @@ export default function CreateClientStatusDialog({
             <AmountNotice
               waitingForRate={waitingForRate}
               customRate={selectedPriceSource === "CUSTOM"}
+              binanceFailed={binanceFailed}
               zeroAmount={zeroAmount}
               zeroAmountMessage="La suscripción se creará sin registrar ningún ingreso en tus ganancias."
             />

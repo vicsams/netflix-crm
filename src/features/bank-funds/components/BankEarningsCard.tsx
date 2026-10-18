@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBankEarnings } from "@/features/bank-funds/services/bankEarnings";
+import { formatMoney } from "@/shared/lib/money";
 import { Separator } from "@/shared/components/ui/separator";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -82,7 +83,7 @@ export default function BankEarningsCard() {
               <Skeleton className="h-8 w-28 bg-white/25" />
             ) : (
               <div className="flex items-end justify-between">
-                <p className="text-xl font-bold">{totalBs.toFixed(2)} Bs</p>
+                <p className="text-xl font-bold">{formatMoney(totalBs)} Bs</p>
               </div>
             )}
           </div>
@@ -116,7 +117,7 @@ export default function BankEarningsCard() {
             ) : (
               <div className="flex items-end justify-between">
                 <p className="text-xl font-bold text-white">
-                  {totalUsdt.toFixed(2)} USDT
+                  {formatMoney(totalUsdt)} USDT
                 </p>
               </div>
             )}
@@ -148,7 +149,7 @@ export default function BankEarningsCard() {
                 <Skeleton className="h-8 w-28 bg-white/25" />
               ) : (
                 <div className="flex items-end justify-between">
-                  <p className="text-xl font-bold">{totalBs.toFixed(2)} Bs</p>
+                  <p className="text-xl font-bold">{formatMoney(totalBs)} Bs</p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -186,7 +187,7 @@ export default function BankEarningsCard() {
               ) : (
                 <div className="flex items-end justify-between">
                   <p className="text-xl font-bold text-white">
-                    {totalUsdt.toFixed(2)} USDT
+                    {formatMoney(totalUsdt)} USDT
                   </p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

@@ -1,7 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { getErrorMessage } from "@/shared/lib/errors";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { DataTable } from "@/shared/components/ui/data-table";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import CreateClientDialog from "@/features/clients/components/CreateClientDialog";
@@ -18,7 +24,7 @@ export default function ClientsTable() {
   return (
     <Card className="gap-0 py-0 pb-0!">
       <CardHeader className="gap-0 py-4 shadow-md max-sm:gap-0 max-sm:px-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="text-lg font-bold">Clientes</CardTitle>
           <CreateClientDialog />
         </div>
@@ -50,7 +56,7 @@ export default function ClientsTable() {
           </div>
         ) : isError ? (
           <div className="text-destructive px-4 py-3">
-            {error instanceof Error ? error.message : "An error occurred"}
+            {getErrorMessage(error, "No se pudieron cargar los clientes")}
           </div>
         ) : (
           <DataTable

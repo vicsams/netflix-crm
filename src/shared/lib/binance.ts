@@ -14,6 +14,8 @@ export async function fetchP2PPrice(): Promise<number | null> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
     cache: "no-store",
+    // Binance can hang; give up rather than keep the caller waiting
+    signal: AbortSignal.timeout(4000),
   });
 
   if (!res.ok) throw new Error("Binance fetch failed");

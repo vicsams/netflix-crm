@@ -13,7 +13,10 @@ export async function requireUser(req: Request): Promise<SessionResult> {
   if (!session) {
     return {
       userId: null,
-      response: NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
+      response: NextResponse.json(
+        { message: "Tu sesión expiró. Inicia sesión de nuevo." },
+        { status: 401 },
+      ),
     };
   }
 

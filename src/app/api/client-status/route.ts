@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const parsed = createClientStatusRequestSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid data" }, { status: 400 });
+      return NextResponse.json({ message: "Datos inválidos" }, { status: 400 });
     }
 
     const {
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     if (!validStatuses.includes(status as ClientStatusEnum)) {
       return NextResponse.json(
         {
-          message: `status is required and must be one of: ${validStatuses.join(", ")}`,
+          message: `El estado es obligatorio y debe ser uno de: ${validStatuses.join(", ")}`,
         },
         { status: 400 },
       );
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     });
     if (!accountExists) {
       return NextResponse.json(
-        { message: "activeAccount not found" },
+        { message: "Cuenta no encontrada" },
         { status: 404 },
       );
     }
@@ -57,8 +57,19 @@ export async function POST(req: Request) {
     });
     if (!serviceExists) {
       return NextResponse.json(
-        { message: "service not found" },
+        { message: "Servicio no encontrado" },
         { status: 404 },
+      );
+    }
+
+    // Same consistency rules as editing a subscription
+    if (accountExists.serviceId && accountExists.serviceId !== serviceId) {
+      return NextResponse.json(
+        {
+          message:
+            "La cuenta seleccionada no pertenece al servicio seleccionado",
+        },
+        { status: 400 },
       );
     }
 
@@ -67,8 +78,11 @@ export async function POST(req: Request) {
     });
     if (!screenExists) {
       return NextResponse.json(
-        { message: "screen not found" },
-        { status: 404 },
+        {
+          message:
+            "El perfil seleccionado no pertenece a la cuenta seleccionada",
+        },
+        { status: 400 },
       );
     }
 
@@ -107,7 +121,7 @@ export async function POST(req: Request) {
 
     if (!resolvedClientId) {
       return NextResponse.json(
-        { message: "clientId is required" },
+        { message: "Selecciona un cliente" },
         { status: 400 },
       );
     }
@@ -121,7 +135,7 @@ export async function POST(req: Request) {
 
     if (!clientExists) {
       return NextResponse.json(
-        { message: "client not found" },
+        { message: "Cliente no encontrado" },
         { status: 404 },
       );
     }
@@ -181,7 +195,10 @@ export async function POST(req: Request) {
         { status: 500 },
       );
     }
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }
 
@@ -242,6 +259,9 @@ export async function GET(req: Request) {
         { status: 500 },
       );
     }
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

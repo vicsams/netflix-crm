@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { deleteClient } from "@/features/clients/services/clients";
 import UpdateClientDialog from "@/features/clients/components/UpdateClientDialog";
 import {
@@ -34,27 +37,13 @@ export default function ClientActions({ client }: ClientActionsProps) {
   const deleteMutation = useMutation({
     mutationFn: async () => deleteClient(client.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      toast.success("Cliente eliminado");
+      refreshAfterChange(queryClient, "client");
       setErrorMessage(null);
       setShowDeleteDialog(false);
     },
     onError: (error: unknown) => {
-      const message =
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof error.response === "object" &&
-        error.response !== null &&
-        "data" in error.response &&
-        typeof error.response.data === "object" &&
-        error.response.data !== null &&
-        "message" in error.response.data &&
-        typeof error.response.data.message === "string"
-          ? error.response.data.message
-          : "No se pudo eliminar el cliente";
-
-      setErrorMessage(message);
+      setErrorMessage(getErrorMessage(error, "No se pudo eliminar el cliente"));
     },
   });
 
@@ -66,12 +55,19 @@ export default function ClientActions({ client }: ClientActionsProps) {
         onOpenChange={setShowUpdateDialog}
       />
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <AlertDialog
+        open={showDeleteDialog}
+        onOpenChange={(open) => {
+          if (deleteMutation.isPending) return;
+          if (!open) setErrorMessage(null);
+          setShowDeleteDialog(open);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Estas seguro?</AlertDialogTitle>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta accion no se puede deshacer. Esto eliminara permanentemente
+              Esta acción no se puede deshacer. Esto eliminará permanentemente
               al cliente &quot;{client.clientName}&quot;.
             </AlertDialogDescription>
             {errorMessage && (
@@ -79,11 +75,16 @@ export default function ClientActions({ client }: ClientActionsProps) {
             )}
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setErrorMessage(null)}>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteMutation.mutate()}
+              onClick={(event) => {
+                // AlertDialogAction closes the dialog on click; keep it open
+                // so the spinner and any error show, and close it on success
+                event.preventDefault();
+                deleteMutation.mutate();
+              }}
               className="bg-destructive hover:bg-destructive/90"
               disabled={deleteMutation.isPending}
             >

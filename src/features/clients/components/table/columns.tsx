@@ -12,7 +12,7 @@ export const columns: ColumnDef<Client>[] = [
   },
   {
     accessorKey: "phoneNumber",
-    header: () => <div className="w-50">Telefono</div>,
+    header: () => <div className="w-50">Teléfono</div>,
   },
   {
     accessorKey: "subscriptionCount",

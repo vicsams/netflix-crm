@@ -5,6 +5,10 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useOnOpen from "@/shared/hooks/useOnOpen";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { createClient } from "@/features/clients/services/clients";
 import { createClientSchema } from "@/features/clients/schemas";
 
@@ -39,30 +43,24 @@ export default function CreateClientDialog() {
     },
   });
 
+  // Start from a blank form each time it opens, so a cancelled attempt
+  // doesn't come back
+  useOnOpen(open, () => {
+    reset();
+    setErrorMessage(null);
+  });
+
   const mutation = useMutation({
     mutationFn: createClient,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      toast.success("Cliente creado");
+      refreshAfterChange(queryClient, "client");
       reset();
       setErrorMessage(null);
       setOpen(false);
     },
     onError: (error: unknown) => {
-      const message =
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof error.response === "object" &&
-        error.response !== null &&
-        "data" in error.response &&
-        typeof error.response.data === "object" &&
-        error.response.data !== null &&
-        "message" in error.response.data &&
-        typeof error.response.data.message === "string"
-          ? error.response.data.message
-          : "No se pudo crear el cliente";
-
-      setErrorMessage(message);
+      setErrorMessage(getErrorMessage(error, "No se pudo crear el cliente"));
     },
   });
 

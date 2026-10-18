@@ -1,7 +1,14 @@
 import Link from "next/link";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/shared/lib/auth";
 import { Button } from "@/shared/components/ui/button";
 
 export default async function Home() {
+  // The landing page is only for visitors; signed-in users go to their data
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (session) redirect("/dashboard");
+
   return (
     <div className="flex min-h-dvh flex-col items-center gap-4 pt-[25vh]">
       <h1 className="text-center text-4xl font-bold">

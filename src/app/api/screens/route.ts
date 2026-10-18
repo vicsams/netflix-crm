@@ -9,7 +9,14 @@ export async function POST(req: NextRequest) {
     if (response) return response;
 
     const body = await req.json();
-    const data = createScreenSchema.parse(body);
+    const parsed = createScreenSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { message: parsed.error.issues[0]?.message ?? "Datos inválidos" },
+        { status: 400 },
+      );
+    }
+    const data = parsed.data;
 
     const activeAccount = await prisma.activeAccount.findFirst({
       where: { id: data.activeAccountId, userId },
@@ -18,14 +25,14 @@ export async function POST(req: NextRequest) {
 
     if (!activeAccount) {
       return NextResponse.json(
-        { message: "Active account not found" },
+        { message: "Cuenta no encontrada" },
         { status: 404 },
       );
     }
 
     if (activeAccount.screens.length >= 5) {
       return NextResponse.json(
-        { message: "Maximum limit of 5 screens reached for this account" },
+        { message: "Esta cuenta ya tiene el máximo de 5 pantallas" },
         { status: 400 },
       );
     }
@@ -40,11 +47,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(screen, { status: 201 });
   } catch (error) {
-    if (error instanceof Error) {
-      return NextResponse.json({ message: error.message }, { status: 400 });
-    }
+    console.error("Error creating screen:", error);
     return NextResponse.json(
-      { message: "Error creating screen" },
+      { message: "No se pudo crear la pantalla" },
       { status: 500 },
     );
   }
@@ -76,7 +81,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(screens);
   } catch {
     return NextResponse.json(
-      { message: "Error fetching screens" },
+      { message: "No se pudieron cargar las pantallas" },
       { status: 500 },
     );
   }

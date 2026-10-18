@@ -4,6 +4,8 @@ import { Spinner } from "@/shared/components/ui/spinner";
 type AmountNoticeProps = {
   waitingForRate: boolean;
   customRate: boolean;
+  // The Binance rate failed to load, so waiting for it is pointless
+  binanceFailed: boolean;
   zeroAmount: boolean;
   // What saving 0 Bs means in this flow
   zeroAmountMessage: string;
@@ -14,6 +16,7 @@ type AmountNoticeProps = {
 export default function AmountNotice({
   waitingForRate,
   customRate,
+  binanceFailed,
   zeroAmount,
   zeroAmountMessage,
 }: AmountNoticeProps) {
@@ -22,6 +25,8 @@ export default function AmountNotice({
       <p className="text-muted-foreground flex items-center gap-2 text-sm">
         {customRate ? (
           "Ingresa la tasa USDT manual para calcular el monto."
+        ) : binanceFailed ? (
+          "No se pudo obtener la tasa de Binance. Usa una tasa manual para continuar."
         ) : (
           <>
             <Spinner />

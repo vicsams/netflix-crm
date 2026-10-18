@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { fetchClientStatuses } from "@/features/subscriptions/services/subscriptions";
 import type { ClientStatus } from "@/features/subscriptions/types/clientStatus";
 import { fetchActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
@@ -66,13 +69,12 @@ export default function ServiceActions({ service }: ServiceActionsProps) {
       return await deleteService(service.id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["services"] });
-      queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      toast.success("Servicio eliminado");
+      refreshAfterChange(queryClient, "service");
       setShowDeleteDialog(false);
     },
     onError: (error) => {
-      console.error("Failed to delete service:", error);
+      toast.error(getErrorMessage(error, "No se pudo eliminar el servicio"));
     },
   });
 
@@ -84,7 +86,12 @@ export default function ServiceActions({ service }: ServiceActionsProps) {
         onOpenChange={setShowUpdateDialog}
       />
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <AlertDialog
+        open={showDeleteDialog}
+        onOpenChange={(open) => {
+          if (!deleteMutation.isPending) setShowDeleteDialog(open);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
@@ -101,9 +108,16 @@ export default function ServiceActions({ service }: ServiceActionsProps) {
             />
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
+              Cancelar
+            </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteMutation.mutate()}
+              onClick={(event) => {
+                // AlertDialogAction closes the dialog on click; keep it open
+                // so the spinner and any error show, and close it on success
+                event.preventDefault();
+                deleteMutation.mutate();
+              }}
               className="bg-destructive hover:bg-destructive/90"
               disabled={deleteMutation.isPending || checking || checkFailed}
             >

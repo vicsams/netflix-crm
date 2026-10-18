@@ -4,7 +4,7 @@ import { useState } from "react";
 import ClientStatusActions from "@/features/subscriptions/components/ClientStatusActions";
 import ClientStatusDetailsSheet from "@/features/subscriptions/components/ClientStatusDetailsSheet";
 import {
-  getRemainingDaysLabel,
+  getExpiryDetail,
   StatusBadge,
 } from "@/features/subscriptions/components/table/columns";
 import { ClientStatusListProps } from "@/features/subscriptions/types/clientStatus";
@@ -50,17 +50,21 @@ export default function ClientStatusList({
             }}
             className="active:bg-muted flex cursor-pointer items-center justify-between gap-3 px-4 py-3"
           >
-            <div className="flex min-w-0 flex-col gap-0.5">
+            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+              {/* The name gets the room: the badge is compact here and the
+                  dates go in the details line below */}
               <div className="flex min-w-0 items-center gap-2">
                 <span className="truncate font-medium">
                   {row.client?.clientName ?? row.clientName}
                 </span>
                 <span className="shrink-0">
-                  <StatusBadge row={row} />
+                  <StatusBadge row={row} compact />
                 </span>
               </div>
               <span className="text-muted-foreground truncate text-xs">
-                {row.service?.serviceName ?? "-"} · {getRemainingDaysLabel(row)}
+                {[row.service?.serviceName ?? "-", getExpiryDetail(row)]
+                  .filter(Boolean)
+                  .join(" · ")}
               </span>
               <span className="text-muted-foreground truncate text-xs">
                 {row.activeAccount?.email ?? "-"}

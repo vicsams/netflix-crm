@@ -3,6 +3,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import { formatPin } from "@/shared/lib/pin";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { updateScreen } from "@/features/streaming-services/services/active-accounts/screens";
 import {
   updateScreenSchema,
@@ -38,7 +42,7 @@ export default function UpdateScreenDialog({
     resolver: zodResolver(updateScreenSchema),
     defaultValues: {
       profileName: screen.profileName,
-      profilePIN: screen.profilePIN,
+      profilePIN: formatPin(screen.profilePIN),
     },
   });
 
@@ -47,12 +51,12 @@ export default function UpdateScreenDialog({
       return await updateScreen(screen.id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["activeAccounts"] });
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      toast.success("Pantalla actualizada");
+      refreshAfterChange(queryClient, "screen");
       onOpenChange(false);
     },
     onError: (error) => {
-      console.error("Failed to update screen:", error);
+      toast.error(getErrorMessage(error, "No se pudo actualizar la pantalla"));
     },
   });
 
@@ -83,7 +87,13 @@ export default function UpdateScreenDialog({
 
           <div>
             <Label>PIN</Label>
-            <Input type="number" {...register("profilePIN")} />
+            <Input
+              type="text"
+              maxLength={4}
+              inputMode="numeric"
+              autoComplete="off"
+              {...register("profilePIN")}
+            />
             {errors.profilePIN && (
               <p className="text-destructive text-sm font-medium">
                 {String(errors.profilePIN.message)}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
+import { PasswordInput } from "@/shared/components/ui/password-input";
 import { Spinner } from "@/shared/components/ui/spinner";
 import {
   Field,
@@ -38,14 +39,17 @@ export default function SignInForm() {
         email: data.email,
         password: data.password,
       }),
-    onSuccess: (res) => {
+    onSuccess: (res, variables) => {
       // better-auth does not throw on failure, it returns { error }
       const error = (
         res as { error?: { status?: number; message?: string } } | null
       )?.error;
 
       if (error?.status === 403) {
-        router.push("/verify-email");
+        // Better Auth just sent a fresh link (sendOnSignIn)
+        router.push(
+          `/verify-email?email=${encodeURIComponent(variables.email)}`,
+        );
         return;
       }
 
@@ -63,14 +67,17 @@ export default function SignInForm() {
       queryClient.invalidateQueries({ queryKey: ["session"] });
       router.push("/dashboard");
     },
-    onError: (err: unknown) => {
+    onError: (err: unknown, variables) => {
       const e = err as {
         status?: number;
         code?: string;
         message?: string;
       } | null;
       if (e && (e.status === 403 || e.code === "API_ERROR")) {
-        router.push("/verify-email");
+        // Better Auth just sent a fresh link (sendOnSignIn)
+        router.push(
+          `/verify-email?email=${encodeURIComponent(variables.email)}`,
+        );
         return;
       }
       const message = e && e.message ? e.message : "Error durante el registro";
@@ -108,6 +115,7 @@ export default function SignInForm() {
                       id="email"
                       {...field}
                       type="email"
+                      autoComplete="email"
                       placeholder="correo@ejemplo.com"
                     />
                     {fieldState.invalid && (
@@ -123,10 +131,10 @@ export default function SignInForm() {
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                    <Input
+                    <PasswordInput
                       id="password"
                       {...field}
-                      type="password"
+                      autoComplete="current-password"
                       placeholder="Ingrese su contraseña"
                     />
                     {fieldState.invalid && (
@@ -142,7 +150,7 @@ export default function SignInForm() {
                   href="/forgot-password"
                   className="text-sm text-blue-600 hover:underline"
                 >
-                  Olvido su contraseña?
+                  ¿Olvidó su contraseña?
                 </Link>
               </div>
               <Button
@@ -153,10 +161,10 @@ export default function SignInForm() {
                 {signInMutation.isPending ? (
                   <>
                     <Spinner />
-                    Iniciando Sesion
+                    Iniciando Sesión
                   </>
                 ) : (
-                  "Iniciar Sesion"
+                  "Iniciar Sesión"
                 )}
               </Button>
             </FieldGroup>
@@ -164,7 +172,7 @@ export default function SignInForm() {
         </form>
 
         <p className="text-muted-foreground mt-6 text-center text-sm">
-          No tiene una cuenta?{" "}
+          ¿No tiene una cuenta?{" "}
           <Link href="/signup" className="text-primary underline">
             Cree una cuenta
           </Link>

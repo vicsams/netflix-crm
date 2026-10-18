@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import useOnOpen from "@/shared/hooks/useOnOpen";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { updateClient } from "@/features/clients/services/clients";
 import { createClientSchema } from "@/features/clients/schemas";
 
@@ -47,38 +51,29 @@ export default function UpdateClientDialog({
     },
   });
 
-  useEffect(() => {
+  // Load the client's current values each time it opens: a cancelled edit
+  // doesn't come back, and a background refetch doesn't wipe a running one
+  useOnOpen(open, () => {
     reset({
       clientName: client.clientName,
       phoneNumber: client.phoneNumber,
     });
-  }, [client, reset]);
+    setErrorMessage(null);
+  });
 
   const mutation = useMutation({
     mutationFn: (data: z.infer<typeof createClientSchema>) =>
       updateClient(client.id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      queryClient.invalidateQueries({ queryKey: ["clientStatuses"] });
+      toast.success("Cliente actualizado");
+      refreshAfterChange(queryClient, "client");
       setErrorMessage(null);
       setOpen?.(false);
     },
     onError: (error: unknown) => {
-      const message =
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof error.response === "object" &&
-        error.response !== null &&
-        "data" in error.response &&
-        typeof error.response.data === "object" &&
-        error.response.data !== null &&
-        "message" in error.response.data &&
-        typeof error.response.data.message === "string"
-          ? error.response.data.message
-          : "No se pudo actualizar el cliente";
-
-      setErrorMessage(message);
+      setErrorMessage(
+        getErrorMessage(error, "No se pudo actualizar el cliente"),
+      );
     },
   });
 

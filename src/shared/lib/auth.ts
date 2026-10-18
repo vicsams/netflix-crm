@@ -6,6 +6,9 @@ import { EMAIL_FROM, getResend } from "@/shared/lib/resend";
 import prisma from "@/shared/lib/db";
 import TwitchResetPasswordEmail from "@/features/auth/emails/ResetPassword";
 
+// Where verification links send the user back to (see sendVerificationEmail)
+export const VERIFIED_CALLBACK_URL = "/verify-email?verified=1";
+
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
@@ -40,7 +43,7 @@ export const auth = betterAuth({
       const { error } = await resend.emails.send({
         from: EMAIL_FROM,
         to: user.email!,
-        subject: "Reset your password",
+        subject: "Restablece tu contraseña",
         react: TwitchResetPasswordEmail({
           resetUrl,
           username: user.name!,
@@ -60,6 +63,11 @@ export const auth = betterAuth({
   },
 
   emailVerification: {
+    // Signing in with an unverified email sends a fresh link (the sign-in
+    // screen tells the user one is on its way)
+    sendOnSignIn: true,
+    // Clicking the link signs the user in, so they land in the dashboard
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       const resend = getResend();
       if (!resend) {
@@ -67,12 +75,18 @@ export const auth = betterAuth({
         return;
       }
 
+      // Every link returns to /verify-email, whichever flow sent it: Better
+      // Auth redirects there on success, or with ?error= when the link
+      // expired or is invalid, and that page handles both
+      const link = new URL(url);
+      link.searchParams.set("callbackURL", VERIFIED_CALLBACK_URL);
+
       // Resend does not throw on failure, it returns { error }
       const { error } = await resend.emails.send({
         from: EMAIL_FROM,
         to: user.email!,
-        subject: "Verify your email",
-        html: `<p>Please verify your email by clicking <a href="${url}">here</a>.</p>`,
+        subject: "Verifica tu correo",
+        html: `<p>Hola,</p><p>Para activar tu cuenta, verifica tu correo haciendo clic <a href="${link.toString()}">aquí</a>.</p><p>Si no creaste esta cuenta, puedes ignorar este correo.</p>`,
       });
 
       if (error) {

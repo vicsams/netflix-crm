@@ -24,6 +24,9 @@ export async function GET(req: Request) {
     return NextResponse.json(withdrawals, { status: 200 });
   } catch (error) {
     console.error("Error fetching withdrawals:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

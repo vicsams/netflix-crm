@@ -12,6 +12,11 @@ export function formatDate(value?: string | null) {
   return `${day} de ${month.charAt(0).toUpperCase()}${month.slice(1)} de ${year}`;
 }
 
+// e.g. "10 abr 2026", where space is tight
+export function formatShortDate(value: string) {
+  return format(new Date(value), "d MMM yyyy", { locale: es });
+}
+
 export function formatNumericDate(value?: string | null) {
   return value ? format(new Date(value), "dd/MM/yyyy") : "-";
 }

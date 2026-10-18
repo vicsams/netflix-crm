@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useOnOpen from "@/shared/hooks/useOnOpen";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { createService } from "@/features/streaming-services/services/service-management/services";
 import {
   createServiceSchema,
@@ -60,6 +64,12 @@ export default function CreateServiceDialog() {
     name: "backgroundColor",
   });
 
+  // Start from a blank form each time it opens, so a cancelled attempt
+  // doesn't come back
+  useOnOpen(open, () => {
+    reset();
+  });
+
   const mutation = useMutation({
     mutationFn: async (data: CreateServiceValues) => {
       const payload = {
@@ -73,12 +83,13 @@ export default function CreateServiceDialog() {
       return await createService(payload);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["services"] });
+      toast.success("Servicio creado");
+      refreshAfterChange(queryClient, "service");
       reset();
       setOpen(false);
     },
     onError: (error) => {
-      console.error("Failed to create service:", error);
+      toast.error(getErrorMessage(error, "No se pudo crear el servicio"));
     },
   });
 

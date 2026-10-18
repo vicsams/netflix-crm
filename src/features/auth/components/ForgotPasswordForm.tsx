@@ -44,7 +44,7 @@ async function checkEmailVerification(email: string) {
   if (!res.ok) {
     return {
       ok: false as const,
-      error: { message: json?.message || "Error checking email" },
+      error: { message: json?.message || "Error verificando el correo" },
     };
   }
 
@@ -75,7 +75,8 @@ export default function ForgotPasswordForm() {
           return {
             error: {
               code: "not_verified",
-              message: "The email sent is not verified",
+              message:
+                "Este correo aún no está verificado. Revisa tu bandeja de entrada y verifícalo primero.",
             },
           };
         }
@@ -144,6 +145,8 @@ export default function ForgotPasswordForm() {
                     <FieldLabel htmlFor="email">Correo</FieldLabel>
                     <Input
                       id="email"
+                      type="email"
+                      autoComplete="email"
                       placeholder="correo@ejemplo.com"
                       {...field}
                     />
@@ -190,7 +193,7 @@ export default function ForgotPasswordForm() {
               <p className="text-center">Revisa tu correo electrónico</p>
             </DialogTitle>
             <DialogDescription className="mt-4">
-              Hemos enviado un correo a tu buzon de entrada. Ingresa a tu correo
+              Hemos enviado un correo a tu buzón de entrada. Ingresa a tu correo
               para restablecer tu contraseña.
             </DialogDescription>
           </DialogHeader>

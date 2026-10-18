@@ -7,6 +7,7 @@ import BankEarningsCard from "@/features/bank-funds/components/BankEarningsCard"
 import ClientStatusTable from "@/features/subscriptions/components/ClientStatusTable";
 import ClientsTable from "@/features/clients/components/ClientsTable";
 import WithdrawalsTable from "@/features/bank-funds/components/WithdrawalsTable";
+import VerifiedToast from "@/features/auth/components/VerifiedToast";
 import {
   Tabs,
   TabsContent,
@@ -14,7 +15,11 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui/tabs";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ verified?: string }>;
+}) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -23,8 +28,11 @@ export default async function DashboardPage() {
     redirect("/signin");
   }
 
+  const { verified } = await searchParams;
+
   return (
     <div className="mx-10 pb-4 max-sm:mx-4">
+      {verified && <VerifiedToast message="¡Correo verificado! Bienvenido." />}
       <Tabs defaultValue="panel-principal" className="w-full gap-4">
         <TabsList
           variant="line"

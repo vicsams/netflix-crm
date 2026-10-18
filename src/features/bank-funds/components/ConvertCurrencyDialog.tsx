@@ -1,15 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { convertCurrency } from "@/features/bank-funds/services/bankEarnings";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
+import { formatMoney } from "@/shared/lib/money";
+import {
+  convertCurrency,
+  fetchBankEarnings,
+} from "@/features/bank-funds/services/bankEarnings";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
-import { AxiosError } from "axios";
 import { Alert, AlertDescription } from "@/shared/components/ui/alert";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -23,8 +30,24 @@ export default function ConvertCurrencyDialog({
 }: ConvertCurrencyDialogProps) {
   const [amountBs, setAmountBs] = useState<number | "">("");
   const [rate, setRate] = useState<number | "">("");
+  // Money moves only after a second, explicit confirmation of the summary
+  const [reviewing, setReviewing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+
+  const { data: bank } = useQuery({
+    queryKey: ["bankEarnings"],
+    queryFn: fetchBankEarnings,
+    enabled: open,
+  });
+  const availableBs = bank ? bank.total / 100 : null;
+
+  const resetForm = () => {
+    setAmountBs("");
+    setRate("");
+    setReviewing(false);
+    setError(null);
+  };
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -32,43 +55,49 @@ export default function ConvertCurrencyDialog({
       return convertCurrency({ amountBs, rate });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bankEarnings"] });
+      toast.success("Conversión realizada");
+      refreshAfterChange(queryClient, "bank");
       onOpenChange(false);
-      setAmountBs("");
-      setRate("");
-      setError(null);
+      resetForm();
     },
     onError: (err: unknown) => {
-      const axiosError = err as AxiosError<{ message?: string }>;
-      const message =
-        axiosError.response?.data?.message ||
-        "Ocurrió un error en la conversión";
-      setError(message);
+      setError(getErrorMessage(err, "Ocurrió un error en la conversión"));
+      setReviewing(false);
     },
   });
 
   const expectedUsdt =
     typeof amountBs === "number" && typeof rate === "number" && rate > 0
-      ? (amountBs / rate).toFixed(2)
-      : "0.00";
+      ? amountBs / rate
+      : 0;
 
-  const isRateTooHigh =
-    typeof amountBs === "number" && typeof rate === "number" && rate > amountBs;
+  const exceedsBalance =
+    typeof amountBs === "number" &&
+    availableBs !== null &&
+    Math.round(amountBs * 100) > Math.round(availableBs * 100);
+
+  const canReview =
+    typeof amountBs === "number" &&
+    amountBs > 0 &&
+    typeof rate === "number" &&
+    rate > 0 &&
+    !exceedsBalance;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (isRateTooHigh) return;
+    if (!canReview) return;
+    if (!reviewing) {
+      setReviewing(true);
+      return;
+    }
     mutation.mutate();
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
+    if (mutation.isPending) return;
     onOpenChange(nextOpen);
-    if (!nextOpen) {
-      setAmountBs("");
-      setRate("");
-      setError(null);
-    }
+    if (!nextOpen) resetForm();
   };
 
   return (
@@ -76,61 +105,132 @@ export default function ConvertCurrencyDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Convertir Bs a USDT</DialogTitle>
+          <DialogDescription>
+            Disponible:{" "}
+            <span className="text-foreground font-semibold">
+              {availableBs === null ? "…" : `${formatMoney(availableBs)} Bs`}
+            </span>
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label>Monto en Bs a convertir</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={amountBs}
-              onChange={(e) =>
-                setAmountBs(e.target.value ? parseFloat(e.target.value) : "")
-              }
-              placeholder="Ej: 10000"
-              required
-            />
-          </div>
-          <div>
-            <Label>Tasa de cambio (Ej: 400 Bs por 1 USDT)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={rate}
-              onChange={(e) =>
-                setRate(e.target.value ? parseFloat(e.target.value) : "")
-              }
-              placeholder="Ej: 400"
-              required
-            />
-            {isRateTooHigh && (
-              <p className="text-sm text-red-500">
-                La tasa de cambio no puede ser mayor que el monto a convertir.
-              </p>
-            )}
-          </div>
-          <div className="rounded bg-neutral-100 p-3 text-sm text-neutral-800">
-            <strong>Recibirás aprox:</strong> {expectedUsdt} USDT
-          </div>
+          {reviewing ? (
+            <div className="space-y-2 rounded-md border p-4 text-sm">
+              <p className="font-semibold">Revisa la conversión</p>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Monto a convertir</span>
+                <span>{formatMoney(Number(amountBs))} Bs</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Tasa</span>
+                <span>{formatMoney(Number(rate))} Bs por USDT</span>
+              </div>
+              <div className="flex justify-between font-semibold">
+                <span>Recibirás aprox.</span>
+                <span>{formatMoney(expectedUsdt)} USDT</span>
+              </div>
+              {availableBs !== null && (
+                <div className="text-muted-foreground flex justify-between">
+                  <span>Te quedarán</span>
+                  <span>{formatMoney(availableBs - Number(amountBs))} Bs</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="convert-amount">
+                    Monto en Bs a convertir
+                  </Label>
+                  {availableBs !== null && availableBs > 0 && (
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="sm"
+                      className="h-auto p-0"
+                      onClick={() => setAmountBs(availableBs)}
+                    >
+                      Máx
+                    </Button>
+                  )}
+                </div>
+                <Input
+                  id="convert-amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={amountBs}
+                  onChange={(e) =>
+                    setAmountBs(
+                      e.target.value ? parseFloat(e.target.value) : "",
+                    )
+                  }
+                  placeholder="Ej: 10000"
+                  required
+                />
+                {exceedsBalance && (
+                  <p className="text-destructive mt-1 text-sm">
+                    El monto supera tu saldo disponible.
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="convert-rate">
+                  Tasa de cambio (Ej: 400 Bs por 1 USDT)
+                </Label>
+                <Input
+                  id="convert-rate"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={rate}
+                  onChange={(e) =>
+                    setRate(e.target.value ? parseFloat(e.target.value) : "")
+                  }
+                  placeholder="Ej: 400"
+                  required
+                />
+              </div>
+              <div className="rounded bg-neutral-100 p-3 text-sm text-neutral-800">
+                <strong>Recibirás aprox:</strong> {formatMoney(expectedUsdt)}{" "}
+                USDT
+              </div>
+            </>
+          )}
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={mutation.isPending || !amountBs || !rate || isRateTooHigh}
-          >
-            {mutation.isPending ? (
-              <>
-                <Spinner />
-                Convirtiendo
-              </>
-            ) : (
-              "Confirmar Conversión"
+          <div className="flex gap-2">
+            {reviewing && (
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                disabled={mutation.isPending}
+                onClick={() => setReviewing(false)}
+              >
+                Volver
+              </Button>
             )}
-          </Button>
+            <Button
+              type="submit"
+              className="flex-1"
+              disabled={mutation.isPending || !canReview}
+            >
+              {mutation.isPending ? (
+                <>
+                  <Spinner />
+                  Convirtiendo
+                </>
+              ) : reviewing ? (
+                "Confirmar conversión"
+              ) : (
+                "Revisar conversión"
+              )}
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { refreshAfterChange } from "@/shared/lib/refresh";
+import useOnOpen from "@/shared/hooks/useOnOpen";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/lib/errors";
 import { updateService } from "@/features/streaming-services/services/service-management/services";
 import {
   createServiceSchema,
@@ -39,23 +43,30 @@ export default function UpdateServiceDialog({
   const setOpen = isControlled ? setControlledOpen : setUncontrolledOpen;
   const queryClient = useQueryClient();
 
+  const currentValues = () => ({
+    serviceName: service.serviceName,
+    price: service.price / 100, // Convert cents to dollars
+    description: service.description ?? "",
+    currency: service.currency,
+    textColor: service.textColor ?? "#111827",
+    backgroundColor: service.backgroundColor ?? "#f3f4f6",
+  });
+
   const {
     register,
     handleSubmit,
     setValue,
     control,
+    reset,
     formState: { errors },
   } = useForm<z.infer<typeof createServiceSchema>>({
     resolver: zodResolver(createServiceSchema),
-    defaultValues: {
-      serviceName: service.serviceName,
-      price: service.price / 100, // Convert cents to dollars
-      description: service.description ?? "",
-      currency: service.currency,
-      textColor: service.textColor ?? "#111827",
-      backgroundColor: service.backgroundColor ?? "#f3f4f6",
-    },
+    defaultValues: currentValues(),
   });
+
+  // Load the service's current values each time it opens: a cancelled edit
+  // doesn't come back, and a previous save is reflected
+  useOnOpen(open, () => reset(currentValues()));
 
   const textColor = useWatch({
     control,
@@ -81,11 +92,12 @@ export default function UpdateServiceDialog({
       return await updateService(service.id, payload);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["services"] });
+      toast.success("Servicio actualizado");
+      refreshAfterChange(queryClient, "service");
       setOpen?.(false);
     },
     onError: (error) => {
-      console.error("Failed to update service:", error);
+      toast.error(getErrorMessage(error, "No se pudo actualizar el servicio"));
     },
   });
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { getErrorMessage } from "@/shared/lib/errors";
 import CreateAccountDialog from "./CreateAccountDialog";
 import { fetchActiveAccount } from "@/features/streaming-services/services/active-accounts/activeAccount";
 import type { ActiveAccountProps } from "@/features/streaming-services/types/activeAccount";
@@ -42,7 +43,7 @@ export default function ActiveAccountsSection() {
     >
       <div
         onClick={handleAccountClick}
-        className="sticky top-0 z-10 flex items-center justify-between bg-white p-4"
+        className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-2 bg-white p-4"
       >
         <div className="flex items-center gap-1">
           <h2 className="text-lg font-bold">Correos Activos</h2>
@@ -78,7 +79,7 @@ export default function ActiveAccountsSection() {
         )}
         {isError && (
           <div className="text-red-600">
-            Error loading accounts: {error?.message ?? String(error)}
+            {getErrorMessage(error, "No se pudieron cargar las cuentas")}
           </div>
         )}
 

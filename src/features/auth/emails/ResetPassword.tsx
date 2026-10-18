@@ -35,7 +35,7 @@ export const TwitchResetPasswordEmail = ({
       <Tailwind>
         <Body className="font-twitch bg-[#efeef1]">
           <Preview>
-            Has actualizado la contraseña de tu cuenta de Streaming POZ
+            Restablece la contraseña de tu cuenta de Streaming POZ
           </Preview>
           <Container className="mx-auto my-[30px] max-w-[580px] bg-white">
             <Section className="p-[30px]">
@@ -58,13 +58,14 @@ export const TwitchResetPasswordEmail = ({
                 Hola {username},
               </Text>
               <Text className="text-[14px] leading-[1.5]">
-                Has solicitado un reninicio de contraseña el {formattedDate}.
+                Has solicitado restablecer tu contraseña el {formattedDate}.
               </Text>
               <Text className="text-[14px] leading-[1.5]">
-                Has click en el siguiente enlace para restablecer tu contraseña{" "}
+                Haz clic en el siguiente enlace para{" "}
                 <Link href={resetUrl} className="underline">
-                  restablece la contraseña de tu cuenta
-                </Link>{" "}
+                  restablecer la contraseña de tu cuenta
+                </Link>
+                . Si no lo solicitaste, puedes ignorar este correo.
               </Text>
               <Text className="text-[14px] leading-[1.5]">
                 Atentamente,

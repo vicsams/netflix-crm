@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,83 +13,101 @@ import { Textarea } from "@/shared/components/ui/textarea";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { Send } from "lucide-react";
-import { ClientStatusMessageDialogProps } from "@/features/subscriptions/types/clientStatus";
+import { formatDate } from "@/shared/lib/date";
+import { formatWhatsAppNumber, toWhatsAppNumber } from "@/shared/lib/phone";
+import { getDerivedStatus } from "@/features/subscriptions/lib/status";
+import type {
+  ClientStatus,
+  ClientStatusMessageDialogProps,
+} from "@/features/subscriptions/types/clientStatus";
+
+// A starting message that fits the subscription's state; it stays editable
+function getDefaultMessage(clientStatus: ClientStatus) {
+  const name = clientStatus.client?.clientName ?? clientStatus.clientName;
+  const service = clientStatus.service?.serviceName;
+  const subscription = service
+    ? `tu suscripción de ${service}`
+    : "tu suscripción";
+  const date = clientStatus.expirationDate
+    ? formatDate(clientStatus.expirationDate)
+    : null;
+
+  if (!date) {
+    return `Hola ${name}, te escribimos por el estado de ${subscription}.`;
+  }
+
+  switch (getDerivedStatus(clientStatus)) {
+    case "EXPIRED":
+      return `Hola ${name}, ${subscription} venció el ${date}. ¿Deseas renovarla?`;
+    case "NEAR_EXPIRATION":
+      return `Hola ${name}, ${subscription} vence el ${date}. ¿Deseas renovarla para no perder el acceso?`;
+    default:
+      return `Hola ${name}, te recordamos que ${subscription} está activa hasta el ${date}.`;
+  }
+}
 
 export default function ClientStatusMessageDialog({
   open,
   onOpenChange,
-  clientName,
-  phoneNumber,
+  clientStatus,
 }: ClientStatusMessageDialogProps) {
+  const phoneNumber =
+    clientStatus.client?.phoneNumber ?? clientStatus.phoneNumber ?? "";
+  const whatsAppNumber = toWhatsAppNumber(phoneNumber);
   const [message, setMessage] = useState("");
-  const [error, setError] = useState<string | null>(null);
 
-  const defaultMessage = useMemo(
-    () =>
-      `Hola ${clientName}, esperamos que te encuentres bien. Te escribimos por el estado de tu suscripcion.`,
-    [clientName],
-  );
-
-  const handleOpenChange = (nextOpen: boolean) => {
-    onOpenChange(nextOpen);
-
-    if (!nextOpen) {
-      setMessage("");
-      setError(null);
-      return;
-    }
-
-    setMessage(defaultMessage);
-    setError(null);
-  };
+  // The parent opens the dialog by setting `open`, which doesn't call
+  // onOpenChange, so start a fresh message whenever it opens
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) setMessage(getDefaultMessage(clientStatus));
+  }
 
   const handleSendMessage = () => {
-    setError(null);
+    if (!whatsAppNumber) return;
 
-    const cleanPhone = phoneNumber.trim();
-    const cleanMessage = message.trim();
-
-    if (!cleanPhone) {
-      setError("El cliente no tiene número de teléfono registrado");
-      return;
-    }
-
-    // if (!cleanMessage) {
-    //   setError("El mensaje es requerido");
-    //   return;
-    // }
-
-    const chatUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(cleanMessage)}`;
+    const chatUrl = `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(message.trim())}`;
     window.open(chatUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Enviar mensaje</DialogTitle>
           <DialogDescription>
-            Escribe el mensaje para abrir el chat del cliente en WhatsApp.
+            Revisa el mensaje para abrir el chat del cliente en WhatsApp.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <Label>Número de teléfono</Label>
-            <Input value={phoneNumber} disabled />
+            <Label htmlFor="whatsapp-phone">Número de teléfono</Label>
+            <Input id="whatsapp-phone" value={phoneNumber} disabled />
+            {whatsAppNumber ? (
+              <p className="text-muted-foreground mt-1 text-xs">
+                Se abrirá el chat con {formatWhatsAppNumber(whatsAppNumber)}
+              </p>
+            ) : (
+              <p className="text-destructive mt-1 text-sm">
+                {phoneNumber.trim()
+                  ? "El número no es válido para WhatsApp. Edita el cliente e incluye el código de país (ej: +58 414 1234567)."
+                  : "El cliente no tiene número de teléfono registrado."}
+              </p>
+            )}
           </div>
 
           <div>
-            <Label>Mensaje</Label>
+            <Label htmlFor="whatsapp-message">Mensaje</Label>
             <Textarea
+              id="whatsapp-message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Escribe el mensaje a enviar"
               rows={6}
             />
           </div>
-
-          {error && <p className="text-destructive text-sm">{error}</p>}
 
           <div className="flex justify-end gap-2">
             <Button
@@ -102,6 +120,7 @@ export default function ClientStatusMessageDialog({
             <Button
               type="button"
               onClick={handleSendMessage}
+              disabled={!whatsAppNumber}
               className="bg-green-500 hover:bg-green-500"
             >
               <p>Enviar Mensaje</p>

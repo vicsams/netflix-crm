@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/shared/lib/session";
 import { decryptSecret, encryptSecret } from "@/shared/lib/crypto";
 import { createActiveAccountSchema } from "@/features/streaming-services/schemas";
+import { isUniqueViolation } from "@/shared/lib/db-errors";
 
 export async function PATCH(
   req: Request,
@@ -19,7 +20,7 @@ export async function PATCH(
     const parsed = createActiveAccountSchema.partial().safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid data" }, { status: 400 });
+      return NextResponse.json({ message: "Datos inválidos" }, { status: 400 });
     }
 
     const owned = await prisma.activeAccount.findFirst({
@@ -29,7 +30,7 @@ export async function PATCH(
 
     if (!owned) {
       return NextResponse.json(
-        { message: "Active account not found" },
+        { message: "Cuenta no encontrada" },
         { status: 404 },
       );
     }
@@ -42,7 +43,7 @@ export async function PATCH(
 
       if (!serviceExists) {
         return NextResponse.json(
-          { message: "service not found" },
+          { message: "Servicio no encontrado" },
           { status: 404 },
         );
       }
@@ -68,8 +69,17 @@ export async function PATCH(
       password: decryptSecret(updatedAccount.password),
     });
   } catch (error) {
+    if (isUniqueViolation(error)) {
+      return NextResponse.json(
+        { message: "Ya existe una cuenta con ese correo" },
+        { status: 409 },
+      );
+    }
     console.error("Error updating active account:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }
 
@@ -88,14 +98,17 @@ export async function DELETE(
 
     if (count === 0) {
       return NextResponse.json(
-        { message: "Active account not found" },
+        { message: "Cuenta no encontrada" },
         { status: 404 },
       );
     }
 
-    return NextResponse.json({ message: "Active account deleted" });
+    return NextResponse.json({ message: "Cuenta eliminada" });
   } catch (error) {
     console.error("Error deleting active account:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

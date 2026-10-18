@@ -35,7 +35,7 @@ export async function PATCH(
 
     const parsed = updateClientSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid data" }, { status: 400 });
+      return NextResponse.json({ message: "Datos inválidos" }, { status: 400 });
     }
 
     const { userId, response } = await requireUser(req);
@@ -48,7 +48,7 @@ export async function PATCH(
 
     if (!owned) {
       return NextResponse.json(
-        { message: "Client not found" },
+        { message: "Cliente no encontrado" },
         { status: 404 },
       );
     }
@@ -82,13 +82,16 @@ export async function PATCH(
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { message: "Ya existe un cliente con ese numero de telefono" },
+        { message: "Ya existe un cliente con ese número de teléfono" },
         { status: 409 },
       );
     }
 
     console.error("Error updating client:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }
 
@@ -116,7 +119,7 @@ export async function DELETE(
 
     if (!client) {
       return NextResponse.json(
-        { message: "Client not found" },
+        { message: "Cliente no encontrado" },
         { status: 404 },
       );
     }
@@ -135,9 +138,12 @@ export async function DELETE(
       where: { id },
     });
 
-    return NextResponse.json({ message: "Client deleted" });
+    return NextResponse.json({ message: "Cliente eliminado" });
   } catch (error) {
     console.error("Error deleting client:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }

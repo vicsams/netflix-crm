@@ -14,7 +14,7 @@ export async function PATCH(
     // Allow partial updates by using partial()
     const parsed = createServiceSchema.partial().safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ message: "Invalid data" }, { status: 400 });
+      return NextResponse.json({ message: "Datos inválidos" }, { status: 400 });
     }
 
     const { userId, response } = await requireUser(req);
@@ -27,7 +27,7 @@ export async function PATCH(
 
     if (!owned) {
       return NextResponse.json(
-        { message: "Service not found" },
+        { message: "Servicio no encontrado" },
         { status: 404 },
       );
     }
@@ -55,7 +55,10 @@ export async function PATCH(
     return NextResponse.json(service);
   } catch (error) {
     console.error("Error updating service:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }
 
@@ -75,14 +78,17 @@ export async function DELETE(
 
     if (count === 0) {
       return NextResponse.json(
-        { message: "Service not found" },
+        { message: "Servicio no encontrado" },
         { status: 404 },
       );
     }
 
-    return NextResponse.json({ message: "Service deleted" });
+    return NextResponse.json({ message: "Servicio eliminado" });
   } catch (error) {
     console.error("Error deleting service:", error);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor. Intenta de nuevo." },
+      { status: 500 },
+    );
   }
 }
