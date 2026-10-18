@@ -94,3 +94,13 @@ export type BankEarnings = Prisma.BankEarningsModel
  * 
  */
 export type BankWithdrawal = Prisma.BankWithdrawalModel
+/**
+ * Model Chat
+ * 
+ */
+export type Chat = Prisma.ChatModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel

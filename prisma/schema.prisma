@@ -29,6 +29,7 @@ model User {
   subscriptions Subscription[]
   bankEarnings  BankEarnings?
   withdrawals   BankWithdrawal[]
+  chats         Chat[]
 
   @@unique([email])
   @@map("user")
@@ -211,3 +212,30 @@ model BankWithdrawal {
 }
 
 
+
+// AI assistant conversations. Messages store the AI SDK UIMessage parts
+// (text and tool results) as JSON, so a chat can be reopened as it was
+model Chat {
+  id        String        @id
+  title     String
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+
+  @@index([userId, updatedAt])
+  @@map("assistant_chats")
+}
+
+model ChatMessage {
+  id        String   @id
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  role      String
+  parts     Json
+  createdAt DateTime @default(now())
+
+  @@index([chatId, createdAt])
+  @@map("assistant_messages")
+}
