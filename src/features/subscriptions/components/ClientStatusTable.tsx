@@ -307,7 +307,7 @@ export default function ClientStatusTable() {
             <SelectTrigger
               size="sm"
               aria-label="Ordenar suscripciones"
-              className="w-52 max-sm:w-full"
+              className="w-60 shrink-0"
             >
               <ArrowUpDown className="text-muted-foreground" />
               <SelectValue />
