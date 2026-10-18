@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ClientStatus } from "@/features/subscriptions/types/clientStatus";
 import ClientStatusActions from "@/features/subscriptions/components/ClientStatusActions";
 import { differenceInDays } from "date-fns";
-import { formatDate } from "@/shared/lib/date";
+import { formatDate, formatShortDate } from "@/shared/lib/date";
 import { formatPin } from "@/shared/lib/pin";
 import { getDerivedStatus } from "@/features/subscriptions/lib/status";
 import { Badge } from "@/shared/components/ui/badge";
@@ -31,7 +31,22 @@ export function getRemainingDaysLabel(row: ClientStatus) {
   if (!row.expirationDate) return "-";
 
   const days = differenceInDays(new Date(row.expirationDate), new Date()) + 1;
-  return days >= 0 ? `${days} días` : "Expirado";
+  return days >= 0 ? pluralDays(days) : "Expirado";
+}
+
+// When it expires (or expired), short enough for a mobile details line:
+// "vence 6 nov 2026 · 14 días", "vence hoy", "venció 19 oct 2026"
+export function getExpiryDetail(row: ClientStatus) {
+  if (!row.expirationDate) return null;
+
+  const date = formatShortDate(row.expirationDate);
+  if (getDerivedStatus(row) === "EXPIRED") return `venció ${date}`;
+
+  // Same count as the "Días restantes" column
+  const remaining =
+    differenceInDays(new Date(row.expirationDate), new Date()) + 1;
+  if (remaining <= 0) return "vence hoy";
+  return `vence ${date} · ${pluralDays(remaining)}`;
 }
 
 export function ServiceBadge({ row }: { row: ClientStatus }) {
@@ -105,9 +120,12 @@ const STATUS_STYLE: Record<string, { badge: string; dot: string }> = {
 export function StatusBadge({
   row,
   className,
+  compact = false,
 }: {
   row: ClientStatus;
   className?: string;
+  // Dot and status only, for tight layouts that show the date elsewhere
+  compact?: boolean;
 }) {
   const status = getDerivedStatus(row);
   const label = STATUS_LABEL[status] ?? status;
@@ -120,8 +138,9 @@ export function StatusBadge({
       </Badge>
     );
 
-  const detail =
-    status === "ACTIVE" && row.purchaseDate
+  const detail = compact
+    ? null
+    : status === "ACTIVE" && row.purchaseDate
       ? `Desde ${formatDate(row.purchaseDate)}`
       : status === "EXPIRED" && row.expirationDate
         ? `Desde ${formatDate(row.expirationDate)}`
