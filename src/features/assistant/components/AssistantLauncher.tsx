@@ -77,13 +77,30 @@ export default function AssistantLauncher() {
 
   return (
     <>
+      {/* White with gradient text; on hover the gradient fills the button */}
       <Button
         type="button"
         onClick={() => handleOpenChange(true)}
-        className="animate-gradient-pan fixed right-6 bottom-6 z-40 h-12 gap-2 rounded-full bg-linear-to-r from-violet-600 via-fuchsia-500 to-orange-400 bg-size-[200%_200%] px-5 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/30 transition-[transform,box-shadow] hover:scale-105 hover:shadow-xl hover:shadow-fuchsia-500/40 motion-reduce:animate-none motion-reduce:transition-none motion-reduce:hover:scale-100 max-sm:right-4 max-sm:bottom-4"
+        className="group hover:animate-gradient-pan fixed right-6 bottom-6 z-40 h-12 gap-2 rounded-full border border-fuchsia-200 bg-white bg-size-[200%_200%] px-5 text-sm font-semibold shadow-lg shadow-fuchsia-500/30 hover:border-transparent hover:bg-linear-to-r hover:from-violet-600 hover:via-fuchsia-500 hover:to-orange-400 motion-reduce:hover:animate-none max-sm:right-4 max-sm:bottom-4"
       >
-        <Sparkles className="size-5" />
-        Chat IA
+        {/* The icon is drawn with its stroke, which can't use the text's
+            clipped gradient, so it gets the same gradient as an SVG paint */}
+        <svg aria-hidden className="absolute size-0">
+          <defs>
+            <linearGradient id="chat-ia-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="var(--color-violet-600)" />
+              <stop offset="50%" stopColor="var(--color-fuchsia-500)" />
+              <stop offset="100%" stopColor="var(--color-orange-400)" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <Sparkles
+          stroke="url(#chat-ia-gradient)"
+          className="size-5 group-hover:stroke-white"
+        />
+        <span className="bg-linear-to-r from-violet-600 via-fuchsia-500 to-orange-400 bg-clip-text text-transparent group-hover:bg-none group-hover:text-white">
+          Chat IA
+        </span>
       </Button>
 
       {isMobile ? (
