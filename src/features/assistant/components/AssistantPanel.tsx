@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { History, SquarePen } from "lucide-react";
+import { History, SquarePen, X } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { getErrorMessage } from "@/shared/lib/errors";
@@ -23,6 +23,7 @@ export default function AssistantPanel({
   onOpenChat,
   onChatSaved,
   onChatDeleted,
+  onClose,
 }: {
   activeChat: ActiveChat;
   showHistory: boolean;
@@ -31,6 +32,7 @@ export default function AssistantPanel({
   onOpenChat: (id: string) => void;
   onChatSaved: () => void;
   onChatDeleted: (id: string) => void;
+  onClose: () => void;
 }) {
   const savedChat = useQuery({
     queryKey: ["assistantChat", activeChat.id],
@@ -70,6 +72,16 @@ export default function AssistantPanel({
             onClick={onNewChat}
           >
             <SquarePen className="size-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="Cerrar asistente"
+            title="Cerrar"
+            onClick={onClose}
+          >
+            <X className="size-4" />
           </Button>
         </div>
       </div>

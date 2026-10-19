@@ -69,6 +69,7 @@ export default function AssistantLauncher() {
           setNewChatStarted(false);
         }
       }}
+      onClose={() => handleOpenChange(false)}
     />
   );
 
@@ -129,7 +130,11 @@ export default function AssistantLauncher() {
         </Drawer>
       ) : (
         <Sheet open={open} onOpenChange={handleOpenChange}>
-          <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-xl">
+          {/* The close button lives in the panel header with the other actions */}
+          <SheetContent
+            showCloseButton={false}
+            className="flex w-full flex-col gap-0 p-0 sm:max-w-xl"
+          >
             <SheetHeader className="sr-only">
               <SheetTitle>{title}</SheetTitle>
               <SheetDescription>{description}</SheetDescription>
