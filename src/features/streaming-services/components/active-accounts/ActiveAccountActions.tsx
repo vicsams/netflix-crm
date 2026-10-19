@@ -142,11 +142,7 @@ export default function ActiveAccountActions({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            // Follows the card, which takes its service's text color
-            className="h-8 w-8 p-0 text-current hover:bg-current/10 hover:text-current"
-          >
+          <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Abrir menú</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
