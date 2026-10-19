@@ -23,7 +23,7 @@ export default function TotalRevenueCard() {
   }, [clientStatuses]);
 
   return (
-    <div className="bg-card text-card-foreground col-span-1 flex flex-col gap-4 rounded-xl border p-4 shadow-xl">
+    <div className="bg-card text-card-foreground col-span-1 flex flex-col gap-4 rounded-xl p-4 shadow-xl">
       <h2 className="text-md font-normal">Suma Total Mensual</h2>
       {isLoading ? (
         <p className="text-md font-bold">Calculando...</p>

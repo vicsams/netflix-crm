@@ -114,7 +114,7 @@ export default function ConvertCurrencyDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {reviewing ? (
-            <div className="space-y-2 rounded-md border p-4 text-sm">
+            <div className="bg-muted space-y-2 rounded-md p-4 text-sm">
               <p className="font-semibold">Revisa la conversión</p>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Monto a convertir</span>

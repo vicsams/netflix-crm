@@ -64,7 +64,7 @@ export default function EmailVerificationWindow({
 
   return (
     <div className="bg-background flex min-h-screen items-center justify-center p-6">
-      <div className="bg-card w-full max-w-md rounded-lg border p-8 shadow-md">
+      <div className="bg-card w-full max-w-md rounded-lg p-8 shadow-md">
         <Card className="border-none shadow-none">
           <div className="bg-lumina-purple w-fit self-center rounded-full p-4">
             <Icon className="text-lumina-cream mx-auto h-12 w-12" />

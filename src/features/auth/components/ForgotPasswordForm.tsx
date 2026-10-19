@@ -128,7 +128,7 @@ export default function ForgotPasswordForm() {
 
   return (
     <div className="bg-background flex min-h-screen items-center justify-center p-6">
-      <div className="bg-card w-full max-w-md rounded-lg border p-8 shadow-md">
+      <div className="bg-card w-full max-w-md rounded-lg p-8 shadow-md">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldLegend>Recuperar contraseña</FieldLegend>

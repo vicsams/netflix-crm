@@ -141,7 +141,7 @@ export default function SignUpForm() {
         priority
         className="h-28 w-auto max-sm:h-20"
       />
-      <div className="bg-card h-fit w-full max-w-md rounded-lg border p-8 shadow-md">
+      <div className="bg-card h-fit w-full max-w-md rounded-lg p-8 shadow-md">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldLegend>Formulario de creación de cuenta</FieldLegend>

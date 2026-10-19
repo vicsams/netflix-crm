@@ -39,7 +39,7 @@ export default function ActiveAccountsSection() {
 
   return (
     <div
-      className={`bg-card col-span-2 flex max-h-91 flex-col overflow-y-scroll rounded-xl border shadow-md transition-all duration-300 ease-in-out ${accountIsOpen ? "max-sm:max-h-94" : "max-sm:max-h-17 max-sm:overflow-y-hidden"}`}
+      className={`bg-card col-span-2 flex max-h-91 flex-col overflow-y-scroll rounded-xl shadow-md transition-all duration-300 ease-in-out ${accountIsOpen ? "max-sm:max-h-94" : "max-sm:max-h-17 max-sm:overflow-y-hidden"}`}
     >
       <div
         onClick={handleAccountClick}

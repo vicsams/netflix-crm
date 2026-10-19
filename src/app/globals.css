@@ -56,8 +56,10 @@
 /* Lumina Play palette, dark only. Brand colors from the logo:
      ink #0c0d12 · purple #5f2673 · crimson #a51d35 · cream #f8f2e2
    Pure purple/crimson are too dark for text on ink (1.9:1 and 2.6:1), so
-   text and icons use the -light tints (7.3:1 and 5.5:1). Cards are barely
-   lighter than the page; their cream borders separate them */
+   text and icons use the -light tints (7.3:1 and 5.5:1).
+   Containers have no borders: each layer is one surface step lighter than
+   the one below (ink page, card, muted, secondary on hover). Borders stay
+   on controls, dividers and floating elements */
 :root,
 .dark {
   color-scheme: dark;
@@ -72,17 +74,17 @@
 
   --background: var(--lumina-ink);
   --foreground: var(--lumina-cream);
-  --card: #15161d;
+  --card: #1a1b22;
   --card-foreground: var(--lumina-cream);
-  --popover: #1a1b23;
+  --popover: #1f2028;
   --popover-foreground: var(--lumina-cream);
   /* Cream on crimson: 6.65:1 */
   --primary: var(--lumina-crimson);
   --primary-foreground: var(--lumina-cream);
-  --secondary: #23242d;
+  --secondary: #2a2b35;
   --secondary-foreground: var(--lumina-cream);
-  --muted: #1d1e26;
-  /* 7:1 on cards */
+  --muted: #23242d;
+  /* 6.7:1 on cards, 6:1 on muted */
   --muted-foreground: #a7a196;
   /* Hover/selected surfaces get a purple tint */
   --accent: #2b1d33;
@@ -100,7 +102,7 @@
   --chart-4: #e0a05c;
   --chart-5: #4fb3a9;
 
-  --sidebar: #15161d;
+  --sidebar: #1a1b22;
   --sidebar-foreground: var(--lumina-cream);
   --sidebar-primary: var(--lumina-crimson);
   --sidebar-primary-foreground: var(--lumina-cream);
