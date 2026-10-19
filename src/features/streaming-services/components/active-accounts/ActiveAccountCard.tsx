@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ActiveAccountActions from "@/features/streaming-services/components/active-accounts/ActiveAccountActions";
+import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { copyToClipboard } from "@/shared/lib/clipboard";
@@ -20,41 +21,7 @@ import UpdateScreenDialog from "./UpdateScreenDialog";
 import type { ScreenProps } from "@/features/streaming-services/types/screen";
 import type { ActiveAccountProps } from "@/features/streaming-services/types/activeAccount";
 import { ChevronDown, Copy } from "lucide-react";
-import ColorContrastChecker from "color-contrast-checker";
 import useIsMobile from "@/shared/hooks/useIsMobile";
-
-const contrastChecker = new ColorContrastChecker();
-
-// --card in globals.css
-const CARD_BACKGROUND = "#15161d";
-
-function resolveServiceTextColor(activeAccount: ActiveAccountProps): string {
-  const service = activeAccount.service;
-
-  if (!service?.textColor) {
-    return "inherit";
-  }
-
-  // The service name sits on the dark card: use whichever of the service's
-  // colors reads better there, or the default text color if neither does
-  try {
-    const cardLum = contrastChecker.hexToLuminance(CARD_BACKGROUND);
-    const [best] = [service.textColor, service.backgroundColor]
-      .filter((color): color is string => !!color)
-      .map((color) => ({
-        color,
-        ratio: contrastChecker.getContrastRatio(
-          contrastChecker.hexToLuminance(color),
-          cardLum,
-        ),
-      }))
-      .sort((a, b) => b.ratio - a.ratio);
-
-    return best && best.ratio >= 4.5 ? best.color : "inherit";
-  } catch {
-    return "inherit";
-  }
-}
 
 function CopyButton({
   label,
@@ -87,7 +54,6 @@ export default function ActiveAccountCard({
   const [selectedScreen, setSelectedScreen] = useState<ScreenProps | null>(
     null,
   );
-  const serviceTextColor = resolveServiceTextColor(activeAccount);
   const isMobile = useIsMobile();
 
   const handleCopyProfile = (e: React.MouseEvent, screen: ScreenProps) => {
@@ -105,14 +71,20 @@ PIN: ${formatPin(screen.profilePIN)}`;
         <div className="flex w-full flex-col justify-between sm:flex-row">
           <div>
             {activeAccount.service?.serviceName ? (
-              <p
-                className="pb-2 text-lg font-semibold"
-                style={{ color: serviceTextColor }}
+              // The service in its own colors, as in the subscriptions table;
+              // the faint ring keeps dark pills (e.g. black) visible on the card
+              <Badge
+                className="ring-border mb-2 px-2.5 py-1 text-sm font-bold ring-1"
+                style={{
+                  color: activeAccount.service.textColor ?? "#111827",
+                  backgroundColor:
+                    activeAccount.service.backgroundColor ?? "#f3f4f6",
+                }}
               >
                 {activeAccount.service.serviceName}
-              </p>
+              </Badge>
             ) : (
-              <p>Sin servicio</p>
+              <p className="text-muted-foreground pb-2">Sin servicio</p>
             )}
             <ItemDescription className="text-foreground flex items-center gap-1">
               <span className="font-semibold">Correo:</span>
