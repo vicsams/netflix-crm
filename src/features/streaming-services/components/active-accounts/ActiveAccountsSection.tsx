@@ -67,7 +67,7 @@ export default function ActiveAccountsSection() {
             {Array.from({ length: 4 }).map((_, index) => (
               <div
                 key={`account-skeleton-${index}`}
-                className="bg-card rounded-xl border p-4"
+                className="bg-muted rounded-xl p-4"
               >
                 <Skeleton className="mb-3 h-6 w-1/2" />
                 <Skeleton className="mb-2 h-4 w-3/4" />

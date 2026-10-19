@@ -63,14 +63,13 @@ PIN: ${formatPin(screen.profilePIN)}`;
     copyToClipboard(textToCopy, "Datos del perfil copiados");
   };
 
+  // No border: the card reads as a card by sitting one surface step above
+  // its section (muted on card), and one more on hover
   return (
-    <Item
-      variant="outline"
-      className="col-span-1 flex-col items-stretch gap-0 overflow-hidden p-0"
-    >
+    <Item className="bg-muted hover:bg-secondary col-span-1 flex-col items-stretch gap-0 overflow-hidden rounded-xl p-0">
       {/* Header in the service's exact colors, with the name and the menu */}
       <div
-        className={`flex items-center justify-between gap-2 py-1.5 pr-2 pl-4 ${
+        className={`flex items-center justify-between gap-2 pr-2 pl-4 ${
           activeAccount.service ? "" : "bg-secondary text-muted-foreground"
         }`}
         style={
