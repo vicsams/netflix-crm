@@ -80,11 +80,10 @@ export default function AssistantLauncher() {
       <Button
         type="button"
         onClick={() => handleOpenChange(true)}
-        aria-label="Abrir asistente"
-        title="Asistente"
-        className="fixed right-6 bottom-6 z-40 size-14 rounded-full bg-black text-yellow-300 shadow-lg hover:bg-neutral-800 max-sm:right-4 max-sm:bottom-4"
+        className="animate-gradient-pan fixed right-6 bottom-6 z-40 h-12 gap-2 rounded-full bg-linear-to-r from-violet-600 via-fuchsia-500 to-orange-400 bg-size-[200%_200%] px-5 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/30 transition-[transform,box-shadow] hover:scale-105 hover:shadow-xl hover:shadow-fuchsia-500/40 motion-reduce:animate-none motion-reduce:transition-none motion-reduce:hover:scale-100 max-sm:right-4 max-sm:bottom-4"
       >
-        <Sparkles className="size-6" />
+        <Sparkles className="size-5" />
+        Chat IA
       </Button>
 
       {isMobile ? (
