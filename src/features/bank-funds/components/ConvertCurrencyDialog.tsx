@@ -191,7 +191,7 @@ export default function ConvertCurrencyDialog({
                   required
                 />
               </div>
-              <div className="rounded bg-neutral-100 p-3 text-sm text-neutral-800">
+              <div className="bg-muted rounded p-3 text-sm">
                 <strong>Recibirás aprox:</strong> {formatMoney(expectedUsdt)}{" "}
                 USDT
               </div>

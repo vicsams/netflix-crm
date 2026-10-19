@@ -35,21 +35,21 @@ export const TwitchResetPasswordEmail = ({
       <Tailwind>
         <Body className="font-twitch bg-[#efeef1]">
           <Preview>
-            Restablece la contraseña de tu cuenta de Streaming POZ
+            Restablece la contraseña de tu cuenta de Lumina Play
           </Preview>
           <Container className="mx-auto my-[30px] max-w-[580px] bg-white">
             <Section className="p-[30px]">
               <Img
                 width={600}
                 src="https://moviamedia.com/wp-content/uploads/feature-streaming-service.jpg"
-                alt="Streaming POZ"
+                alt="Lumina Play"
                 className="mx-auto"
               />
             </Section>
             <Section className="w-full">
               <Row>
                 <Column className="w-[249px] [border-bottom:1px_solid_rgb(238,238,238)]" />
-                <Column className="w-[102px] [border-bottom:1px_solid_rgb(145,71,255)]" />
+                <Column className="w-[102px] [border-bottom:1px_solid_rgb(165,29,53)]" />
                 <Column className="w-[249px] [border-bottom:1px_solid_rgb(238,238,238)]" />
               </Row>
             </Section>
@@ -70,7 +70,7 @@ export const TwitchResetPasswordEmail = ({
               <Text className="text-[14px] leading-[1.5]">
                 Atentamente,
                 <br />
-                Servicios de Streaming POZ
+                El equipo de Lumina Play
               </Text>
             </Section>
           </Container>

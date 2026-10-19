@@ -49,7 +49,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="rounded-none border-t">
       <Table containerClassName="max-h-130 max-sm:max-h-160 overflow-y-auto">
-        <TableHeader className="bg-neutral-700">
+        <TableHeader className="bg-secondary">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({
                   <TableHead
                     key={header.id}
                     className={cn(
-                      "sticky top-0 z-10 bg-neutral-700 font-bold text-white",
+                      "bg-secondary text-secondary-foreground sticky top-0 z-10 font-semibold",
                       header.column.columnDef.meta?.className,
                     )}
                   >

@@ -243,7 +243,7 @@ export default function ClientStatusTable() {
         </div>
         <div className="mt-4 flex">
           <Select value={searchField} onValueChange={setSearchField}>
-            <SelectTrigger className="w-30 rounded-r-none bg-zinc-100">
+            <SelectTrigger className="bg-muted w-30 rounded-r-none">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -232,7 +232,7 @@ export default function UpdateClientStatusDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup className="max-h-70 overflow-y-auto">
-                  <SelectLabel className="sticky top-0 z-999 bg-white!">
+                  <SelectLabel className="bg-popover! sticky top-0 z-999">
                     Clientes
                   </SelectLabel>
                   {(clients.data ?? []).map((client) => (

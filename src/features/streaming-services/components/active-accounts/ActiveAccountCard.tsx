@@ -25,6 +25,9 @@ import useIsMobile from "@/shared/hooks/useIsMobile";
 
 const contrastChecker = new ColorContrastChecker();
 
+// --card in globals.css
+const CARD_BACKGROUND = "#15161d";
+
 function resolveServiceTextColor(activeAccount: ActiveAccountProps): string {
   const service = activeAccount.service;
 
@@ -32,18 +35,24 @@ function resolveServiceTextColor(activeAccount: ActiveAccountProps): string {
     return "inherit";
   }
 
+  // The service name sits on the dark card: use whichever of the service's
+  // colors reads better there, or the default text color if neither does
   try {
-    const textLum = contrastChecker.hexToLuminance(service.textColor);
-    const whiteLum = contrastChecker.hexToLuminance("#ffffff");
-    const contrastRatio = contrastChecker.getContrastRatio(textLum, whiteLum);
+    const cardLum = contrastChecker.hexToLuminance(CARD_BACKGROUND);
+    const [best] = [service.textColor, service.backgroundColor]
+      .filter((color): color is string => !!color)
+      .map((color) => ({
+        color,
+        ratio: contrastChecker.getContrastRatio(
+          contrastChecker.hexToLuminance(color),
+          cardLum,
+        ),
+      }))
+      .sort((a, b) => b.ratio - a.ratio);
 
-    if (contrastRatio >= 4.5) {
-      return service.textColor;
-    }
-
-    return service.backgroundColor ?? service.textColor;
+    return best && best.ratio >= 4.5 ? best.color : "inherit";
   } catch {
-    return service.textColor;
+    return "inherit";
   }
 }
 
@@ -105,7 +114,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
             ) : (
               <p>Sin servicio</p>
             )}
-            <ItemDescription className="flex items-center gap-1 text-black">
+            <ItemDescription className="text-foreground flex items-center gap-1">
               <span className="font-semibold">Correo:</span>
               <span className="truncate">{activeAccount.email}</span>
               <CopyButton
@@ -115,7 +124,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
                 }
               />
             </ItemDescription>
-            <ItemDescription className="flex items-center gap-1 text-black">
+            <ItemDescription className="text-foreground flex items-center gap-1">
               <span className="font-semibold">Contraseña:</span>
               <span className="truncate">{activeAccount.password}</span>
               <CopyButton
@@ -125,7 +134,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
                 }
               />
             </ItemDescription>
-            <ItemDescription className="text-black">
+            <ItemDescription className="text-foreground">
               <span className="font-semibold">Expiración:</span>{" "}
               {formatDate(new Date(activeAccount.expirationDate).toISOString())}
             </ItemDescription>
@@ -137,7 +146,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
             <Button
               variant="link"
               size="sm"
-              className="flex h-8 cursor-pointer items-center gap-1 px-0! text-neutral-500 hover:text-blue-500"
+              className="text-muted-foreground hover:text-lumina-crimson-light flex h-8 cursor-pointer items-center gap-1 px-0!"
               onClick={() => setShowScreens(!showScreens)}
             >
               <span>
@@ -159,7 +168,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
                     <div key={screen.id}>
                       <div>
                         <div
-                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-full border pl-4 font-medium text-neutral-600 transition-colors"
+                          className="group text-foreground flex cursor-pointer items-center justify-between gap-2 rounded-full border pl-4 font-medium transition-colors"
                           onClick={() =>
                             setSelectedScreen({
                               ...screen,
@@ -171,7 +180,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
                             <div className="flex h-4 items-center gap-2 text-left text-sm">
                               <span>{screen.profileName}</span>
                               <Separator orientation="vertical" />
-                              <span className="text-left text-xs text-neutral-400">
+                              <span className="text-muted-foreground text-left text-xs">
                                 PIN: {formatPin(screen.profilePIN)}
                               </span>
                             </div>
@@ -180,7 +189,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
                             variant="ghost"
                             size="icon"
                             aria-label={`Copiar datos del perfil ${screen.profileName}`}
-                            className="h-7 w-7 shrink-0 rounded-full transition-opacity group-hover:opacity-100 hover:bg-neutral-100!"
+                            className="hover:bg-accent! h-7 w-7 shrink-0 rounded-full transition-opacity group-hover:opacity-100"
                             onClick={(e) => {
                               handleCopyProfile(e, {
                                 ...screen,
@@ -198,7 +207,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
                     <Tooltip key={screen.id}>
                       <TooltipTrigger asChild>
                         <div
-                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-full border pl-4 font-medium text-neutral-600 transition-colors"
+                          className="group text-foreground flex cursor-pointer items-center justify-between gap-2 rounded-full border pl-4 font-medium transition-colors"
                           onClick={() =>
                             setSelectedScreen({
                               ...screen,
@@ -210,7 +219,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
                             <div className="flex h-4 items-center gap-2 text-left text-sm">
                               <span>{screen.profileName}</span>
                               <Separator orientation="vertical" />
-                              <span className="text-left text-xs text-neutral-400">
+                              <span className="text-muted-foreground text-left text-xs">
                                 PIN: {formatPin(screen.profilePIN)}
                               </span>
                             </div>
@@ -219,7 +228,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
                             variant="ghost"
                             size="icon"
                             aria-label={`Copiar datos del perfil ${screen.profileName}`}
-                            className="h-7 w-7 shrink-0 rounded-full transition-opacity group-hover:opacity-100 hover:bg-neutral-100!"
+                            className="hover:bg-accent! h-7 w-7 shrink-0 rounded-full transition-opacity group-hover:opacity-100"
                             onClick={(e) => {
                               handleCopyProfile(e, {
                                 ...screen,
@@ -240,7 +249,7 @@ PIN: ${formatPin(screen.profilePIN)}`;
           </div>
         )}
         {(!activeAccount.screens || activeAccount.screens.length === 0) && (
-          <div className="mt-2 text-sm text-neutral-400">
+          <div className="text-muted-foreground mt-2 text-sm">
             Sin pantallas registradas
           </div>
         )}

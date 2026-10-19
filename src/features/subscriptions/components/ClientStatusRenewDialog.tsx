@@ -391,25 +391,25 @@ export default function ClientStatusRenewDialog({
             {calculatedAmount && (
               <div className="space-y-1 rounded-md p-0 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-neutral-700">
+                  <span className="text-muted-foreground font-semibold">
                     Servicio calculado:
                   </span>
                   <span>{calculatedAmount.usdFormatted} USD</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-neutral-700">
+                  <span className="text-muted-foreground font-semibold">
                     Monto bruto (Bs):
                   </span>
                   <span>{calculatedAmount.grossBsFormatted}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-neutral-700">
+                  <span className="text-muted-foreground font-semibold">
                     Precio proveedor (Bs):
                   </span>
                   <span>- {calculatedAmount.supplierBsFormatted}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-neutral-700">
+                  <span className="text-muted-foreground font-semibold">
                     Monto neto a guardar:
                   </span>
                   <span className="text-md font-bold">

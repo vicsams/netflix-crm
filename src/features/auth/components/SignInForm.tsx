@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -95,11 +96,19 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-slate-50 p-6 max-sm:items-start max-sm:pt-[15vh]">
-      <div className="h-fit w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+    <div className="bg-background flex min-h-dvh flex-col items-center justify-center gap-6 p-6 max-sm:justify-start max-sm:pt-[8vh]">
+      <Image
+        src="/brand/lumina-logo.png"
+        alt="Lumina Play"
+        width={304}
+        height={259}
+        priority
+        className="h-28 w-auto max-sm:h-20"
+      />
+      <div className="bg-card h-fit w-full max-w-md rounded-lg border p-8 shadow-md">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
-            <FieldLegend>Formulario de inicio de sesion</FieldLegend>
+            <FieldLegend>Formulario de inicio de sesión</FieldLegend>
             <FieldDescription>
               Por favor ingrese su correo y contraseña para iniciar sesión.
             </FieldDescription>
@@ -148,7 +157,7 @@ export default function SignInForm() {
                 <div />
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-blue-600 hover:underline"
+                  className="text-lumina-crimson-light text-sm hover:underline"
                 >
                   ¿Olvidó su contraseña?
                 </Link>
@@ -173,7 +182,7 @@ export default function SignInForm() {
 
         <p className="text-muted-foreground mt-6 text-center text-sm">
           ¿No tiene una cuenta?{" "}
-          <Link href="/signup" className="text-primary underline">
+          <Link href="/signup" className="text-lumina-crimson-light underline">
             Cree una cuenta
           </Link>
         </p>

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Streamings PZO",
+  title: "Lumina Play",
   description: "Gestión de suscripciones de streaming",
 };
 
@@ -26,21 +26,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-slate-50 antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryProvider>
           <TooltipProvider delayDuration={500}>
             {children}
             <Toaster
               position="top-center"
-              toastOptions={{
-                style: {
-                  background: "#4a4a4a",
-                  color: "white",
-                },
-              }}
+              // Colors come from the theme (ui/sonner.tsx); dark only
+              theme="dark"
             />
           </TooltipProvider>
         </ReactQueryProvider>

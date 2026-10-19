@@ -68,8 +68,8 @@ export default function ResetPasswordForm({
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-      <div className="w-full max-w-md rounded-lg bg-white shadow-md">
+    <div className="bg-background flex min-h-screen items-center justify-center p-6">
+      <div className="bg-card w-full max-w-md rounded-lg border shadow-md">
         <Card className="border-0 shadow-none">
           <CardHeader className="text-left">
             <CardTitle className="text-xl">Reiniciar Contraseña</CardTitle>

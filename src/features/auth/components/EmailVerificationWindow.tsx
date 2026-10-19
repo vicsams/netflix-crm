@@ -63,11 +63,11 @@ export default function EmailVerificationWindow({
   const Icon = linkError ? MailWarning : MailOpen;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+    <div className="bg-background flex min-h-screen items-center justify-center p-6">
+      <div className="bg-card w-full max-w-md rounded-lg border p-8 shadow-md">
         <Card className="border-none shadow-none">
-          <div className="w-fit self-center rounded-full bg-yellow-400 p-4">
-            <Icon className="mx-auto h-12 w-12 text-neutral-900" />
+          <div className="bg-lumina-purple w-fit self-center rounded-full p-4">
+            <Icon className="text-lumina-cream mx-auto h-12 w-12" />
           </div>
           <CardHeader>
             <CardTitle className="text-center text-lg font-bold">

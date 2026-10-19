@@ -127,7 +127,7 @@ export default function ClientStatusActions({
         <div className="grid grid-cols-4 gap-2">
           <Button
             onClick={() => setShowMessageDialog(true)}
-            className="flex h-auto flex-col gap-1 bg-green-500 py-2 text-xs text-white hover:bg-green-600"
+            className="flex h-auto flex-col gap-1 bg-green-700 py-2 text-xs text-white hover:bg-green-800"
           >
             <MessageCircle className="h-4 w-4" />
             WhatsApp
@@ -150,7 +150,7 @@ export default function ClientStatusActions({
           <Button
             variant="outline"
             onClick={() => setShowDeleteDialog(true)}
-            className="text-destructive hover:text-destructive flex h-auto flex-col gap-1 border-red-200 py-2 text-xs"
+            className="text-destructive hover:text-destructive border-destructive/40 flex h-auto flex-col gap-1 py-2 text-xs"
           >
             <Trash className="h-4 w-4" />
             Eliminar
@@ -174,7 +174,7 @@ export default function ClientStatusActions({
               <span>Renovar</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setShowMessageDialog(true)}>
-              <MessageCircle className="h-4 w-4 text-green-600" />
+              <MessageCircle className="h-4 w-4 text-green-500" />
               <span>Enviar WhatsApp</span>
             </DropdownMenuItem>
             <DropdownMenuItem

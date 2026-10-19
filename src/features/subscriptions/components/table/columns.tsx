@@ -107,16 +107,16 @@ function getStatusHint(
 
 const STATUS_STYLE: Record<string, { badge: string; dot: string }> = {
   ACTIVE: {
-    badge: "border-green-200 bg-green-50 text-green-800",
-    dot: "bg-green-500",
+    badge: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
+    dot: "bg-emerald-400",
   },
   EXPIRED: {
-    badge: "border-red-200 bg-red-50 text-red-800",
-    dot: "bg-red-500",
+    badge: "border-rose-400/30 bg-rose-400/10 text-rose-300",
+    dot: "bg-rose-400",
   },
   NEAR_EXPIRATION: {
-    badge: "border-yellow-200 bg-yellow-50 text-yellow-800",
-    dot: "bg-yellow-500",
+    badge: "border-amber-400/30 bg-amber-400/10 text-amber-300",
+    dot: "bg-amber-400",
   },
 };
 

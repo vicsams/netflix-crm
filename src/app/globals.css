@@ -37,6 +37,13 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* Brand colors as utilities: bg-lumina-purple, text-lumina-crimson-light… */
+  --color-lumina-ink: var(--lumina-ink);
+  --color-lumina-purple: var(--lumina-purple);
+  --color-lumina-purple-light: var(--lumina-purple-light);
+  --color-lumina-crimson: var(--lumina-crimson);
+  --color-lumina-crimson-light: var(--lumina-crimson-light);
+  --color-lumina-cream: var(--lumina-cream);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -46,73 +53,61 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
+/* Lumina Play palette, dark only. Brand colors from the logo:
+     ink #0c0d12 · purple #5f2673 · crimson #a51d35 · cream #f8f2e2
+   Pure purple/crimson are too dark for text on ink (1.9:1 and 2.6:1), so
+   text and icons use the -light tints (7.3:1 and 5.5:1). Cards are barely
+   lighter than the page; their cream borders separate them */
+:root,
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  color-scheme: dark;
+  --radius: 0.625rem;
+
+  --lumina-ink: #0c0d12;
+  --lumina-purple: #5f2673;
+  --lumina-purple-light: #c08ad8;
+  --lumina-crimson: #a51d35;
+  --lumina-crimson-light: #e8566f;
+  --lumina-cream: #f8f2e2;
+
+  --background: var(--lumina-ink);
+  --foreground: var(--lumina-cream);
+  --card: #15161d;
+  --card-foreground: var(--lumina-cream);
+  --popover: #1a1b23;
+  --popover-foreground: var(--lumina-cream);
+  /* Cream on crimson: 6.65:1 */
+  --primary: var(--lumina-crimson);
+  --primary-foreground: var(--lumina-cream);
+  --secondary: #23242d;
+  --secondary-foreground: var(--lumina-cream);
+  --muted: #1d1e26;
+  /* 7:1 on cards */
+  --muted-foreground: #a7a196;
+  /* Hover/selected surfaces get a purple tint */
+  --accent: #2b1d33;
+  --accent-foreground: var(--lumina-cream);
+  /* Brighter than crimson so delete actions don't look like main buttons */
+  --destructive: #f0535e;
+  --border: rgb(248 242 226 / 10%);
+  --input: rgb(248 242 226 / 14%);
+  /* Focus ring: 4.1:1 on ink */
+  --ring: #d23a57;
+
+  --chart-1: var(--lumina-crimson);
+  --chart-2: #8b3fa6;
+  --chart-3: var(--lumina-cream);
+  --chart-4: #e0a05c;
+  --chart-5: #4fb3a9;
+
+  --sidebar: #15161d;
+  --sidebar-foreground: var(--lumina-cream);
+  --sidebar-primary: var(--lumina-crimson);
+  --sidebar-primary-foreground: var(--lumina-cream);
+  --sidebar-accent: #2b1d33;
+  --sidebar-accent-foreground: var(--lumina-cream);
+  --sidebar-border: rgb(248 242 226 / 10%);
+  --sidebar-ring: #d23a57;
 }
 
 @layer base {

@@ -39,11 +39,11 @@ export default function ActiveAccountsSection() {
 
   return (
     <div
-      className={`col-span-2 flex max-h-91 flex-col overflow-y-scroll rounded-xl bg-white shadow-md transition-all duration-300 ease-in-out ${accountIsOpen ? "max-sm:max-h-94" : "max-sm:max-h-17 max-sm:overflow-y-hidden"}`}
+      className={`bg-card col-span-2 flex max-h-91 flex-col overflow-y-scroll rounded-xl border shadow-md transition-all duration-300 ease-in-out ${accountIsOpen ? "max-sm:max-h-94" : "max-sm:max-h-17 max-sm:overflow-y-hidden"}`}
     >
       <div
         onClick={handleAccountClick}
-        className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-2 bg-white p-4"
+        className="bg-card sticky top-0 z-10 flex flex-wrap items-center justify-between gap-2 p-4"
       >
         <div className="flex items-center gap-1">
           <h2 className="text-lg font-bold">Correos Activos</h2>
@@ -67,7 +67,7 @@ export default function ActiveAccountsSection() {
             {Array.from({ length: 4 }).map((_, index) => (
               <div
                 key={`account-skeleton-${index}`}
-                className="rounded-xl border bg-white p-4"
+                className="bg-card rounded-xl border p-4"
               >
                 <Skeleton className="mb-3 h-6 w-1/2" />
                 <Skeleton className="mb-2 h-4 w-3/4" />
@@ -78,7 +78,7 @@ export default function ActiveAccountsSection() {
           </div>
         )}
         {isError && (
-          <div className="text-red-600">
+          <div className="text-destructive">
             {getErrorMessage(error, "No se pudieron cargar las cuentas")}
           </div>
         )}
