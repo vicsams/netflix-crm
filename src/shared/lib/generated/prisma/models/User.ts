@@ -206,6 +206,7 @@ export type UserWhereInput = {
   subscriptions?: Prisma.SubscriptionListRelationFilter
   bankEarnings?: Prisma.XOR<Prisma.BankEarningsNullableScalarRelationFilter, Prisma.BankEarningsWhereInput> | null
   withdrawals?: Prisma.BankWithdrawalListRelationFilter
+  chats?: Prisma.ChatListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -224,6 +225,7 @@ export type UserOrderByWithRelationInput = {
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
   bankEarnings?: Prisma.BankEarningsOrderByWithRelationInput
   withdrawals?: Prisma.BankWithdrawalOrderByRelationAggregateInput
+  chats?: Prisma.ChatOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -245,6 +247,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   subscriptions?: Prisma.SubscriptionListRelationFilter
   bankEarnings?: Prisma.XOR<Prisma.BankEarningsNullableScalarRelationFilter, Prisma.BankEarningsWhereInput> | null
   withdrawals?: Prisma.BankWithdrawalListRelationFilter
+  chats?: Prisma.ChatListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -289,6 +292,7 @@ export type UserCreateInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -307,6 +311,7 @@ export type UserUncheckedCreateInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsUncheckedCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -325,6 +330,7 @@ export type UserUpdateInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -343,6 +349,7 @@ export type UserUncheckedUpdateInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUncheckedUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -538,6 +545,20 @@ export type UserUpdateOneRequiredWithoutWithdrawalsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWithdrawalsInput, Prisma.UserUpdateWithoutWithdrawalsInput>, Prisma.UserUncheckedUpdateWithoutWithdrawalsInput>
 }
 
+export type UserCreateNestedOneWithoutChatsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatsInput, Prisma.UserUncheckedCreateWithoutChatsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutChatsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatsInput, Prisma.UserUncheckedCreateWithoutChatsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatsInput
+  upsert?: Prisma.UserUpsertWithoutChatsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatsInput, Prisma.UserUpdateWithoutChatsInput>, Prisma.UserUncheckedUpdateWithoutChatsInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id: string
   name: string
@@ -553,6 +574,7 @@ export type UserCreateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -570,6 +592,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsUncheckedCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -603,6 +626,7 @@ export type UserUpdateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -620,6 +644,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUncheckedUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -637,6 +662,7 @@ export type UserCreateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -654,6 +680,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsUncheckedCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -687,6 +714,7 @@ export type UserUpdateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -704,6 +732,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUncheckedUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutServicesInput = {
@@ -721,6 +750,7 @@ export type UserCreateWithoutServicesInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutServicesInput = {
@@ -738,6 +768,7 @@ export type UserUncheckedCreateWithoutServicesInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsUncheckedCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutServicesInput = {
@@ -771,6 +802,7 @@ export type UserUpdateWithoutServicesInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutServicesInput = {
@@ -788,6 +820,7 @@ export type UserUncheckedUpdateWithoutServicesInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUncheckedUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutActiveAccountsInput = {
@@ -805,6 +838,7 @@ export type UserCreateWithoutActiveAccountsInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutActiveAccountsInput = {
@@ -822,6 +856,7 @@ export type UserUncheckedCreateWithoutActiveAccountsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsUncheckedCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutActiveAccountsInput = {
@@ -855,6 +890,7 @@ export type UserUpdateWithoutActiveAccountsInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActiveAccountsInput = {
@@ -872,6 +908,7 @@ export type UserUncheckedUpdateWithoutActiveAccountsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUncheckedUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutClientsInput = {
@@ -889,6 +926,7 @@ export type UserCreateWithoutClientsInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutClientsInput = {
@@ -906,6 +944,7 @@ export type UserUncheckedCreateWithoutClientsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsUncheckedCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutClientsInput = {
@@ -939,6 +978,7 @@ export type UserUpdateWithoutClientsInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutClientsInput = {
@@ -956,6 +996,7 @@ export type UserUncheckedUpdateWithoutClientsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUncheckedUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubscriptionsInput = {
@@ -973,6 +1014,7 @@ export type UserCreateWithoutSubscriptionsInput = {
   clients?: Prisma.ClientCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionsInput = {
@@ -990,6 +1032,7 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
   clients?: Prisma.ClientUncheckedCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsUncheckedCreateNestedOneWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -1023,6 +1066,7 @@ export type UserUpdateWithoutSubscriptionsInput = {
   clients?: Prisma.ClientUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionsInput = {
@@ -1040,6 +1084,7 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
   clients?: Prisma.ClientUncheckedUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUncheckedUpdateOneWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBankEarningsInput = {
@@ -1057,6 +1102,7 @@ export type UserCreateWithoutBankEarningsInput = {
   clients?: Prisma.ClientCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBankEarningsInput = {
@@ -1074,6 +1120,7 @@ export type UserUncheckedCreateWithoutBankEarningsInput = {
   clients?: Prisma.ClientUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   withdrawals?: Prisma.BankWithdrawalUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBankEarningsInput = {
@@ -1107,6 +1154,7 @@ export type UserUpdateWithoutBankEarningsInput = {
   clients?: Prisma.ClientUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBankEarningsInput = {
@@ -1124,6 +1172,7 @@ export type UserUncheckedUpdateWithoutBankEarningsInput = {
   clients?: Prisma.ClientUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   withdrawals?: Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWithdrawalsInput = {
@@ -1141,6 +1190,7 @@ export type UserCreateWithoutWithdrawalsInput = {
   clients?: Prisma.ClientCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsCreateNestedOneWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWithdrawalsInput = {
@@ -1158,6 +1208,7 @@ export type UserUncheckedCreateWithoutWithdrawalsInput = {
   clients?: Prisma.ClientUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   bankEarnings?: Prisma.BankEarningsUncheckedCreateNestedOneWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWithdrawalsInput = {
@@ -1191,6 +1242,7 @@ export type UserUpdateWithoutWithdrawalsInput = {
   clients?: Prisma.ClientUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUpdateOneWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWithdrawalsInput = {
@@ -1208,6 +1260,95 @@ export type UserUncheckedUpdateWithoutWithdrawalsInput = {
   clients?: Prisma.ClientUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   bankEarnings?: Prisma.BankEarningsUncheckedUpdateOneWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutChatsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  services?: Prisma.ServiceCreateNestedManyWithoutCreatedByInput
+  activeAccounts?: Prisma.ActiveAccountCreateNestedManyWithoutUserInput
+  clients?: Prisma.ClientCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  bankEarnings?: Prisma.BankEarningsCreateNestedOneWithoutUserInput
+  withdrawals?: Prisma.BankWithdrawalCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutChatsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  activeAccounts?: Prisma.ActiveAccountUncheckedCreateNestedManyWithoutUserInput
+  clients?: Prisma.ClientUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  bankEarnings?: Prisma.BankEarningsUncheckedCreateNestedOneWithoutUserInput
+  withdrawals?: Prisma.BankWithdrawalUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutChatsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatsInput, Prisma.UserUncheckedCreateWithoutChatsInput>
+}
+
+export type UserUpsertWithoutChatsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutChatsInput, Prisma.UserUncheckedUpdateWithoutChatsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatsInput, Prisma.UserUncheckedCreateWithoutChatsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutChatsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutChatsInput, Prisma.UserUncheckedUpdateWithoutChatsInput>
+}
+
+export type UserUpdateWithoutChatsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutCreatedByNestedInput
+  activeAccounts?: Prisma.ActiveAccountUpdateManyWithoutUserNestedInput
+  clients?: Prisma.ClientUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  bankEarnings?: Prisma.BankEarningsUpdateOneWithoutUserNestedInput
+  withdrawals?: Prisma.BankWithdrawalUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutChatsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  activeAccounts?: Prisma.ActiveAccountUncheckedUpdateManyWithoutUserNestedInput
+  clients?: Prisma.ClientUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  bankEarnings?: Prisma.BankEarningsUncheckedUpdateOneWithoutUserNestedInput
+  withdrawals?: Prisma.BankWithdrawalUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1223,6 +1364,7 @@ export type UserCountOutputType = {
   clients: number
   subscriptions: number
   withdrawals: number
+  chats: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1233,6 +1375,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   clients?: boolean | UserCountOutputTypeCountClientsArgs
   subscriptions?: boolean | UserCountOutputTypeCountSubscriptionsArgs
   withdrawals?: boolean | UserCountOutputTypeCountWithdrawalsArgs
+  chats?: boolean | UserCountOutputTypeCountChatsArgs
 }
 
 /**
@@ -1294,6 +1437,13 @@ export type UserCountOutputTypeCountWithdrawalsArgs<ExtArgs extends runtime.Type
   where?: Prisma.BankWithdrawalWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountChatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1311,6 +1461,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
   bankEarnings?: boolean | Prisma.User$bankEarningsArgs<ExtArgs>
   withdrawals?: boolean | Prisma.User$withdrawalsArgs<ExtArgs>
+  chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1354,6 +1505,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
   bankEarnings?: boolean | Prisma.User$bankEarningsArgs<ExtArgs>
   withdrawals?: boolean | Prisma.User$withdrawalsArgs<ExtArgs>
+  chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1370,6 +1522,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
     bankEarnings: Prisma.$BankEarningsPayload<ExtArgs> | null
     withdrawals: Prisma.$BankWithdrawalPayload<ExtArgs>[]
+    chats: Prisma.$ChatPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1781,6 +1934,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   subscriptions<T extends Prisma.User$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bankEarnings<T extends Prisma.User$bankEarningsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bankEarningsArgs<ExtArgs>>): Prisma.Prisma__BankEarningsClient<runtime.Types.Result.GetResult<Prisma.$BankEarningsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   withdrawals<T extends Prisma.User$withdrawalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BankWithdrawalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chats<T extends Prisma.User$chatsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2389,6 +2543,30 @@ export type User$withdrawalsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.BankWithdrawalScalarFieldEnum | Prisma.BankWithdrawalScalarFieldEnum[]
+}
+
+/**
+ * User.chats
+ */
+export type User$chatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Chat
+   */
+  select?: Prisma.ChatSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Chat
+   */
+  omit?: Prisma.ChatOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatInclude<ExtArgs> | null
+  where?: Prisma.ChatWhereInput
+  orderBy?: Prisma.ChatOrderByWithRelationInput | Prisma.ChatOrderByWithRelationInput[]
+  cursor?: Prisma.ChatWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatScalarFieldEnum | Prisma.ChatScalarFieldEnum[]
 }
 
 /**

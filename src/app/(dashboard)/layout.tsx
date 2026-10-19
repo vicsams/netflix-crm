@@ -1,6 +1,7 @@
 import { ReactQueryProvider } from "../provider";
 import Header from "@/shared/components/shell/Header";
 import { BinancePriceProvider } from "@/shared/context/BinancePriceContext";
+import AssistantLauncher from "@/features/assistant/components/AssistantLauncher";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,8 @@ export default function DashboardLayout({
         <BinancePriceProvider>
           <Header />
           {children}
+          {/* Only where Gemini is configured (GOOGLE_GENERATIVE_AI_API_KEY) */}
+          {process.env.GOOGLE_GENERATIVE_AI_API_KEY && <AssistantLauncher />}
         </BinancePriceProvider>
       </ReactQueryProvider>
     </div>

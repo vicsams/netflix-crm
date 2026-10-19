@@ -1,7 +1,10 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ClientStatus } from "@/features/subscriptions/types/clientStatus";
+import type {
+  ClientStatus,
+  SubscriptionDates,
+} from "@/features/subscriptions/types/clientStatus";
 import ClientStatusActions from "@/features/subscriptions/components/ClientStatusActions";
 import { differenceInDays } from "date-fns";
 import { formatDate, formatShortDate } from "@/shared/lib/date";
@@ -36,7 +39,7 @@ export function getRemainingDaysLabel(row: ClientStatus) {
 
 // When it expires (or expired), short enough for a mobile details line:
 // "vence 6 nov 2026 · 14 días", "vence hoy", "venció 19 oct 2026"
-export function getExpiryDetail(row: ClientStatus) {
+export function getExpiryDetail(row: SubscriptionDates) {
   if (!row.expirationDate) return null;
 
   const date = formatShortDate(row.expirationDate);
@@ -75,7 +78,7 @@ function pluralDays(days: number) {
 
 // Extra detail for the badge tooltip: whatever the badge itself does not show
 function getStatusHint(
-  row: ClientStatus,
+  row: SubscriptionDates,
   status: ReturnType<typeof getDerivedStatus>,
 ) {
   if (!row.expirationDate) return null;
@@ -122,7 +125,7 @@ export function StatusBadge({
   className,
   compact = false,
 }: {
-  row: ClientStatus;
+  row: SubscriptionDates;
   className?: string;
   // Dot and status only, for tight layouts that show the date elsewhere
   compact?: boolean;
