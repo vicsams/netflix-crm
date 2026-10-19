@@ -8,20 +8,19 @@ export default function BinancePriceCard() {
   const { price, isLoading, isError, retry } = useBinancePrice();
 
   return (
-    <div className="flex w-fit items-center gap-1 rounded-full bg-black px-4 py-1 text-yellow-300">
+    <div className="border-lumina-purple/60 bg-lumina-purple/25 flex w-fit shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 text-sm whitespace-nowrap">
       {price !== null ? (
-        <p className="text-md font-bold">
-          Precio USDT: {formatMoney(price)} Bs
+        <p>
+          <span className="text-lumina-purple-light font-medium">USDT</span>{" "}
+          <span className="font-semibold">{formatMoney(price)} Bs</span>
         </p>
       ) : isLoading ? (
-        <p className="text-md animate-pulse text-yellow-300/70">
-          Cargando precio USDT…
-        </p>
+        <p className="text-muted-foreground animate-pulse">Cargando USDT…</p>
       ) : (
         <button
           type="button"
           onClick={retry}
-          className="flex items-center gap-1.5 text-red-400 hover:text-red-300"
+          className="text-destructive flex items-center gap-1.5 hover:opacity-80"
         >
           {isError ? "Precio no disponible" : "Sin precio"}
           <RotateCw className="size-3.5" />

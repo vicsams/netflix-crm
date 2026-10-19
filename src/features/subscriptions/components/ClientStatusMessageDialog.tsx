@@ -121,7 +121,7 @@ export default function ClientStatusMessageDialog({
               type="button"
               onClick={handleSendMessage}
               disabled={!whatsAppNumber}
-              className="bg-green-500 hover:bg-green-500"
+              className="bg-green-700 text-white hover:bg-green-800"
             >
               <p>Enviar Mensaje</p>
               <Send size={16} />

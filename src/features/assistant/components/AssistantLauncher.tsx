@@ -69,6 +69,7 @@ export default function AssistantLauncher() {
           setNewChatStarted(false);
         }
       }}
+      onClose={() => handleOpenChange(false)}
     />
   );
 
@@ -77,29 +78,29 @@ export default function AssistantLauncher() {
 
   return (
     <>
-      {/* White with gradient text; on hover the gradient fades in behind it.
-          Backgrounds can't animate between white and a gradient, so the
-          gradient is its own layer whose opacity transitions. hover:bg-white
-          replaces the Button's dark hover color, which used to flash while
-          fading back after the cursor left */}
+      {/* Cream with brand-gradient text; on hover the gradient fades in behind
+          it. Backgrounds can't animate between a color and a gradient, so the
+          gradient is its own layer whose opacity transitions. The cream hover
+          background replaces the Button's dark hover color, which used to
+          flash while fading back after the cursor left */}
       <Button
         type="button"
         onClick={() => handleOpenChange(true)}
-        className="group fixed right-6 bottom-6 isolate z-40 h-12 gap-2 overflow-hidden rounded-full border border-fuchsia-200 bg-white px-5 text-sm font-semibold shadow-lg shadow-fuchsia-500/30 transition-colors duration-300 ease-out hover:border-transparent hover:bg-white max-sm:right-4 max-sm:bottom-4"
+        className="group border-lumina-purple/30 bg-lumina-cream shadow-lumina-purple/40 hover:bg-lumina-cream fixed right-6 bottom-6 isolate z-40 h-12 gap-2 overflow-hidden rounded-full border px-5 text-sm font-semibold shadow-lg transition-colors duration-300 ease-out hover:border-transparent max-sm:right-4 max-sm:bottom-4"
       >
         <span
           aria-hidden
-          className="animate-gradient-pan absolute inset-0 -z-10 bg-linear-to-r from-violet-600 via-fuchsia-500 to-orange-400 bg-size-[200%_200%] opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 motion-reduce:animate-none"
+          className="animate-gradient-pan from-lumina-purple via-lumina-crimson to-lumina-purple absolute inset-0 -z-10 bg-linear-to-r bg-size-[200%_200%] opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 motion-reduce:animate-none"
         />
         {/* The icon is a stroke, which can't use the text's clipped gradient:
-            it gets the gradient as an SVG paint, and a white copy fades in
+            it gets the gradient as an SVG paint, and a cream copy fades in
             over it on hover (a paint can't animate into a color) */}
         <svg aria-hidden className="absolute size-0">
           <defs>
             <linearGradient id="chat-ia-gradient" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="var(--color-violet-600)" />
-              <stop offset="50%" stopColor="var(--color-fuchsia-500)" />
-              <stop offset="100%" stopColor="var(--color-orange-400)" />
+              <stop offset="0%" stopColor="var(--lumina-purple)" />
+              <stop offset="50%" stopColor="var(--lumina-crimson)" />
+              <stop offset="100%" stopColor="var(--lumina-purple)" />
             </linearGradient>
           </defs>
         </svg>
@@ -108,11 +109,11 @@ export default function AssistantLauncher() {
             stroke="url(#chat-ia-gradient)"
             className="absolute inset-0 size-5 transition-opacity duration-300 ease-out group-hover:opacity-0"
           />
-          <Sparkles className="absolute inset-0 size-5 text-white opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100" />
+          <Sparkles className="text-lumina-cream absolute inset-0 size-5 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100" />
         </span>
         {/* Transparent text shows the clipped gradient; fading the color to
-            white turns it white smoothly */}
-        <span className="bg-linear-to-r from-violet-600 via-fuchsia-500 to-orange-400 bg-clip-text text-transparent transition-colors duration-300 ease-out group-hover:text-white">
+            cream turns it cream smoothly */}
+        <span className="from-lumina-purple via-lumina-crimson to-lumina-purple group-hover:text-lumina-cream bg-linear-to-r bg-clip-text text-transparent transition-colors duration-300 ease-out">
           Chat IA
         </span>
       </Button>
@@ -129,7 +130,11 @@ export default function AssistantLauncher() {
         </Drawer>
       ) : (
         <Sheet open={open} onOpenChange={handleOpenChange}>
-          <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-xl">
+          {/* The close button lives in the panel header with the other actions */}
+          <SheetContent
+            showCloseButton={false}
+            className="flex w-full flex-col gap-0 p-0 sm:max-w-xl"
+          >
             <SheetHeader className="sr-only">
               <SheetTitle>{title}</SheetTitle>
               <SheetDescription>{description}</SheetDescription>

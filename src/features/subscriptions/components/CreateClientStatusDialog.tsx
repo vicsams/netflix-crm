@@ -269,7 +269,7 @@ export default function CreateClientStatusDialog({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup className="max-h-70 overflow-y-auto">
-                  <SelectLabel className="sticky top-0 z-999 bg-white!">
+                  <SelectLabel className="bg-popover! sticky top-0 z-999">
                     Clientes
                   </SelectLabel>
                   {clients.map((client) => (
@@ -506,34 +506,34 @@ export default function CreateClientStatusDialog({
           {calculatedAmount && (
             <div className="col-span-2 space-y-1 rounded-md p-0 text-sm">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-neutral-700">
+                <span className="text-muted-foreground font-semibold">
                   Servicio calculado:
                 </span>
-                <span className="text-neutral-900">
+                <span className="text-foreground">
                   {calculatedAmount.usdFormatted} USD
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-neutral-700">
+                <span className="text-muted-foreground font-semibold">
                   Monto bruto (Bs):
                 </span>
-                <span className="text-neutral-900">
+                <span className="text-foreground">
                   {calculatedAmount.grossBsFormatted}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-neutral-700">
+                <span className="text-muted-foreground font-semibold">
                   Precio proveedor (Bs):
                 </span>
-                <span className="text-neutral-900">
+                <span className="text-foreground">
                   - {calculatedAmount.supplierBsFormatted}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-neutral-700">
+                <span className="text-muted-foreground font-semibold">
                   Monto neto a guardar:
                 </span>
-                <span className="text-md font-bold text-neutral-900">
+                <span className="text-md text-foreground font-bold">
                   {calculatedAmount.netBsFormatted}
                 </span>
               </div>

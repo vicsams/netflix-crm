@@ -127,8 +127,8 @@ export default function ForgotPasswordForm() {
   const onSubmit = (data: ForgotPasswordFormValues) => mutation.mutate(data);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+    <div className="bg-background flex min-h-screen items-center justify-center p-6">
+      <div className="bg-card w-full max-w-md rounded-lg p-8 shadow-md">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldLegend>Recuperar contraseña</FieldLegend>
@@ -177,7 +177,7 @@ export default function ForgotPasswordForm() {
 
         <p className="text-muted-foreground mt-6 text-center text-sm">
           ¿No tienes una cuenta?{" "}
-          <Link href="/signup" className="text-primary underline">
+          <Link href="/signup" className="text-lumina-crimson-light underline">
             Crear una cuenta
           </Link>
         </p>
@@ -187,8 +187,8 @@ export default function ForgotPasswordForm() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex flex-col justify-center gap-4">
-              <div className="w-fit self-center rounded-full bg-yellow-400 p-4">
-                <MailOpen className="mx-auto h-12 w-12 text-neutral-900" />
+              <div className="bg-lumina-purple w-fit self-center rounded-full p-4">
+                <MailOpen className="text-lumina-cream mx-auto h-12 w-12" />
               </div>
               <p className="text-center">Revisa tu correo electrónico</p>
             </DialogTitle>

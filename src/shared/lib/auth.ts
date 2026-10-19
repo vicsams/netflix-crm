@@ -43,7 +43,7 @@ export const auth = betterAuth({
       const { error } = await resend.emails.send({
         from: EMAIL_FROM,
         to: user.email!,
-        subject: "Restablece tu contraseña",
+        subject: "Restablece tu contraseña · Lumina Play",
         react: TwitchResetPasswordEmail({
           resetUrl,
           username: user.name!,
@@ -85,7 +85,7 @@ export const auth = betterAuth({
       const { error } = await resend.emails.send({
         from: EMAIL_FROM,
         to: user.email!,
-        subject: "Verifica tu correo",
+        subject: "Verifica tu correo · Lumina Play",
         html: `<p>Hola,</p><p>Para activar tu cuenta, verifica tu correo haciendo clic <a href="${link.toString()}">aquí</a>.</p><p>Si no creaste esta cuenta, puedes ignorar este correo.</p>`,
       });
 

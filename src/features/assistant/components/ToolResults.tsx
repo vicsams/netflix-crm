@@ -49,7 +49,7 @@ function ResultFrame<ROW>({
   const visible = expanded ? rows : rows.slice(0, COLLAPSED_ROWS);
 
   return (
-    <div className="bg-background w-full overflow-hidden rounded-lg border">
+    <div className="bg-muted w-full overflow-hidden rounded-lg">
       <div className="text-muted-foreground flex items-center justify-between gap-2 border-b px-3 py-2 text-xs">
         <span className="text-foreground font-medium">{title}</span>
         <span>
@@ -236,7 +236,7 @@ function ServicesResult({ output }: { output: Output<"listarServicios"> }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border px-3 py-2">
+    <div className="bg-muted rounded-md px-3 py-2">
       <div className="text-muted-foreground text-xs">{label}</div>
       <div className="font-semibold">{value}</div>
     </div>

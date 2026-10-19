@@ -42,3 +42,6 @@ next-env.d.ts
 
 /src/lib/generated/prisma
 .env*.local
+
+# iCloud Drive sync duplicates ("client 2.ts", "routes.d 3.ts")
+* [0-9].*

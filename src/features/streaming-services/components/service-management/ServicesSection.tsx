@@ -47,7 +47,7 @@ export default function ServicesSection() {
 
   return (
     <div
-      className={`col-span-2 flex max-h-91 flex-col overflow-y-scroll rounded-xl bg-white shadow-md transition-all duration-300 ease-in-out ${
+      className={`bg-card col-span-2 flex max-h-91 flex-col overflow-y-scroll rounded-xl shadow-md transition-all duration-300 ease-in-out ${
         serviceIsOpen
           ? "max-sm:max-h-94"
           : "max-sm:max-h-17 max-sm:overflow-y-hidden"
@@ -55,7 +55,7 @@ export default function ServicesSection() {
     >
       <div
         onClick={handleServiceClick}
-        className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-2 bg-white p-4"
+        className="bg-card sticky top-0 z-10 flex flex-wrap items-center justify-between gap-2 p-4"
       >
         <div className="flex items-center gap-1">
           <h2 className="text-lg font-bold">Servicios</h2>
@@ -79,7 +79,7 @@ export default function ServicesSection() {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={`service-skeleton-${index}`}
-                className="col-span-1 rounded-xl border bg-white p-4"
+                className="bg-muted col-span-1 rounded-xl p-4"
               >
                 <Skeleton className="mb-3 h-6 w-2/3" />
                 <Skeleton className="h-4 w-1/2" />
@@ -88,7 +88,7 @@ export default function ServicesSection() {
           </div>
         )}
         {isError && (
-          <div className="text-red-600">
+          <div className="text-destructive">
             {getErrorMessage(error, "No se pudieron cargar los servicios")}
           </div>
         )}
@@ -110,8 +110,7 @@ export default function ServicesSection() {
               return (
                 <Item
                   key={service.id}
-                  variant="outline"
-                  className={`col-span-1 items-center shadow-md transition-all duration-300 ease-out ${cardsVisible ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}
+                  className={`col-span-1 items-center rounded-xl shadow-md transition-all duration-300 ease-out ${cardsVisible ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}
                   style={{
                     backgroundColor,
                     // transitionDelay: `${index * 60}ms`,

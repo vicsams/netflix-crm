@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -10,11 +11,21 @@ export default async function Home() {
   if (session) redirect("/dashboard");
 
   return (
-    <div className="flex min-h-dvh flex-col items-center gap-4 pt-[25vh]">
-      <h1 className="text-center text-4xl font-bold">
-        Servicios Streaming PZO
-      </h1>
-      <div className="mt-8 flex gap-4">
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-6 p-6">
+      {/* The logo carries the name; the heading keeps it for screen readers */}
+      <h1 className="sr-only">Lumina Play</h1>
+      <Image
+        src="/brand/lumina-logo.png"
+        alt="Lumina Play"
+        width={304}
+        height={259}
+        priority
+        className="h-40 w-auto max-sm:h-32"
+      />
+      <p className="text-muted-foreground text-center">
+        Gestión de suscripciones de streaming
+      </p>
+      <div className="mt-4 flex gap-4">
         <Button asChild size="lg">
           <Link href="/signup">Crear Cuenta</Link>
         </Button>
@@ -22,6 +33,6 @@ export default async function Home() {
           <Link href="/signin">Iniciar Sesión</Link>
         </Button>
       </div>
-    </div>
+    </main>
   );
 }
