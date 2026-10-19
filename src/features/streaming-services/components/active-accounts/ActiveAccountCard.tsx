@@ -1,6 +1,5 @@
 import { useState } from "react";
 import ActiveAccountActions from "@/features/streaming-services/components/active-accounts/ActiveAccountActions";
-import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { copyToClipboard } from "@/shared/lib/clipboard";
@@ -8,7 +7,6 @@ import { formatDate } from "@/shared/lib/date";
 import { formatPin } from "@/shared/lib/pin";
 import {
   Item,
-  ItemActions,
   ItemContent,
   ItemDescription,
 } from "@/shared/components/ui/item";
@@ -66,26 +64,34 @@ PIN: ${formatPin(screen.profilePIN)}`;
   };
 
   return (
-    <Item variant="outline" className="col-span-1 items-start">
-      <ItemContent>
+    <Item
+      variant="outline"
+      className="col-span-1 flex-col items-stretch gap-0 overflow-hidden p-0"
+    >
+      {/* Header in the service's exact colors, with the name and the menu */}
+      <div
+        className={`flex items-center justify-between gap-2 py-1.5 pr-2 pl-4 ${
+          activeAccount.service ? "" : "bg-secondary text-muted-foreground"
+        }`}
+        style={
+          activeAccount.service
+            ? {
+                backgroundColor:
+                  activeAccount.service.backgroundColor ?? "#f3f4f6",
+                color: activeAccount.service.textColor ?? "#111827",
+              }
+            : undefined
+        }
+      >
+        <p className="truncate text-base font-bold">
+          {activeAccount.service?.serviceName ?? "Sin servicio"}
+        </p>
+        <ActiveAccountActions activeAccount={activeAccount} />
+      </div>
+
+      <ItemContent className="p-4">
         <div className="flex w-full flex-col justify-between sm:flex-row">
           <div>
-            {activeAccount.service?.serviceName ? (
-              // The service in its own colors, as in the subscriptions table;
-              // the faint ring keeps dark pills (e.g. black) visible on the card
-              <Badge
-                className="ring-border mb-2 px-2.5 py-1 text-sm font-bold ring-1"
-                style={{
-                  color: activeAccount.service.textColor ?? "#111827",
-                  backgroundColor:
-                    activeAccount.service.backgroundColor ?? "#f3f4f6",
-                }}
-              >
-                {activeAccount.service.serviceName}
-              </Badge>
-            ) : (
-              <p className="text-muted-foreground pb-2">Sin servicio</p>
-            )}
             <ItemDescription className="text-foreground flex items-center gap-1">
               <span className="font-semibold">Correo:</span>
               <span className="truncate">{activeAccount.email}</span>
@@ -226,9 +232,6 @@ PIN: ${formatPin(screen.profilePIN)}`;
           </div>
         )}
       </ItemContent>
-      <ItemActions className="flex shrink-0 flex-col gap-2">
-        <ActiveAccountActions activeAccount={activeAccount} />
-      </ItemActions>
 
       {selectedScreen && (
         <UpdateScreenDialog
