@@ -77,14 +77,23 @@ export default function AssistantLauncher() {
 
   return (
     <>
-      {/* White with gradient text; on hover the gradient fills the button */}
+      {/* White with gradient text; on hover the gradient fades in behind it.
+          Backgrounds can't animate between white and a gradient, so the
+          gradient is its own layer whose opacity transitions. hover:bg-white
+          replaces the Button's dark hover color, which used to flash while
+          fading back after the cursor left */}
       <Button
         type="button"
         onClick={() => handleOpenChange(true)}
-        className="group hover:animate-gradient-pan fixed right-6 bottom-6 z-40 h-12 gap-2 rounded-full border border-fuchsia-200 bg-white bg-size-[200%_200%] px-5 text-sm font-semibold shadow-lg shadow-fuchsia-500/30 hover:border-transparent hover:bg-linear-to-r hover:from-violet-600 hover:via-fuchsia-500 hover:to-orange-400 motion-reduce:hover:animate-none max-sm:right-4 max-sm:bottom-4"
+        className="group fixed right-6 bottom-6 isolate z-40 h-12 gap-2 overflow-hidden rounded-full border border-fuchsia-200 bg-white px-5 text-sm font-semibold shadow-lg shadow-fuchsia-500/30 transition-colors duration-300 ease-out hover:border-transparent hover:bg-white max-sm:right-4 max-sm:bottom-4"
       >
-        {/* The icon is drawn with its stroke, which can't use the text's
-            clipped gradient, so it gets the same gradient as an SVG paint */}
+        <span
+          aria-hidden
+          className="animate-gradient-pan absolute inset-0 -z-10 bg-linear-to-r from-violet-600 via-fuchsia-500 to-orange-400 bg-size-[200%_200%] opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 motion-reduce:animate-none"
+        />
+        {/* The icon is a stroke, which can't use the text's clipped gradient:
+            it gets the gradient as an SVG paint, and a white copy fades in
+            over it on hover (a paint can't animate into a color) */}
         <svg aria-hidden className="absolute size-0">
           <defs>
             <linearGradient id="chat-ia-gradient" x1="0" y1="0" x2="1" y2="1">
@@ -94,11 +103,16 @@ export default function AssistantLauncher() {
             </linearGradient>
           </defs>
         </svg>
-        <Sparkles
-          stroke="url(#chat-ia-gradient)"
-          className="size-5 group-hover:stroke-white"
-        />
-        <span className="bg-linear-to-r from-violet-600 via-fuchsia-500 to-orange-400 bg-clip-text text-transparent group-hover:bg-none group-hover:text-white">
+        <span className="relative size-5">
+          <Sparkles
+            stroke="url(#chat-ia-gradient)"
+            className="absolute inset-0 size-5 transition-opacity duration-300 ease-out group-hover:opacity-0"
+          />
+          <Sparkles className="absolute inset-0 size-5 text-white opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100" />
+        </span>
+        {/* Transparent text shows the clipped gradient; fading the color to
+            white turns it white smoothly */}
+        <span className="bg-linear-to-r from-violet-600 via-fuchsia-500 to-orange-400 bg-clip-text text-transparent transition-colors duration-300 ease-out group-hover:text-white">
           Chat IA
         </span>
       </Button>
