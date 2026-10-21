@@ -2,6 +2,7 @@ import prisma from "@/shared/lib/db";
 import { NextResponse } from "next/server";
 import { requireUser } from "@/shared/lib/session";
 import { updateClientStatusSchema } from "@/features/subscriptions/schemas";
+import { buildSale, parseSaleInput } from "@/features/sales/server/sales";
 
 function normalizePhoneNumber(phone: string) {
   return phone.trim();
@@ -56,9 +57,27 @@ export async function PATCH(
       );
     }
 
+    // A renewal that sent how it was priced records a sale; its profit
+    // (computed here) is what the subscription stores and the bank receives
+    const saleInput = parseSaleInput(body.sale);
+    if (saleInput === "invalid") {
+      return NextResponse.json(
+        { message: "Datos de la venta inválidos" },
+        { status: 400 },
+      );
+    }
+    const recordsSale = saleInput !== null && saleInput.grossBs > 0;
+    if (recordsSale) {
+      subscriptionData.amount = Math.max(
+        saleInput.grossBs - saleInput.supplierBs,
+        0,
+      );
+    }
+
     const amount =
       typeof subscriptionData.amount === "number" ? subscriptionData.amount : 0;
-    const isRenewal = subscriptionData.status === "ACTIVE" && amount > 0;
+    const isRenewal =
+      recordsSale || (subscriptionData.status === "ACTIVE" && amount > 0);
 
     if (isRenewal) {
       subscriptionData.purchaseDate = new Date();
@@ -109,7 +128,7 @@ export async function PATCH(
       }),
       prisma.service.findFirst({
         where: { id: nextServiceId, createdById: userId },
-        select: { id: true },
+        select: { id: true, serviceName: true },
       }),
       prisma.screen.findUnique({
         where: { id: nextScreenId },
@@ -244,6 +263,20 @@ export async function PATCH(
           total: isRenewal ? amount : 0,
         },
       }),
+      ...(recordsSale && saleInput
+        ? [
+            prisma.sale.create({
+              data: buildSale(saleInput, {
+                userId,
+                subscriptionId: id,
+                clientName:
+                  targetClientName ?? currentSubscription.client.clientName,
+                serviceName: nextService.serviceName,
+                kind: "RENEWAL",
+              }),
+            }),
+          ]
+        : []),
     ]);
 
     return NextResponse.json({

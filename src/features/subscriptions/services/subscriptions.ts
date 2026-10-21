@@ -1,6 +1,10 @@
 import axiosInstance from "@/shared/lib/axiosInstance";
+// Type-only: the sale schema lives with the server code that records sales
+import type { SaleInput } from "@/features/sales/server/sales";
 
 export type CreateClientStatusPayload = {
+  // How the price was computed; when sent, the server records the sale
+  sale?: SaleInput;
   clientId: string;
   clientName?: string;
   phoneNumber?: string;
