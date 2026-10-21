@@ -7,6 +7,7 @@ import BankEarningsCard from "@/features/bank-funds/components/BankEarningsCard"
 import ClientStatusTable from "@/features/subscriptions/components/ClientStatusTable";
 import ClientsTable from "@/features/clients/components/ClientsTable";
 import WithdrawalsTable from "@/features/bank-funds/components/WithdrawalsTable";
+import SalesSection from "@/features/sales/components/SalesSection";
 import VerifiedToast from "@/features/auth/components/VerifiedToast";
 import {
   Tabs,
@@ -44,6 +45,9 @@ export default async function DashboardPage({
           <TabsTrigger value="clientes" className="px-4">
             Clientes
           </TabsTrigger>
+          <TabsTrigger value="ventas" className="px-4">
+            Ventas
+          </TabsTrigger>
           <TabsTrigger value="retiros" className="px-4">
             Retiros
           </TabsTrigger>
@@ -62,6 +66,10 @@ export default async function DashboardPage({
 
         <TabsContent value="clientes">
           <ClientsTable />
+        </TabsContent>
+
+        <TabsContent value="ventas">
+          <SalesSection />
         </TabsContent>
 
         <TabsContent value="retiros">
