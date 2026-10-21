@@ -104,3 +104,8 @@ export type Chat = Prisma.ChatModel
  * 
  */
 export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model Sale
+ * 
+ */
+export type Sale = Prisma.SaleModel

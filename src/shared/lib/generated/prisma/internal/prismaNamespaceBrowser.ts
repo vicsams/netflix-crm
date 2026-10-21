@@ -63,7 +63,8 @@ export const ModelName = {
   BankEarnings: 'BankEarnings',
   BankWithdrawal: 'BankWithdrawal',
   Chat: 'Chat',
-  ChatMessage: 'ChatMessage'
+  ChatMessage: 'ChatMessage',
+  Sale: 'Sale'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -253,6 +254,28 @@ export const ChatMessageScalarFieldEnum = {
 } as const
 
 export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const SaleScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  subscriptionId: 'subscriptionId',
+  clientName: 'clientName',
+  serviceName: 'serviceName',
+  kind: 'kind',
+  grossBs: 'grossBs',
+  supplierBs: 'supplierBs',
+  netBs: 'netBs',
+  rate: 'rate',
+  rateSource: 'rateSource',
+  grossUsdt: 'grossUsdt',
+  supplierUsdt: 'supplierUsdt',
+  netUsdt: 'netUsdt',
+  soldAt: 'soldAt',
+  voidedAt: 'voidedAt'
+} as const
+
+export type SaleScalarFieldEnum = (typeof SaleScalarFieldEnum)[keyof typeof SaleScalarFieldEnum]
 
 
 export const SortOrder = {
