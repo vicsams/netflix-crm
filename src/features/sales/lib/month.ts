@@ -21,6 +21,17 @@ export function currentMonth() {
   return monthOf(new Date());
 }
 
+// "2026-10-20" for the day a moment falls on, in Venezuela time
+export function dayOf(date: Date) {
+  return new Date(date.getTime() - VE_OFFSET_MS).toISOString().slice(0, 10);
+}
+
+// The instant a "YYYY-MM-DD" day starts in Venezuela time
+export function dayStart(day: string) {
+  const [year, month, date] = day.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, date) + VE_OFFSET_MS);
+}
+
 // The instants where the month starts and the next one starts
 export function monthRange(month: string) {
   const [, year, mon] = month.match(MONTH_PATTERN) ?? [];

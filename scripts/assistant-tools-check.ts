@@ -11,6 +11,7 @@ import net from "net";
 import { convertToModelMessages, type UIMessage } from "ai";
 import prisma from "@/shared/lib/db";
 import { createAssistantTools } from "@/features/assistant/server/tools";
+import { currentMonth, monthRange } from "@/features/sales/lib/month";
 
 // Under Bun, `pg` times out connecting to Neon unless addresses are tried one
 // at a time (see scripts/copy-user-data.ts)
@@ -37,7 +38,7 @@ const SAMPLES: Record<string, Record<string, unknown>[]> = {
   listarClientes: [{}, { conSuscripcionActiva: false }],
   listarCuentas: [{}, { soloConPantallasLibres: true }],
   listarServicios: [{}],
-  resumenGanancias: [{}],
+  resumenGanancias: [{}, { desde: "2026-01-01", hasta: "2026-12-31" }],
   listarRetiros: [{}, { moneda: "USDT" }],
 };
 
@@ -146,6 +147,37 @@ async function main() {
   console.log(
     `history: ${history.length} model message(s), ${historyText.length} chars`,
   );
+
+  // "¿Cuánto vendí este mes?" must match the Ventas tab: same sales, same
+  // Venezuela-time month
+  const { from, to } = monthRange(currentMonth());
+  const [earnings, month] = await Promise.all([
+    tools.resumenGanancias.execute!({}, {
+      toolCallId: "check-month",
+      messages: [],
+      context: {},
+    } as never),
+    prisma.sale.aggregate({
+      where: { userId: user.id, voidedAt: null, soldAt: { gte: from, lt: to } },
+      _sum: { grossBs: true, netBs: true },
+      _count: { _all: true },
+    }),
+  ]);
+  const { salesCount, salesBs, profitBs } = earnings as {
+    salesCount: number;
+    salesBs: number;
+    profitBs: number;
+  };
+  if (
+    salesCount !== month._count._all ||
+    Math.round(salesBs * 100) !== (month._sum.grossBs ?? 0) ||
+    Math.round(profitBs * 100) !== (month._sum.netBs ?? 0)
+  ) {
+    failures.push(
+      `resumenGanancias: this month (${salesCount} sales, ${salesBs} Bs) differs from the Ventas tab (${month._count._all} sales, ${(month._sum.grossBs ?? 0) / 100} Bs)`,
+    );
+  }
+  console.log(`month ${currentMonth()}: ${salesCount} sale(s), ${salesBs} Bs`);
 
   if (failures.length) {
     console.error(`\nFAILED (${failures.length}):`);
