@@ -7,12 +7,15 @@ import {
   stepCountIs,
   streamText,
 } from "ai";
-import { google } from "@ai-sdk/google";
 import * as z from "zod";
 import prisma from "@/shared/lib/db";
 import { requireUser } from "@/shared/lib/session";
 import { createAssistantTools } from "@/features/assistant/server/tools";
 import { buildInstructions } from "@/features/assistant/server/instructions";
+import {
+  assistantModel,
+  StartTimeoutError,
+} from "@/features/assistant/server/model";
 import {
   HISTORY_LIMIT,
   isOverHourlyLimit,
@@ -23,13 +26,11 @@ import {
 } from "@/features/assistant/server/chats";
 import type { AssistantUIMessage } from "@/features/assistant/types/assistant";
 
-// Prisma (pg) needs the Node runtime; tool calls plus the answer fit in 30 s
+// Prisma (pg) needs the Node runtime. A healthy answer takes a few seconds;
+// 60 s leaves room for falling back to other models on both steps (tool
+// call, then text) when Gemini is overloaded
 export const runtime = "nodejs";
-export const maxDuration = 30;
-
-// `gemini-flash-latest` follows Google's current stable Flash model; set
-// ASSISTANT_MODEL to pin a specific one
-const MODEL = process.env.ASSISTANT_MODEL ?? "gemini-flash-latest";
+export const maxDuration = 60;
 
 const MAX_MESSAGE_LENGTH = 1000;
 
@@ -45,10 +46,17 @@ const requestSchema = z.object({
 
 const generateMessageId = createIdGenerator({ prefix: "msg", size: 16 });
 
+const BUSY_MESSAGE =
+  "El asistente está saturado. Intenta de nuevo en un minuto.";
+
+// Reached only after every model in the chain failed
 function errorMessage(error: unknown) {
+  if (error instanceof StartTimeoutError) return BUSY_MESSAGE;
   if (APICallError.isInstance(error)) {
-    if (error.statusCode === 429) {
-      return "El asistente está saturado. Intenta de nuevo en un minuto.";
+    const status = error.statusCode ?? 0;
+    if (status === 429 || status >= 500) {
+      console.error("Gemini unavailable:", status, error.message);
+      return BUSY_MESSAGE;
     }
     if (error.statusCode === 400 || error.statusCode === 403) {
       console.error("Gemini rejected the request:", error.message);
@@ -150,13 +158,16 @@ async function answer(req: Request) {
   const messages = validated.success ? validated.data : [userMessage];
 
   const result = streamText({
-    model: google(MODEL),
+    model: assistantModel(),
     instructions: buildInstructions(),
     // With `tools`, earlier tool results are re-summarized by toModelOutput,
     // so phone numbers and emails from saved rows never reach the model
     messages: await convertToModelMessages(messages, { tools }),
     tools,
     stopWhen: stepCountIs(5),
+    // assistantModel() already moves on to the next model; retrying the whole
+    // chain would only push the answer past maxDuration
+    maxRetries: 0,
   });
 
   // Finish (and save) the answer even if the user closes the panel
