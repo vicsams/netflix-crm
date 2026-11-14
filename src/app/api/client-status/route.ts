@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/shared/lib/session";
 import { ClientStatusEnum } from "@/shared/lib/generated/prisma/enums";
 import { createClientStatusRequestSchema } from "@/features/subscriptions/schemas";
+import { buildSale, parseSaleInput } from "@/features/sales/server/sales";
 
 function normalizePhoneNumber(phone: string) {
   return phone.trim();
@@ -140,8 +141,22 @@ export async function POST(req: Request) {
       );
     }
 
-    const [created] = await prisma.$transaction([
-      prisma.subscription.create({
+    // A sale is recorded when the dialog sent how it priced it; its profit
+    // (computed here) is what the subscription stores and the bank receives
+    const saleInput = parseSaleInput(body.sale);
+    if (saleInput === "invalid") {
+      return NextResponse.json(
+        { message: "Datos de la venta inválidos" },
+        { status: 400 },
+      );
+    }
+    const recordsSale = saleInput !== null && saleInput.grossBs > 0;
+    const netAmount = recordsSale
+      ? Math.max(saleInput.grossBs - saleInput.supplierBs, 0)
+      : actualAmount;
+
+    const created = await prisma.$transaction(async (tx) => {
+      const subscription = await tx.subscription.create({
         data: {
           clientId: resolvedClientId,
           activeAccountId,
@@ -149,7 +164,7 @@ export async function POST(req: Request) {
           screenId,
           expirationDate:
             providedExpiration ?? accountExists.expirationDate ?? null,
-          amount: actualAmount,
+          amount: netAmount,
           status: status as ClientStatusEnum,
           userId,
         },
@@ -162,20 +177,28 @@ export async function POST(req: Request) {
             },
           },
         },
-      }),
-      prisma.bankEarnings.upsert({
+      });
+
+      if (recordsSale) {
+        await tx.sale.create({
+          data: buildSale(saleInput, {
+            userId,
+            subscriptionId: subscription.id,
+            clientName: subscription.client.clientName,
+            serviceName: serviceExists.serviceName,
+            kind: "NEW",
+          }),
+        });
+      }
+
+      await tx.bankEarnings.upsert({
         where: { userId },
-        update: {
-          total: {
-            increment: actualAmount ?? 0,
-          },
-        },
-        create: {
-          userId,
-          total: actualAmount ?? 0,
-        },
-      }),
-    ]);
+        update: { total: { increment: netAmount ?? 0 } },
+        create: { userId, total: netAmount ?? 0 },
+      });
+
+      return subscription;
+    });
 
     return NextResponse.json(
       {

@@ -30,6 +30,7 @@ model User {
   bankEarnings  BankEarnings?
   withdrawals   BankWithdrawal[]
   chats         Chat[]
+  sales         Sale[]
 
   @@unique([email])
   @@map("user")
@@ -178,6 +179,7 @@ model Subscription {
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  sales           Sale[]
 
   @@index([userId])
   @@index([clientId])
@@ -238,4 +240,37 @@ model ChatMessage {
 
   @@index([chatId, createdAt])
   @@map("assistant_messages")
+}
+
+// One row per sale (new subscription or renewal), frozen at sale time: the
+// amounts, the exchange rate used and its USDT equivalents. Client and
+// service names are snapshots, so the history survives renames and deletes
+model Sale {
+  id             String        @id @default(uuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  clientName     String
+  serviceName    String
+  // "NEW" | "RENEWAL"
+  kind           String
+  // Bs cents: what the client paid, the supplier cost, and the profit
+  grossBs        Int
+  supplierBs     Int
+  netBs          Int
+  // Bs per USDT used in the sale, and where it came from ("BINANCE" | "CUSTOM")
+  rate           Decimal       @db.Decimal(14, 4)
+  rateSource     String
+  // USDT cents, computed once from the Bs amounts and the rate
+  grossUsdt      Int
+  supplierUsdt   Int
+  netUsdt        Int
+  soldAt         DateTime      @default(now())
+  // Set when the sale is voided: excluded from totals, kept in the history
+  voidedAt       DateTime?
+
+  @@index([userId, soldAt])
+  @@index([subscriptionId])
+  @@map("sales")
 }

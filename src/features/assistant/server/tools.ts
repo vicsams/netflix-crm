@@ -10,6 +10,7 @@ import {
 } from "date-fns";
 import prisma from "@/shared/lib/db";
 import { getDerivedStatus } from "@/features/subscriptions/lib/status";
+import { currentMonth, dayOf, dayStart } from "@/features/sales/lib/month";
 
 // Read-only CRM queries the assistant can call. Every query is scoped to the
 // signed-in user (userId comes from the request, never from the model) and
@@ -468,40 +469,55 @@ export function createAssistantTools(userId: string) {
 
     resumenGanancias: tool({
       description:
-        "Resumen de dinero: saldo actual en banco (Bs) y Binance (USDT), y ventas de suscripciones en un rango de fechas, por servicio. Las ventas usan la fecha y el monto de la última compra o renovación de cada suscripción.",
+        "Resumen de dinero: saldo actual en banco (Bs) y Binance (USDT), y el historial de ventas (suscripciones nuevas y renovaciones, sin las anuladas) en un rango de fechas, por servicio: lo que pagaron los clientes, el costo del proveedor y la ganancia, en Bs y en USDT a la tasa de cada venta. El historial empieza con la primera venta registrada en la app.",
       inputSchema: z.object(dateRangeInput),
       execute: async ({ desde, hasta }) => {
-        const { from, to, toExclusive } = dayRange(desde, hasta);
+        // Days in Venezuela time, like the Ventas tab, so "este mes" matches
+        // its totals whatever the server's timezone
+        const { from, to, toExclusive } = dayRange(
+          desde ?? `${currentMonth()}-01`,
+          hasta ?? dayOf(new Date()),
+        );
 
-        const [bank, sales, services] = await Promise.all([
+        const [bank, sales] = await Promise.all([
           prisma.bankEarnings.findUnique({
             where: { userId },
             select: { total: true, totalUsdt: true },
           }),
-          prisma.subscription.groupBy({
-            by: ["serviceId"],
+          prisma.sale.groupBy({
+            by: ["serviceName"],
             where: {
               userId,
-              amount: { not: null },
-              purchaseDate: { gte: from, lt: toExclusive },
+              voidedAt: null,
+              soldAt: {
+                gte: dayStart(toDay(from)!),
+                lt: dayStart(toDay(toExclusive)!),
+              },
             },
-            _sum: { amount: true },
+            _sum: {
+              grossBs: true,
+              supplierBs: true,
+              netBs: true,
+              grossUsdt: true,
+              netUsdt: true,
+            },
             _count: { _all: true },
-          }),
-          prisma.service.findMany({
-            where: { createdById: userId },
-            select: { id: true, serviceName: true },
           }),
         ]);
 
-        const serviceName = new Map(
-          services.map((service) => [service.id, service.serviceName]),
-        );
+        // Sums in cents, converted once, so totals don't pick up float noise
+        const cents = (key: keyof (typeof sales)[number]["_sum"]) =>
+          sales.reduce((total, group) => total + (group._sum[key] ?? 0), 0);
+
         const byService = sales
           .map((group) => ({
-            serviceName: serviceName.get(group.serviceId) ?? "Sin servicio",
-            totalBs: (group._sum.amount ?? 0) / 100,
+            serviceName: group.serviceName,
             count: group._count._all,
+            totalBs: (group._sum.grossBs ?? 0) / 100,
+            totalUsdt: (group._sum.grossUsdt ?? 0) / 100,
+            costBs: (group._sum.supplierBs ?? 0) / 100,
+            profitBs: (group._sum.netBs ?? 0) / 100,
+            profitUsdt: (group._sum.netUsdt ?? 0) / 100,
           }))
           .sort((a, b) => b.totalBs - a.totalBs);
 
@@ -510,8 +526,15 @@ export function createAssistantTools(userId: string) {
           hasta: toDay(to)!,
           bankBs: (bank?.total ?? 0) / 100,
           bankUsdt: (bank?.totalUsdt ?? 0) / 100,
-          salesBs: byService.reduce((sum, row) => sum + row.totalBs, 0),
-          salesCount: byService.reduce((sum, row) => sum + row.count, 0),
+          salesCount: sales.reduce(
+            (total, group) => total + group._count._all,
+            0,
+          ),
+          salesBs: cents("grossBs") / 100,
+          salesUsdt: cents("grossUsdt") / 100,
+          costBs: cents("supplierBs") / 100,
+          profitBs: cents("netBs") / 100,
+          profitUsdt: cents("netUsdt") / 100,
           byService,
         };
       },

@@ -165,6 +165,7 @@ export default function CreateClientStatusDialog({
       return {
         cents: 0,
         waitingForRate: false,
+        sale: undefined,
         usdFormatted: "0.00",
         bsFormatted: "0.00 Bs",
       };
@@ -190,6 +191,15 @@ export default function CreateClientStatusDialog({
     return {
       cents: Math.round(netBsFloat * 100),
       waitingForRate: !rate,
+      // How the price was computed; recorded as the sale once a rate is known
+      sale: rate
+        ? {
+            grossBs: Math.round(grossBsFloat * 100),
+            supplierBs: Math.round(supplierBs * 100),
+            rate,
+            rateSource: selectedPriceSource,
+          }
+        : undefined,
       usdFormatted: usdPriceFormatted,
       grossBsFormatted: rate
         ? `${grossBsFloat.toFixed(2)} Bs`
@@ -233,6 +243,7 @@ export default function CreateClientStatusDialog({
       status: data.status,
       expirationDate,
       amount: calculatedAmount?.cents ?? null,
+      sale: calculatedAmount?.sale,
     });
   };
 

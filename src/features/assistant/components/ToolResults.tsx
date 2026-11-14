@@ -234,25 +234,49 @@ function ServicesResult({ output }: { output: Output<"listarServicios"> }) {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string;
+  detail?: string;
+}) {
   return (
     <div className="bg-muted rounded-md px-3 py-2">
       <div className="text-muted-foreground text-xs">{label}</div>
       <div className="font-semibold">{value}</div>
+      {detail && <div className="text-muted-foreground text-xs">{detail}</div>}
     </div>
   );
 }
 
+// Answers saved before the sales history have no USDT or profit figures, so
+// those are optional here
+const usdtDetail = (value: number | undefined) =>
+  value === undefined ? undefined : `${formatMoney(value)} USDT`;
+
 function EarningsResult({ output }: { output: Output<"resumenGanancias"> }) {
+  const hasProfit = output.profitBs !== undefined;
+
   return (
     <div className="space-y-2">
-      <div className="grid grid-cols-3 gap-2 max-sm:grid-cols-1">
+      <div className="grid grid-cols-2 gap-2 max-sm:grid-cols-1">
         <Stat label="Banco" value={`${formatMoney(output.bankBs)} Bs`} />
         <Stat label="Binance" value={`${formatMoney(output.bankUsdt)} USDT`} />
         <Stat
           label={`Ventas ${shortDate(output.desde)} – ${shortDate(output.hasta)}`}
           value={`${formatMoney(output.salesBs)} Bs (${output.salesCount})`}
+          detail={usdtDetail(output.salesUsdt)}
         />
+        {hasProfit && (
+          <Stat
+            label="Ganancia"
+            value={`${formatMoney(output.profitBs)} Bs`}
+            detail={usdtDetail(output.profitUsdt)}
+          />
+        )}
       </div>
       <ResultFrame
         title="Ventas por servicio"
@@ -263,6 +287,9 @@ function EarningsResult({ output }: { output: Output<"resumenGanancias"> }) {
             <TableHead>Servicio</TableHead>
             <TableHead>Ventas</TableHead>
             <TableHead className="text-right">Total</TableHead>
+            {hasProfit && (
+              <TableHead className="text-right">Ganancia</TableHead>
+            )}
           </>
         }
         renderRow={(row) => (
@@ -270,8 +297,19 @@ function EarningsResult({ output }: { output: Output<"resumenGanancias"> }) {
             <TableCell className="font-medium">{row.serviceName}</TableCell>
             <TableCell>{row.count}</TableCell>
             <TableCell className="text-right">
-              {formatMoney(row.totalBs)} Bs
+              <div>{formatMoney(row.totalBs)} Bs</div>
+              <div className="text-muted-foreground text-xs">
+                {usdtDetail(row.totalUsdt)}
+              </div>
             </TableCell>
+            {hasProfit && (
+              <TableCell className="text-right">
+                <div>{formatMoney(row.profitBs)} Bs</div>
+                <div className="text-muted-foreground text-xs">
+                  {usdtDetail(row.profitUsdt)}
+                </div>
+              </TableCell>
+            )}
           </TableRow>
         )}
       />

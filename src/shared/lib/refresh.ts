@@ -6,7 +6,8 @@ export type ChangedRecord =
   | "screen"
   | "client"
   | "subscription"
-  | "bank";
+  | "bank"
+  | "sale";
 
 // Every cached list that displays each kind of record (including through
 // cascading deletes), so a change refreshes all the places that show it:
@@ -14,14 +15,17 @@ export type ChangedRecord =
 // - accounts: their cards, subscriptions table, profile dropdowns
 // - screens: account cards, subscriptions table, profile dropdowns
 // - clients: their table and the subscriptions table
-// - subscriptions: their table and the clients' subscription counts
+// - subscriptions: their table, the clients' subscription counts, and the
+//   sales history (creating or renewing records a sale)
+// - sales (voiding): the history and the bank balance
 const AFFECTED_QUERIES: Record<ChangedRecord, string[]> = {
   service: ["services", "activeAccounts", "clientStatuses", "clients"],
   account: ["activeAccounts", "screens", "clientStatuses", "clients"],
   screen: ["screens", "activeAccounts", "clientStatuses"],
   client: ["clients", "clientStatuses"],
-  subscription: ["clientStatuses", "clients"],
+  subscription: ["clientStatuses", "clients", "sales"],
   bank: ["bankEarnings", "bankWithdrawals"],
+  sale: ["sales", "bankEarnings"],
 };
 
 // Refetches every list affected by the changed records. Keys match by prefix,
